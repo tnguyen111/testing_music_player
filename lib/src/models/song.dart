@@ -1,14 +1,13 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 
 class Song {
   String songName;
   String songAuthor = '';
-  Duration songDuration;
+  late Duration songDuration;
   late File songFile;
   String songDurationString = '';
 
-  Song({required this.songName, required this.songDuration}) {
+  Song({required this.songName, songAuthor, songDuration}) {
     if(songDuration.inMinutes < 10){
       songDurationString = '0${songDuration.inMinutes}:';
     } else{

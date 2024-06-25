@@ -1,14 +1,11 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:testing_api_twitter/src/models/models.dart';
 import 'package:testing_api_twitter/src/services/services.dart';
 import 'package:testing_api_twitter/src/services/state_management/helper_funcs/helper_funcs.dart';
-import 'package:testing_api_twitter/src/ui/screens/edit_playlist_screen.dart';
-
 import '../../../main.dart';
-import '../screens/add_playlist_screen.dart';
+import '../ui.dart';
 
 IconButton searchIcon(WidgetRef ref) => IconButton(
       icon: const Icon(Icons.search),
@@ -26,10 +23,17 @@ IconButton menuIcon(BuildContext context) => IconButton(
       },
     );
 
-IconButton sortIcon() => IconButton(
+IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
       icon: const Icon(Icons.sort),
       onPressed: () {
         /*Sort things*/
+        if(typeSort == 'Your Playlist'){
+          playlistArray.sort((a, b)=> a.playlistName.compareTo(b.playlistName));
+
+        } else{
+          songArray.sort((a, b)=> a.songName.compareTo(b.songName));
+        }
+        playlistSwitchState(ref);
       },
     );
 
@@ -38,16 +42,18 @@ IconButton addIcon(WidgetRef ref) => IconButton(
       onPressed: () {
         /*Add things*/
         print('bruh');
-        songArray.add(Song(songName: 'test', songDuration: Duration(seconds: 65)));
+        showDataAlert(globalNavigatorKey.currentContext!, ref);
         print(songArray);
         playlistSwitchState(ref);
       },
     );
 
-IconButton removeIcon() => IconButton(
+IconButton removeIcon(WidgetRef ref, Song song) => IconButton(
       icon: const Icon(Icons.close),
       onPressed: () {
         /*Remove things*/
+        songArray.remove(song);
+        playlistSwitchState(ref);
       },
     );
 

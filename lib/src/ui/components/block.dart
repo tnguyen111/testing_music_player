@@ -11,11 +11,11 @@ Container headerBlock(String header, WidgetRef ref) => Container(
           left: kDefaultPadding, top: kSmallPadding, bottom: kSmallPadding),
       child: Row(
         children: [
-          Text(
+          Expanded(child:Text(
             header,
-          ),
+          ),),
           const SizedBox(width: 125),
-          sortIcon(),
+          sortIcon(ref,header),
           (header == 'Your Playlist') ? settingListIcon(ref) : addIcon(ref),
         ],
       ),
@@ -27,6 +27,7 @@ Container playlistBlock(WidgetRef ref, Playlist playlist) => Container(
       child: GestureDetector(
         onTap: () {
           // Change!
+          playSong();
           modeSwitchState(ref);
         },
         child: Stack(
@@ -46,13 +47,13 @@ Container playlistBlock(WidgetRef ref, Playlist playlist) => Container(
                   width: 90,
                   height: 90,
                   child: Container(
-                    child: playlist.playlistImage,
+                    child: playlist.playlistImage_,
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    playlist.playlistName,
+                    playlist.playlistName_,
                   ),
                 ),
                 settingSongIcon(ref, playlist),
@@ -135,11 +136,11 @@ Container songBlock(WidgetRef ref, Song song) => Container(
                     Text(
                       song.songName,
                     ),
-                    Text('testAuthor', textScaler: TextScaler.linear(0.6),),
+                     Text(song.songAuthor, textScaler: TextScaler.linear(0.6),),
                   ]),
                 ),
                 Text(song.songDurationString),
-                removeIcon(),
+                removeIcon(ref, song),
               ],
             ),
           ],

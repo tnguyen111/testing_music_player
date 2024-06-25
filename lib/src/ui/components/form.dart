@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -9,12 +8,12 @@ import 'package:testing_api_twitter/src/ui/themes/source_colors.dart';
 import '../../../main.dart';
 import '../../services/services.dart';
 import '../themes/text_theme.dart';
-import '../../models/models.dart';
 
 Widget playlistForm(WidgetRef ref) {
   String playlistName = '';
-  Playlist temp = Playlist(playlistName: '');
-  Uint8List imageInput;
+  Playlist temp = Playlist(playlistName_: '');
+  temp.initState();
+  Uint8List imageInput = Uint8List(0);
 
   return Center(
     child: SingleChildScrollView(
@@ -22,6 +21,11 @@ Widget playlistForm(WidgetRef ref) {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           GestureDetector(
+            child: SizedBox(
+              width: 300,
+              height: 300,
+              child:  temp.playlistImage_,
+            ),
             onTap: () async {
               FilePickerResult? result = await FilePicker.platform.pickFiles(
                 type: FileType.custom,
@@ -31,6 +35,7 @@ Widget playlistForm(WidgetRef ref) {
                 String pathInput = result.files.single.path!;
                 File file = File(pathInput);
                 imageInput = file.readAsBytesSync();
+                print(imageInput);
                 temp.setImage(
                   Image.memory(
                     imageInput,
@@ -41,11 +46,6 @@ Widget playlistForm(WidgetRef ref) {
                 // User canceled the picker
               }
             },
-            child: SizedBox(
-              width: 300,
-              height: 300,
-              child: temp.playlistImage,
-            ),
           ),
           const SizedBox(height: 50),
           Form(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:testing_api_twitter/src/config/config.dart';
 import 'source_colors.dart';
 import 'text_theme.dart';
 

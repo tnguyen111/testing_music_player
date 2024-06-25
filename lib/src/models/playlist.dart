@@ -1,46 +1,45 @@
-import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import 'models.dart';
 
 class Playlist{
-  String playlistName;
-  Image playlistImage = Image.network('https://th.bing.com/th/id/OIP.D9khLX8H-gRPheV4jWHh7AHaHa?rs=1&pid=ImgDetMain');
-  List<Song> songList = [];
-
-  late Uint8List playlistImageByte;
-
   void initState() async{
-    playlistImageByte = (await NetworkAssetBundle(Uri.parse('https://th.bing.com/th/id/OIP.D9khLX8H-gRPheV4jWHh7AHaHa?rs=1&pid=ImgDetMain'))
-      .load('https://th.bing.com/th/id/OIP.D9khLX8H-gRPheV4jWHh7AHaHa?rs=1&pid=ImgDetMain'))
-      .buffer
-      .asUint8List();
+    playlistImageByte_ = (await NetworkAssetBundle(Uri.parse('https://th.bing.com/th/id/OIP.D9khLX8H-gRPheV4jWHh7AHaHa?rs=1&pid=ImgDetMain'))
+        .load('https://th.bing.com/th/id/OIP.D9khLX8H-gRPheV4jWHh7AHaHa?rs=1&pid=ImgDetMain'))
+        .buffer
+        .asUint8List();
   }
 
+  String playlistName_;
+  Image playlistImage_ = Image.network('https://th.bing.com/th/id/OIP.D9khLX8H-gRPheV4jWHh7AHaHa?rs=1&pid=ImgDetMain');
+  List<Song> songList_ = [];
 
-  Playlist({required this.playlistName}){initState();}
+  late Uint8List playlistImageByte_;
 
-  String get _playlistName =>  playlistName;
-  Image get _playListImage => playlistImage;
-  Uint8List get _playlistImageByte => playlistImageByte;
+
+  Playlist({required this.playlistName_}){initState();}
+
+  String get playlistName =>  playlistName_;
+  Image get playlistImage => playlistImage_;
+  Uint8List get playlistImageByte => playlistImageByte_;
 
   void setImage(Image newImage, Uint8List newByte){
-    playlistImage = newImage;
-    playlistImageByte = newByte;
+    playlistImage_ = newImage;
+    playlistImageByte_ = newByte;
     return;
   }
 
   void setName(String newName){
-    playlistName = newName;
+    playlistName_ = newName;
   }
 
   void addSong(Song newSong) {
-    songList.add(newSong);
+    songList_.add(newSong);
   }
 
   void removeSong(Song existedSong){
-    songList.remove(existedSong);
+    songList_.remove(existedSong);
   }
 }
