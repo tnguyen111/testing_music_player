@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:testing_api_twitter/src/models/models.dart';
 import 'package:testing_api_twitter/src/services/services.dart';
 import 'package:testing_api_twitter/src/services/state_management/helper_funcs/helper_funcs.dart';
+import 'package:testing_api_twitter/src/ui/screens/edit_playlist_screen.dart';
 
 import '../../../main.dart';
 import '../screens/add_playlist_screen.dart';
@@ -46,26 +47,30 @@ IconButton removeIcon() => IconButton(
       },
     );
 
-PopupMenuButton<String> settingListIcon(WidgetRef ref) => PopupMenuButton<String>(
-  onSelected: (value) {
-    handleSettingListClick(value, ref);
-  },
-  itemBuilder: (BuildContext context) {
-    return {'Add New Playlist', 'Delete Playlist'}.map((String choice) {
-      return PopupMenuItem<String>(
-        value: choice,
-        child: Text(choice),
-      );
-    }).toList();
-  },
-);
+PopupMenuButton<String> settingListIcon(WidgetRef ref) =>
+    PopupMenuButton<String>(
+      onSelected: (value) {
+        handleSettingListClick(value, ref);
+      },
+      itemBuilder: (BuildContext context) {
+        return {'Add New Playlist', 'Delete Playlist'}.map((String choice) {
+          return PopupMenuItem<String>(
+            value: choice,
+            child: Text(choice),
+          );
+        }).toList();
+      },
+    );
 
 void handleSettingListClick(String value, WidgetRef ref) {
   switch (value) {
     case 'Add New Playlist':
       Navigator.push(
         globalNavigatorKey.currentContext!,
-        MaterialPageRoute(builder: (context) => AddPlaylistScreen(ref: ref,)),
+        MaterialPageRoute(
+            builder: (context) => AddPlaylistScreen(
+                  ref: ref,
+                )),
       );
       break;
     case 'Delete Playlist':
@@ -73,30 +78,35 @@ void handleSettingListClick(String value, WidgetRef ref) {
   }
 }
 
-PopupMenuButton<String> settingSongIcon(WidgetRef ref, Playlist playlist) => PopupMenuButton<String>(
-  icon: const Icon(Icons.more_horiz),
-  iconSize: 30,
-  onSelected: (value) {
-    handleSettingSongClick(value, ref, playlist);
-    playlistSwitchState(ref);
-  },
-  itemBuilder: (BuildContext context) {
-    return {'Change Playlist Name', 'Delete Playlist'}.map((String choice) {
-      return PopupMenuItem<String>(
-        value: choice,
-        child: Text(choice),
-      );
-    }).toList();
-  },
-);
+PopupMenuButton<String> settingSongIcon(WidgetRef ref, Playlist playlist) =>
+    PopupMenuButton<String>(
+      icon: const Icon(Icons.more_horiz),
+      iconSize: 30,
+      onSelected: (value) {
+        handleSettingSongClick(value, ref, playlist);
+        playlistSwitchState(ref);
+      },
+      itemBuilder: (BuildContext context) {
+        return {'Edit Playlist Info', 'Delete Playlist'}.map((String choice) {
+          return PopupMenuItem<String>(
+            value: choice,
+            child: Text(choice),
+          );
+        }).toList();
+      },
+    );
 
 void handleSettingSongClick(String value, WidgetRef ref, Playlist playlist) {
   switch (value) {
-    case 'Change Playlist Name':
-      /*Navigator.push(
+    case 'Edit Playlist Info':
+      Navigator.push(
         globalNavigatorKey.currentContext!,
-        MaterialPageRoute(builder: (context) => AddPlaylistScreen(ref: ref,)),
-      );*/
+        MaterialPageRoute(
+            builder: (context) => EditPlaylistScreen(
+                  ref: ref,
+                  playlist: playlist,
+                )),
+      );
       break;
     case 'Delete Playlist':
       print(playlistArray);
