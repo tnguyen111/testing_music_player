@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:testing_api_twitter/src/services/services.dart';
 
+import '../../../main.dart';
+
 Drawer sideBar(WidgetRef ref) {
   return Drawer(
     child: Column(
@@ -20,6 +22,8 @@ Drawer sideBar(WidgetRef ref) {
           onTap: () {
             // Update the state of the app.
             // ...
+            screenSetState(ref, 0);
+            Navigator.pop(globalNavigatorKey.currentContext!);
           },
         ),
         ListTile(
@@ -27,6 +31,8 @@ Drawer sideBar(WidgetRef ref) {
           onTap: () {
             // Update the state of the app.
             // ...
+            screenSetState(ref, 2);
+            Navigator.pop(globalNavigatorKey.currentContext!);
           },
         ),
         Expanded(

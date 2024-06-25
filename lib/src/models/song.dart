@@ -1,17 +1,32 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
-
-class Song{
+class Song {
   String songName;
   String songAuthor = '';
-  Durations songDuration;
-  File songFile;
+  Duration songDuration;
+  late File songFile;
+  String songDurationString = '';
 
-  Song({required this.songName, required this.songFile, required this.songDuration});
+  Song({required this.songName, required this.songDuration}) {
+    if(songDuration.inMinutes < 10){
+      songDurationString = '0${songDuration.inMinutes}:';
+    } else{
+      songDurationString = '${songDuration.inMinutes}:';
+    }
 
-  String get _songName =>  songName;
-  String get _songAuthor =>  songAuthor;
-  Durations get _songDuration => songDuration;
-  File get _songFile =>  songFile;
+    if (songDuration.inSeconds % 60 < 10) {
+      songDurationString += '0${songDuration.inSeconds % 60}';
+    } else {
+      songDurationString += '${songDuration.inSeconds % 60}';
+    }
+  }
+
+  String get _songName => songName;
+
+  String get _songAuthor => songAuthor;
+
+  Duration get _songDuration => songDuration;
+
+  File get _songFile => songFile;
 }

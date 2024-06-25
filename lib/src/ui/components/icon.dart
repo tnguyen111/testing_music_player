@@ -33,10 +33,14 @@ IconButton sortIcon() => IconButton(
       },
     );
 
-IconButton addIcon() => IconButton(
+IconButton addIcon(WidgetRef ref) => IconButton(
       icon: const Icon(Icons.add),
       onPressed: () {
         /*Add things*/
+        print('bruh');
+        songArray.add(Song(songName: 'test', songDuration: Duration(seconds: 65)));
+        print(songArray);
+        playlistSwitchState(ref);
       },
     );
 

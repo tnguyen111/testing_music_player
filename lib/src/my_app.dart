@@ -11,6 +11,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     playlistWatchState(ref);
+    int screenState = screenWatchState(ref);
     return MaterialApp(
       navigatorKey: globalNavigatorKey,
       theme: (modeWatchState(ref)) ? lightTheme() : darkTheme(),
@@ -24,7 +25,13 @@ class MyApp extends ConsumerWidget {
         ],
       ),
       color: Colors.white,
-      home: mainScreen(ref),
+      home: (screenState == 0)
+          ? mainScreen(ref)
+          : (screenState == 1)
+              ? Container()
+              : (screenState == 2)
+                  ? songScreen(ref)
+                  : Container(),
     );
   }
 }

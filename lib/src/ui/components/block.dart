@@ -16,7 +16,7 @@ Container headerBlock(String header, WidgetRef ref) => Container(
           ),
           const SizedBox(width: 125),
           sortIcon(),
-          settingListIcon(ref),
+          (header == 'Your Playlist') ? settingListIcon(ref) : addIcon(ref),
         ],
       ),
     );
@@ -26,6 +26,7 @@ Container playlistBlock(WidgetRef ref, Playlist playlist) => Container(
           left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
       child: GestureDetector(
         onTap: () {
+          // Change!
           modeSwitchState(ref);
         },
         child: Stack(
@@ -45,8 +46,6 @@ Container playlistBlock(WidgetRef ref, Playlist playlist) => Container(
                   width: 90,
                   height: 90,
                   child: Container(
-
-                    color: Color.fromRGBO(246, 114, 114, 1),
                     child: playlist.playlistImage,
                   ),
                 ),
@@ -104,6 +103,45 @@ Container playlistAddBlock(WidgetRef ref) => Container(
                 ),
               ),
             ]),
+          ],
+        ),
+      ),
+    );
+
+Container songBlock(WidgetRef ref, Song song) => Container(
+      margin: const EdgeInsets.only(
+          left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
+      child: GestureDetector(
+        onTap: () {
+          // Change!
+          modeSwitchState(ref);
+        },
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                color: (modeReadState(ref))
+                    ? lightThemeHeader()
+                    : darkThemeHeader(),
+              ),
+              height: 65,
+            ),
+            Row(
+              children: [
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
+                    Text(
+                      song.songName,
+                    ),
+                    Text('testAuthor', textScaler: TextScaler.linear(0.6),),
+                  ]),
+                ),
+                Text(song.songDurationString),
+                removeIcon(),
+              ],
+            ),
           ],
         ),
       ),

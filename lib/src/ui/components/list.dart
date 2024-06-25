@@ -19,3 +19,18 @@ Widget playlistList(WidgetRef ref) {
         }),
   );
 }
+
+Widget songList(WidgetRef ref) {
+  final ScrollController scrollController = ScrollController();
+
+  return Expanded(
+    child: ListView.builder(
+        itemCount: songArray.length,
+        scrollDirection: Axis.vertical,
+        shrinkWrap: false,
+        controller: scrollController,
+        itemBuilder: (context, index) {
+          return songBlock(ref, songArray[index]);
+        }),
+  );
+}
