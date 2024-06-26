@@ -1,20 +1,14 @@
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:testing_api_twitter/src/models/models.dart';
-import 'package:testing_api_twitter/src/ui/themes/source_colors.dart';
 import '../../../main.dart';
 import '../../services/services.dart';
-import '../themes/text_theme.dart';
+import '../ui.dart';
 
-Widget playlistForm(WidgetRef ref) {
+
+
+Widget playlistForm(WidgetRef ref, Image imageInput) {
   String playlistName = '';
-  Playlist temp = Playlist(playlistName_: '');
-  temp.initState();
-  Uint8List imageInput = Uint8List(0);
-
   return Center(
     child: SingleChildScrollView(
       child: Column(
@@ -24,27 +18,10 @@ Widget playlistForm(WidgetRef ref) {
             child: SizedBox(
               width: 300,
               height: 300,
-              child:  temp.playlistImage_,
+              child:  imageInput,
             ),
             onTap: () async {
-              FilePickerResult? result = await FilePicker.platform.pickFiles(
-                type: FileType.custom,
-                allowedExtensions: ['jpg', 'jpeg', 'png', 'jfif'],
-              );
-              if (result != null) {
-                String pathInput = result.files.single.path!;
-                File file = File(pathInput);
-                imageInput = file.readAsBytesSync();
-                print(imageInput);
-                temp.setImage(
-                  Image.memory(
-                    imageInput,
-                    fit: BoxFit.fill,
-                  ), imageInput,
-                );
-              } else {
-                // User canceled the picker
-              }
+              imageInput = await changeImage(imageInput);
             },
           ),
           const SizedBox(height: 50),
@@ -65,8 +42,7 @@ Widget playlistForm(WidgetRef ref) {
                   onSubmitted: (String value) async {
                     if (playlistName != '') {
                       playlistName = value;
-                      temp.setName(playlistName);
-                      playlistArray.add(temp);
+                      playlistArray.add(Playlist(playlistName_: playlistName,playlistImage_: imageInput));
                       playlistSwitchState(ref);
                       Navigator.pop(globalNavigatorKey.currentContext!);
                     }
@@ -78,7 +54,6 @@ Widget playlistForm(WidgetRef ref) {
           const SizedBox(height: 20),
           ElevatedButton(
             style: ButtonStyle(
-      
               overlayColor: WidgetStatePropertyAll(
                 modeReadState(ref) ? darkThemeSub() : lightThemeSub(),
               ),
@@ -88,8 +63,7 @@ Widget playlistForm(WidgetRef ref) {
             ),
             onPressed: () {
               if (playlistName != '') {
-                temp.setName(playlistName);
-                playlistArray.add(temp);
+                playlistArray.add(Playlist(playlistName_: playlistName,playlistImage_: imageInput));
                 playlistSwitchState(ref);
                 Navigator.pop(globalNavigatorKey.currentContext!);
               }
@@ -109,7 +83,6 @@ Widget playlistForm(WidgetRef ref) {
 Widget editPlaylistForm(WidgetRef ref, Playlist playlist) {
   String playlistName = playlist.playlistName;
   TextEditingController controller = TextEditingController.fromValue(TextEditingValue(text: playlistName));
-  Uint8List imageInput = playlist.playlistImageByte;
 
   return Center(
     child: SingleChildScrollView(
@@ -118,23 +91,8 @@ Widget editPlaylistForm(WidgetRef ref, Playlist playlist) {
         children: [
           GestureDetector(
             onTap: () async {
-              FilePickerResult? result = await FilePicker.platform.pickFiles(
-                type: FileType.custom,
-                allowedExtensions: ['jpg', 'jpeg', 'png', 'jfif'],
-              );
-              if (result != null) {
-                String pathInput = result.files.single.path!;
-                File file = File(pathInput);
-                imageInput = file.readAsBytesSync();
-                playlist.setImage(
-                  Image.memory(
-                    imageInput,
-                    fit: BoxFit.fill,
-                  ), imageInput
-                );
-              } else {
-                // User canceled the picker
-              }
+              await changePlaylistImage(playlist);
+              playlistSwitchState(ref);
             },
             child: SizedBox(
               width: 300,

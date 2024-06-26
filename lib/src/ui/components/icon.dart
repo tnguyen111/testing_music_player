@@ -37,13 +37,13 @@ IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
       },
     );
 
-IconButton addIcon(WidgetRef ref) => IconButton(
+IconButton addIcon(WidgetRef ref, List<Song> songList) => IconButton(
       icon: const Icon(Icons.add),
       onPressed: () {
         /*Add things*/
         print('bruh');
-        showDataAlert(globalNavigatorKey.currentContext!, ref);
-        print(songArray);
+        showDataAlert(globalNavigatorKey.currentContext!, ref, songList);
+        print(songList);
         playlistSwitchState(ref);
       },
     );
@@ -78,8 +78,8 @@ void handleSettingListClick(String value, WidgetRef ref) {
       Navigator.push(
         globalNavigatorKey.currentContext!,
         MaterialPageRoute(
-            builder: (context) => AddPlaylistScreen(
-                  ref: ref,
+            builder: (context) => addPlaylistScreen(
+                 ref
                 )),
       );
       break;
@@ -159,7 +159,7 @@ IconButton skipSongIcon(WidgetRef ref, bool skipNext) => IconButton(
 
 IconButton shuffleIcon(WidgetRef ref) => IconButton(
       icon: (player.shuffleModeEnabled)
-          ? const Icon(Icons.shuffle_on)
+          ? const Icon(Icons.shuffle_on_outlined)
           : const Icon(Icons.shuffle),
       onPressed: () {
         /*Shuffle songs*/
@@ -172,8 +172,8 @@ IconButton loopIcon(WidgetRef ref) => IconButton(
       icon: (player.loopMode == LoopMode.off)
           ? const Icon(Icons.repeat)
           : (player.loopMode == LoopMode.one)
-              ? const Icon(Icons.repeat_one_on)
-              : const Icon(Icons.repeat_on),
+              ? const Icon(Icons.repeat_one_on_outlined)
+              : const Icon(Icons.repeat_on_outlined),
       onPressed: () {
         /*Set loop modes*/
         if (player.loopMode == LoopMode.off) {
@@ -188,3 +188,12 @@ IconButton loopIcon(WidgetRef ref) => IconButton(
       },
     );
 
+IconButton backIcon(BuildContext context) => IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        /*Shuffle songs*/
+        Navigator.pop(
+          context,
+        );
+      },
+    );

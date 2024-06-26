@@ -22,17 +22,17 @@ Widget playlistList(WidgetRef ref) {
   );
 }
 
-Widget songList(WidgetRef ref) {
+Widget songList(WidgetRef ref,List<Song> songList) {
   final ScrollController scrollController = ScrollController();
 
   return Expanded(
     child: ListView.builder(
-        itemCount: songArray.length,
+        itemCount: songList.length,
         scrollDirection: Axis.vertical,
         shrinkWrap: false,
         controller: scrollController,
         itemBuilder: (context, index) {
-          return songBlock(ref, songArray[index]);
+          return songBlock(ref, songList[index]);
         }),
   );
 }

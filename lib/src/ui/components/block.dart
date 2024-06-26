@@ -11,12 +11,14 @@ Container headerBlock(String header, WidgetRef ref) => Container(
           left: kDefaultPadding, top: kSmallPadding, bottom: kSmallPadding),
       child: Row(
         children: [
-          Expanded(child:Text(
-            header,
-          ),),
+          Expanded(
+            child: Text(
+              header,
+            ),
+          ),
           const SizedBox(width: 125),
-          sortIcon(ref,header),
-          (header == 'Your Playlist') ? settingListIcon(ref) : addIcon(ref),
+          sortIcon(ref, header),
+          (header == 'Your Playlist') ? settingListIcon(ref) : addIcon(ref, songArray),
         ],
       ),
     );
@@ -27,8 +29,11 @@ Container playlistBlock(WidgetRef ref, Playlist playlist) => Container(
       child: GestureDetector(
         onTap: () {
           // Change!
-          playSong();
-          modeSwitchState(ref);
+          Navigator.push(
+            globalNavigatorKey.currentContext!,
+            MaterialPageRoute(
+                builder: (context) => playlistScreen(ref, playlist)),
+          );
         },
         child: Stack(
           children: [
@@ -73,7 +78,8 @@ Container playlistAddBlock(WidgetRef ref) => Container(
           Navigator.push(
             globalNavigatorKey.currentContext!,
             MaterialPageRoute(
-                builder: (context) => AddPlaylistScreen(ref: ref)),
+              builder: (context) => addPlaylistScreen(ref),
+            ),
           );
         },
         child: Stack(
@@ -132,12 +138,17 @@ Container songBlock(WidgetRef ref, Song song) => Container(
               children: [
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-                    Text(
-                      song.songName,
-                    ),
-                     Text(song.songAuthor, textScaler: const TextScaler.linear(0.6),),
-                  ]),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          song.songName,
+                        ),
+                        Text(
+                          song.songAuthor,
+                          textScaler: const TextScaler.linear(0.6),
+                        ),
+                      ]),
                 ),
                 Text(song.songDurationString),
                 removeIcon(ref, song),
@@ -145,5 +156,44 @@ Container songBlock(WidgetRef ref, Song song) => Container(
             ),
           ],
         ),
+      ),
+    );
+
+Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
+      margin: const EdgeInsets.only(
+          left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
+      child: Column(
+        children: [
+          const SizedBox(height: kDefaultPadding),
+          GestureDetector(
+            child: SizedBox(
+              width: 300,
+              height: 300,
+              child: playlist.playlistImage,
+            ),
+            onTap: () async {
+              await changePlaylistImage(playlist);
+              playlistSwitchState(ref);
+            },
+          ),
+          TextButton(
+            onPressed: () {editPlaylistNameDialog(globalNavigatorKey.currentContext!,ref,playlist);},
+            child: Text(
+              playlist.playlistName,
+              style: modeReadState(ref)
+                  ? lightThemeHeaderText()
+                  : darkThemeHeaderText(),
+            ),
+          ),
+          Row(
+            children: [
+              playIcon(ref),
+              shuffleIcon(ref),
+              const Expanded(child: SizedBox()),
+              sortIcon(ref, 'Your Playlist'),
+              addIcon(ref,playlist.songList),
+            ],
+          ),
+        ],
       ),
     );

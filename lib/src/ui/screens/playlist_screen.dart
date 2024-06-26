@@ -5,11 +5,11 @@ import '../components/components.dart';
 
 Scaffold playlistScreen(WidgetRef ref, Playlist playlist) {
   return Scaffold(
-    appBar: headerBar(ref),
+    appBar: playlistAppBar(ref, playlist.playlistName),
     body: Column(
       children: [
-        headerBlock('$playlist', ref),
-        playlistList(ref),
+        playlistMenuBlock(ref,playlist),
+        songList(ref,playlist.songList),
       ],
     ),
     drawer: sideBar(ref),

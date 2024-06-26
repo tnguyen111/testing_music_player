@@ -3,16 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../components/components.dart';
 import '../../services/services.dart';
 
-class AddPlaylistScreen extends StatelessWidget {
-  const AddPlaylistScreen({super.key, required this.ref});
-  final WidgetRef ref;
-
-
-  @override
-  Widget build(BuildContext context) {
+Scaffold addPlaylistScreen (WidgetRef ref){
     return Scaffold(
       appBar: AppBar(),
-      body: playlistForm(ref),
+      body: playlistForm(ref, Image.network('https://th.bing.com/th/id/OIP.D9khLX8H-gRPheV4jWHh7AHaHa?rs=1&pid=ImgDetMain')),
     );
-  }
 }

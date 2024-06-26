@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:testing_api_twitter/src/models/models.dart';
 import 'package:testing_api_twitter/src/services/services.dart';
 
-showDataAlert(BuildContext context, WidgetRef ref) {
+showDataAlert(BuildContext context, WidgetRef ref, List<Song> songList) {
   String songName = '';
   String authorName = '';
   String fileName = '';
@@ -94,6 +94,16 @@ showDataAlert(BuildContext context, WidgetRef ref) {
                   child: ElevatedButton(
                     onPressed: () {
                       if (songFile.path.isNotEmpty && songName != '') {
+                        if (songList != songArray) {
+                          songList.add(
+                            Song(
+                              songFile: songFile,
+                              songName: songName,
+                              authorName: authorName,
+                              duration: const Duration(seconds: 79),
+                            ),
+                          );
+                        }
                         songArray.add(
                           Song(
                             songFile: songFile,
@@ -105,6 +115,70 @@ showDataAlert(BuildContext context, WidgetRef ref) {
                         playlistSwitchState(ref);
                         Navigator.of(context).pop();
                       }
+                    },
+                    child: const Text(
+                      textScaler: TextScaler.linear(1.2),
+                      "Submit",
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+editPlaylistNameDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
+  String playlistName = playlist.playlistName;
+  TextEditingController controller = TextEditingController(text: playlistName);
+
+  showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        content: SizedBox(
+          height: 300,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.all(18.0),
+                  child: Text(
+                    "Change Playlist Name",
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: controller,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Enter Playlist Name',
+                        labelText: 'New Playlist Name'),
+                    onChanged: (value) {
+                      playlistName = value;
+                    },
+                    onSubmitted: (value) {
+                      playlistName = value;
+                    },
+                  ),
+                ),
+                const SizedBox(height: 30),
+                Container(
+                  width: double.infinity,
+                  height: 60,
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      playlist.setName(playlistName);
+                      playlistSwitchState(ref);
+                      Navigator.of(context).pop();
                     },
                     child: const Text(
                       textScaler: TextScaler.linear(1.2),
