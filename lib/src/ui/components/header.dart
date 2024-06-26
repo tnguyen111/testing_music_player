@@ -14,3 +14,29 @@ AppBar headerBar(WidgetRef ref){
   );
 }
 
+AppBar playlistAppBar(WidgetRef ref, String playlistName){
+  return AppBar(
+    leading: Builder(
+      builder: (context) {
+        return menuIcon(context);
+      },
+    ),
+    actions: [searchIcon(ref)],
+    title: Text(playlistName),
+  );
+}
+
+AppBar songAppBar(WidgetRef ref){
+  return AppBar(
+    leading: Builder(
+      builder: (context) {
+        return menuIcon(context);
+      },
+    ),
+    actions: [searchIcon(ref)],
+    title: const Text('Now Playing'),
+  );
+}
+
+
+

@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:testing_api_twitter/src/models/models.dart';
 import 'package:testing_api_twitter/src/services/services.dart';
 import 'package:testing_api_twitter/src/services/state_management/helper_funcs/helper_funcs.dart';
@@ -27,11 +27,11 @@ IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
       icon: const Icon(Icons.sort),
       onPressed: () {
         /*Sort things*/
-        if(typeSort == 'Your Playlist'){
-          playlistArray.sort((a, b)=> a.playlistName.compareTo(b.playlistName));
-
-        } else{
-          songArray.sort((a, b)=> a.songName.compareTo(b.songName));
+        if (typeSort == 'Your Playlist') {
+          playlistArray
+              .sort((a, b) => a.playlistName.compareTo(b.playlistName));
+        } else {
+          songArray.sort((a, b) => a.songName.compareTo(b.songName));
         }
         playlistSwitchState(ref);
       },
@@ -125,3 +125,66 @@ void handleSettingSongClick(String value, WidgetRef ref, Playlist playlist) {
       break;
   }
 }
+
+IconButton playIcon(WidgetRef ref) => IconButton(
+      icon: (player.playing)
+          ? const Icon(Icons.play_arrow)
+          : const Icon(Icons.pause),
+      onPressed: () {
+        /*Play or Pause songs*/
+        if (player.playing) {
+          player.pause();
+          songSetState(ref, 1);
+        } else {
+          player.play();
+          songSetState(ref, 0);
+        }
+      },
+    );
+
+IconButton skipSongIcon(WidgetRef ref, bool skipNext) => IconButton(
+      icon: (skipNext)
+          ? const Icon(Icons.skip_next)
+          : const Icon(Icons.skip_previous),
+      onPressed: () {
+        /*Skip songs*/
+        if (skipNext) {
+          player.seekToNext();
+        } else {
+          player.seekToPrevious();
+        }
+        songSetState(ref, 2);
+      },
+    );
+
+IconButton shuffleIcon(WidgetRef ref) => IconButton(
+      icon: (player.shuffleModeEnabled)
+          ? const Icon(Icons.shuffle_on)
+          : const Icon(Icons.shuffle),
+      onPressed: () {
+        /*Shuffle songs*/
+        player.setShuffleModeEnabled(!player.shuffleModeEnabled);
+        playlistSwitchState(ref);
+      },
+    );
+
+IconButton loopIcon(WidgetRef ref) => IconButton(
+      icon: (player.loopMode == LoopMode.off)
+          ? const Icon(Icons.repeat)
+          : (player.loopMode == LoopMode.one)
+              ? const Icon(Icons.repeat_one_on)
+              : const Icon(Icons.repeat_on),
+      onPressed: () {
+        /*Set loop modes*/
+        if (player.loopMode == LoopMode.off) {
+          player.setLoopMode(LoopMode.one);
+        } else if (player.loopMode == LoopMode.one) {
+          player.setLoopMode(LoopMode.all);
+        } else {
+          player.setLoopMode(LoopMode.off);
+        }
+
+        playlistSwitchState(ref);
+      },
+    );
+

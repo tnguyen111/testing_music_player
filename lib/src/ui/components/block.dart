@@ -136,7 +136,7 @@ Container songBlock(WidgetRef ref, Song song) => Container(
                     Text(
                       song.songName,
                     ),
-                     Text(song.songAuthor, textScaler: TextScaler.linear(0.6),),
+                     Text(song.songAuthor, textScaler: const TextScaler.linear(0.6),),
                   ]),
                 ),
                 Text(song.songDurationString),

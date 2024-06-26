@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ScreenNotifier extends Notifier<int> {
-
   @override
   int build() {
     return 0;
@@ -12,15 +11,8 @@ class ScreenNotifier extends Notifier<int> {
     return state;
   }
 
-  int playlistMenuScreen() {
+  int songMenuScreen() {
     state = 1;
     return state;
   }
-
-  int songMenuScreen(){
-    state = 2;
-    return state;
-  }
-
-
 }

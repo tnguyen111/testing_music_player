@@ -12,11 +12,6 @@ void screenSetState(WidgetRef ref, int state){
   }
 
   if(state == 1){
-    ref.read(screenProvider.notifier).playlistMenuScreen();
-    return;
-  }
-
-  if(state == 2){
     ref.read(screenProvider.notifier).songMenuScreen();
   }
 

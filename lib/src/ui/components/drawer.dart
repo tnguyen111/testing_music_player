@@ -13,7 +13,7 @@ Drawer sideBar(WidgetRef ref) {
       children: [
         DrawerHeader(
           decoration: const BoxDecoration(
-            color: Colors.blue,
+            color: Colors.grey,
           ),
           child: Container(),
         ),
@@ -31,7 +31,7 @@ Drawer sideBar(WidgetRef ref) {
           onTap: () {
             // Update the state of the app.
             // ...
-            screenSetState(ref, 2);
+            screenSetState(ref, 1);
             Navigator.pop(globalNavigatorKey.currentContext!);
           },
         ),

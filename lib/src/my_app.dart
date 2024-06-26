@@ -27,11 +27,7 @@ class MyApp extends ConsumerWidget {
       color: Colors.white,
       home: (screenState == 0)
           ? mainScreen(ref)
-          : (screenState == 1)
-              ? Container()
-              : (screenState == 2)
-                  ? songScreen(ref)
-                  : Container(),
+          : songScreen(ref),
     );
   }
 }

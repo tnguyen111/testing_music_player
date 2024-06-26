@@ -4,10 +4,12 @@ class Song {
   String songName;
   String songAuthor = '';
   late Duration songDuration;
-  late File songFile;
+  File songFile;
   String songDurationString = '';
 
-  Song({required this.songName, songAuthor, songDuration}) {
+  Song({required this.songName, required this.songFile, authorName, duration}) {
+    songDuration = duration;
+    songAuthor = authorName;
     if(songDuration.inMinutes < 10){
       songDurationString = '0${songDuration.inMinutes}:';
     } else{
