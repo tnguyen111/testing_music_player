@@ -4,6 +4,7 @@
     <application
         android:label="testing_api_twitter"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

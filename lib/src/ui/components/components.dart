@@ -5,3 +5,4 @@ export 'list.dart';
 export 'form.dart';
 export 'drawer.dart';
 export 'dialog.dart';
+export 'progress_bar.dart';

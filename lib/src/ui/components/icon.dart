@@ -30,11 +30,21 @@ IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
         if (typeSort == 'Your Playlist') {
           playlistArray
               .sort((a, b) => a.playlistName.compareTo(b.playlistName));
-        } else {}
+        } else {
+          songArray.children.sort((a, b) => (a as UriAudioSource).tag.songName.compareTo((b as UriAudioSource).tag.songName));
+        }
         playlistSwitchState(ref);
       },
     );
 
+IconButton sortSongIcon(WidgetRef ref, ConcatenatingAudioSource playlist) => IconButton(
+  icon: const Icon(Icons.sort),
+  onPressed: () {
+    /*Sort things*/
+    playlist.children.sort((a, b) => (a as UriAudioSource).tag.songName.compareTo((b as UriAudioSource).tag.songName));
+    playlistSwitchState(ref);
+  },
+);
 IconButton addIcon(WidgetRef ref, ConcatenatingAudioSource songList) =>
     IconButton(
       icon: const Icon(Icons.add),
@@ -47,11 +57,11 @@ IconButton addIcon(WidgetRef ref, ConcatenatingAudioSource songList) =>
       },
     );
 
-IconButton removeIcon(WidgetRef ref, AudioSource song) => IconButton(
+IconButton removeIcon(WidgetRef ref, ConcatenatingAudioSource playlist,AudioSource song) => IconButton(
       icon: const Icon(Icons.close),
       onPressed: () {
         /*Remove things*/
-        songArray.children.remove(song);
+        playlist.children.remove(song);
         playlistSwitchState(ref);
       },
     );
@@ -169,13 +179,7 @@ IconButton skipSongIcon(WidgetRef ref, bool skipNext,
         }
 
         if(changed) {
-          Navigator.pop(globalNavigatorKey.currentContext!);
-          Navigator.push(
-            globalNavigatorKey.currentContext!,
-            MaterialPageRoute(
-              builder: (context) => songPlayerScreen(ref, playlist, index),
-            ),
-          );
+          skipSong(ref, playlist, index);
           songSetState(ref, 2);
         }
       },

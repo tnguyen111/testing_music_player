@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -20,7 +18,7 @@ Container headerBlock(String header, WidgetRef ref) => Container(
             ),
           ),
           const SizedBox(width: 125),
-          sortIcon(ref, header),
+          sortIcon(ref,header),
           (header == 'Your Playlist')
               ? settingListIcon(ref)
               : addIcon(ref, songArray),
@@ -121,13 +119,8 @@ Container songBlock(WidgetRef ref, ConcatenatingAudioSource playlist, int index)
           left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(
-            globalNavigatorKey.currentContext!,
-            MaterialPageRoute(
-              builder: (context) => songPlayerScreen(ref, playlist, index),
-            ),
-          );
-          loadNewSong(index);
+
+          loadNewSong(ref, playlist, index);
         },
         child: Stack(
           children: [
@@ -155,7 +148,7 @@ Container songBlock(WidgetRef ref, ConcatenatingAudioSource playlist, int index)
                       ]),
                 ),
                 Text((playlist[index] as UriAudioSource).tag.songDurationString),
-                removeIcon(ref, (playlist[index] as UriAudioSource)),
+                removeIcon(ref, playlist,(playlist[index] as UriAudioSource)),
               ],
             ),
           ],
@@ -195,7 +188,7 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
               playIcon(ref),
               shuffleIcon(ref),
               const Expanded(child: SizedBox()),
-              sortIcon(ref, 'Your Playlist'),
+              sortSongIcon(ref,playlist.songList),
               addIcon(ref, playlist.songList),
             ],
           ),

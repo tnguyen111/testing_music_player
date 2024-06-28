@@ -12,6 +12,5 @@ Scaffold playlistScreen(WidgetRef ref, Playlist playlist) {
         songList(ref,playlist.songList),
       ],
     ),
-    drawer: sideBar(ref),
   );
 }

@@ -42,7 +42,8 @@ Widget playlistForm(WidgetRef ref, Image imageInput) {
                   onSubmitted: (String value) async {
                     if (playlistName != '') {
                       playlistName = value;
-                      playlistArray.add(Playlist(playlistName_: playlistName,playlistImage_: imageInput));
+                      Playlist tempPlaylist = Playlist(playlistName_: playlistName,playlistImage_: imageInput);
+                      playlistArray.add(tempPlaylist);
                       playlistSwitchState(ref);
                       Navigator.pop(globalNavigatorKey.currentContext!);
                     }
@@ -63,7 +64,8 @@ Widget playlistForm(WidgetRef ref, Image imageInput) {
             ),
             onPressed: () {
               if (playlistName != '') {
-                playlistArray.add(Playlist(playlistName_: playlistName,playlistImage_: imageInput));
+                Playlist tempPlaylist = Playlist(playlistName_: playlistName,playlistImage_: imageInput);
+                playlistArray.add(tempPlaylist);
                 playlistSwitchState(ref);
                 Navigator.pop(globalNavigatorKey.currentContext!);
               }

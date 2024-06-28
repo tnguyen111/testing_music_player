@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:testing_api_twitter/src/models/models.dart';
 import 'package:testing_api_twitter/src/services/services.dart';
 
+import '../ui.dart';
+
 showDataAlert(
     BuildContext context, WidgetRef ref, ConcatenatingAudioSource songList) {
   String songName = '';
@@ -94,26 +96,27 @@ showDataAlert(
                   height: 60,
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (songFile.path.isNotEmpty && songName != '') {
+                        Duration? newDuration = await getDuration(songFile);
                         AudioSource temp = AudioSource.uri(
                           Uri.parse(songFile.path),
                           tag: SongDetails(
                             songName: songName,
                             authorName: authorName,
-                            duration: const Duration(seconds: 79),
+                            duration: newDuration,
                           ),
                         );
                         if (songList != songArray) {
-                          songList.children.add(
+                          songList.add(
                             temp,
                           );
                         }
                         songArray.add(
                           temp,
                         );
-                        playlistSwitchState(ref);
                         Navigator.of(context).pop();
+                        playlistSwitchState(ref);
                       }
                     },
                     child: const Text(

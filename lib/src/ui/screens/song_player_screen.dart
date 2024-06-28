@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
-import '../../models/models.dart';
 import '../components/components.dart';
 
 Scaffold songPlayerScreen(WidgetRef ref, ConcatenatingAudioSource playlist, int index) {
   return Scaffold(
     appBar: songAppBar(ref),
     body: Column(
-      children: [
+      children: <Widget>[
+        SizedBox(height: 300),
         songNameBlock(ref, playlist[index] as UriAudioSource),
+        songProgressBar(ref, playlist),
+        const SizedBox(height: 50),
         songIconBlock(ref, playlist, index),
       ],
     ),
-    drawer: sideBar(ref),
   );
 }
