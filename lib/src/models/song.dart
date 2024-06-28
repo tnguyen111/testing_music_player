@@ -1,15 +1,13 @@
 import 'dart:io';
 
-class Song {
-  String songName;
+class SongDetails{
+  String songName   = '';
   String songAuthor = '';
-  late Duration songDuration;
-  File songFile;
   String songDurationString = '';
+  late Duration songDuration;
 
-  Song({required this.songName, required this.songFile, authorName, duration}) {
+  void setDuration(Duration duration){
     songDuration = duration;
-    songAuthor = authorName;
     if(songDuration.inMinutes < 10){
       songDurationString = '0${songDuration.inMinutes}:';
     } else{
@@ -23,11 +21,10 @@ class Song {
     }
   }
 
-  String get _songName => songName;
-
-  String get _songAuthor => songAuthor;
-
-  Duration get _songDuration => songDuration;
-
-  File get _songFile => songFile;
+  void setSongName(String name){songName = name;}
+  void setAuthorName(String name){songAuthor = name;}
+  SongDetails({required this.songName, authorName, duration}){
+    songAuthor = authorName;
+    setDuration(duration);
+  }
 }

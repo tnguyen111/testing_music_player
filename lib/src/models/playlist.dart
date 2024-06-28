@@ -1,6 +1,6 @@
 
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 
 import 'models.dart';
 
@@ -9,7 +9,7 @@ class Playlist{
 
   String playlistName_;
   Image playlistImage_;
-  List<Song> songList_ = [];
+  ConcatenatingAudioSource songList_ = ConcatenatingAudioSource(children:[],useLazyPreparation: true,shuffleOrder: DefaultShuffleOrder());
 
 
 
@@ -17,7 +17,7 @@ class Playlist{
 
   String get playlistName =>  playlistName_;
   Image get playlistImage => playlistImage_;
-  List<Song> get songList => songList_;
+  ConcatenatingAudioSource get songList => songList_;
 
   void setImage(Image newImage){
     playlistImage_ = newImage;
@@ -28,11 +28,11 @@ class Playlist{
     playlistName_ = newName;
   }
 
-  void addSong(Song newSong) {
-    songList_.add(newSong);
+  void addSong(AudioSource newSong) {
+    songList_.children.add(newSong);
   }
 
-  void removeSong(Song existedSong){
-    songList_.remove(existedSong);
+  void removeSong(AudioSource existedSong){
+    songList_.children.remove(existedSong);
   }
 }

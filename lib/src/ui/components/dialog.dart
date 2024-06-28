@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:testing_api_twitter/src/models/models.dart';
 import 'package:testing_api_twitter/src/services/services.dart';
 
-showDataAlert(BuildContext context, WidgetRef ref, List<Song> songList) {
+showDataAlert(
+    BuildContext context, WidgetRef ref, ConcatenatingAudioSource songList) {
   String songName = '';
   String authorName = '';
   String fileName = '';
@@ -76,7 +78,7 @@ showDataAlert(BuildContext context, WidgetRef ref, List<Song> songList) {
                     },
                     child: const Text(
                       textScaler: TextScaler.linear(1.2),
-                      "Upload Your Song",
+                      "Upload Your File",
                     ),
                   ),
                 ),
@@ -94,23 +96,21 @@ showDataAlert(BuildContext context, WidgetRef ref, List<Song> songList) {
                   child: ElevatedButton(
                     onPressed: () {
                       if (songFile.path.isNotEmpty && songName != '') {
-                        if (songList != songArray) {
-                          songList.add(
-                            Song(
-                              songFile: songFile,
-                              songName: songName,
-                              authorName: authorName,
-                              duration: const Duration(seconds: 79),
-                            ),
-                          );
-                        }
-                        songArray.add(
-                          Song(
-                            songFile: songFile,
+                        AudioSource temp = AudioSource.uri(
+                          Uri.parse(songFile.path),
+                          tag: SongDetails(
                             songName: songName,
                             authorName: authorName,
                             duration: const Duration(seconds: 79),
                           ),
+                        );
+                        if (songList != songArray) {
+                          songList.children.add(
+                            temp,
+                          );
+                        }
+                        songArray.add(
+                          temp,
                         );
                         playlistSwitchState(ref);
                         Navigator.of(context).pop();

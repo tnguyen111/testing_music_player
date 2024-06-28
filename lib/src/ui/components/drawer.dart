@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:testing_api_twitter/src/models/models.dart';
 import 'package:testing_api_twitter/src/services/services.dart';
 
 import '../../../main.dart';
+import '../ui.dart';
 
 Drawer sideBar(WidgetRef ref) {
   return Drawer(
@@ -31,6 +33,7 @@ Drawer sideBar(WidgetRef ref) {
           onTap: () {
             // Update the state of the app.
             // ...
+            loadNewPlaylist(songArray);
             screenSetState(ref, 1);
             Navigator.pop(globalNavigatorKey.currentContext!);
           },

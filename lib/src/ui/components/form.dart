@@ -55,10 +55,10 @@ Widget playlistForm(WidgetRef ref, Image imageInput) {
           ElevatedButton(
             style: ButtonStyle(
               overlayColor: WidgetStatePropertyAll(
-                modeReadState(ref) ? darkThemeSub() : lightThemeSub(),
+                currentThemeSub(ref),
               ),
               backgroundColor: WidgetStatePropertyAll(
-                modeReadState(ref) ? lightThemeSub() : darkThemeSub(),
+                  currentThemeSub(ref),
               ),
             ),
             onPressed: () {
@@ -71,7 +71,7 @@ Widget playlistForm(WidgetRef ref, Image imageInput) {
             child: Text(
               'Create Playlist',
               style:
-                  modeReadState(ref) ? lightThemeSongText() : darkThemeSongText(),
+              currentThemeSmallText(ref),
             ),
           ),
         ],
@@ -133,10 +133,10 @@ Widget editPlaylistForm(WidgetRef ref, Playlist playlist) {
             style: ButtonStyle(
 
               overlayColor: WidgetStatePropertyAll(
-                modeReadState(ref) ? darkThemeSub() : lightThemeSub(),
+                currentThemeSub(ref),
               ),
               backgroundColor: WidgetStatePropertyAll(
-                modeReadState(ref) ? lightThemeSub() : darkThemeSub(),
+                  currentThemeSub(ref),
               ),
             ),
             onPressed: () {
@@ -148,8 +148,7 @@ Widget editPlaylistForm(WidgetRef ref, Playlist playlist) {
             },
             child: Text(
               'Edit Playlist',
-              style:
-              modeReadState(ref) ? lightThemeSongText() : darkThemeSongText(),
+              style: currentThemeSmallText(ref),
             ),
           ),
         ],

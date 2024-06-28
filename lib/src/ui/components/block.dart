@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:testing_api_twitter/src/config/config.dart';
 import 'package:testing_api_twitter/src/ui/ui.dart';
 import 'package:testing_api_twitter/src/services/services.dart';
@@ -18,7 +21,9 @@ Container headerBlock(String header, WidgetRef ref) => Container(
           ),
           const SizedBox(width: 125),
           sortIcon(ref, header),
-          (header == 'Your Playlist') ? settingListIcon(ref) : addIcon(ref, songArray),
+          (header == 'Your Playlist')
+              ? settingListIcon(ref)
+              : addIcon(ref, songArray),
         ],
       ),
     );
@@ -34,15 +39,14 @@ Container playlistBlock(WidgetRef ref, Playlist playlist) => Container(
             MaterialPageRoute(
                 builder: (context) => playlistScreen(ref, playlist)),
           );
+          loadNewPlaylist(playlist.songList);
         },
         child: Stack(
           children: [
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                color: (modeReadState(ref))
-                    ? lightThemeHeader()
-                    : darkThemeHeader(),
+                color: currentThemeHeader(ref),
               ),
               height: 90,
             ),
@@ -87,9 +91,7 @@ Container playlistAddBlock(WidgetRef ref) => Container(
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                color: (modeReadState(ref))
-                    ? lightThemeHeader()
-                    : darkThemeHeader(),
+                color: currentThemeHeader(ref),
               ),
               height: 90,
             ),
@@ -98,8 +100,7 @@ Container playlistAddBlock(WidgetRef ref) => Container(
                 width: 90,
                 height: 90,
                 child: Container(
-                  color:
-                      (modeReadState(ref)) ? lightThemeSub() : darkThemeSub(),
+                  color: currentThemeSub(ref),
                   child: const Icon(Icons.add),
                 ),
               ),
@@ -115,22 +116,25 @@ Container playlistAddBlock(WidgetRef ref) => Container(
       ),
     );
 
-Container songBlock(WidgetRef ref, Song song) => Container(
+Container songBlock(WidgetRef ref, ConcatenatingAudioSource playlist, int index) => Container(
       margin: const EdgeInsets.only(
           left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
       child: GestureDetector(
         onTap: () {
-          // Change!
-          modeSwitchState(ref);
+          Navigator.push(
+            globalNavigatorKey.currentContext!,
+            MaterialPageRoute(
+              builder: (context) => songPlayerScreen(ref, playlist, index),
+            ),
+          );
+          loadNewSong(index);
         },
         child: Stack(
           children: [
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                color: (modeReadState(ref))
-                    ? lightThemeHeader()
-                    : darkThemeHeader(),
+                color: currentThemeHeader(ref),
               ),
               height: 65,
             ),
@@ -142,16 +146,16 @@ Container songBlock(WidgetRef ref, Song song) => Container(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          song.songName,
+                            (playlist[index] as UriAudioSource).tag.songName
                         ),
                         Text(
-                          song.songAuthor,
+                          (playlist[index] as UriAudioSource).tag.songAuthor,
                           textScaler: const TextScaler.linear(0.6),
                         ),
                       ]),
                 ),
-                Text(song.songDurationString),
-                removeIcon(ref, song),
+                Text((playlist[index] as UriAudioSource).tag.songDurationString),
+                removeIcon(ref, (playlist[index] as UriAudioSource)),
               ],
             ),
           ],
@@ -177,12 +181,13 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
             },
           ),
           TextButton(
-            onPressed: () {editPlaylistNameDialog(globalNavigatorKey.currentContext!,ref,playlist);},
+            onPressed: () {
+              editPlaylistNameDialog(
+                  globalNavigatorKey.currentContext!, ref, playlist);
+            },
             child: Text(
               playlist.playlistName,
-              style: modeReadState(ref)
-                  ? lightThemeHeaderText()
-                  : darkThemeHeaderText(),
+              style: currentThemeHeaderText(ref),
             ),
           ),
           Row(
@@ -191,9 +196,37 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
               shuffleIcon(ref),
               const Expanded(child: SizedBox()),
               sortIcon(ref, 'Your Playlist'),
-              addIcon(ref,playlist.songList),
+              addIcon(ref, playlist.songList),
             ],
           ),
         ],
       ),
     );
+
+Widget songIconBlock(WidgetRef ref, ConcatenatingAudioSource playlist, int index) {
+  songWatchState(ref);
+  return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+    shuffleIcon(ref),
+    skipSongIcon(ref, false, playlist, index),
+    const SizedBox(width: 18),
+    Transform.scale(scale: 2, child: playIcon(ref)),
+    const SizedBox(width: 18),
+    skipSongIcon(ref, true, playlist, index),
+    loopIcon(ref),
+  ]);
+}
+
+Widget songNameBlock(WidgetRef ref, UriAudioSource song) {
+  return Column(
+    children: [
+      Text(
+        song.tag.songName,
+        style: currentThemeHeaderText(ref),
+      ),
+      Text(song.tag.songAuthor),
+    ],
+  );
+}
+
+
+

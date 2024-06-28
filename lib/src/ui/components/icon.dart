@@ -30,14 +30,13 @@ IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
         if (typeSort == 'Your Playlist') {
           playlistArray
               .sort((a, b) => a.playlistName.compareTo(b.playlistName));
-        } else {
-          songArray.sort((a, b) => a.songName.compareTo(b.songName));
-        }
+        } else {}
         playlistSwitchState(ref);
       },
     );
 
-IconButton addIcon(WidgetRef ref, List<Song> songList) => IconButton(
+IconButton addIcon(WidgetRef ref, ConcatenatingAudioSource songList) =>
+    IconButton(
       icon: const Icon(Icons.add),
       onPressed: () {
         /*Add things*/
@@ -48,11 +47,11 @@ IconButton addIcon(WidgetRef ref, List<Song> songList) => IconButton(
       },
     );
 
-IconButton removeIcon(WidgetRef ref, Song song) => IconButton(
+IconButton removeIcon(WidgetRef ref, AudioSource song) => IconButton(
       icon: const Icon(Icons.close),
       onPressed: () {
         /*Remove things*/
-        songArray.remove(song);
+        songArray.children.remove(song);
         playlistSwitchState(ref);
       },
     );
@@ -77,10 +76,7 @@ void handleSettingListClick(String value, WidgetRef ref) {
     case 'Add New Playlist':
       Navigator.push(
         globalNavigatorKey.currentContext!,
-        MaterialPageRoute(
-            builder: (context) => addPlaylistScreen(
-                 ref
-                )),
+        MaterialPageRoute(builder: (context) => addPlaylistScreen(ref)),
       );
       break;
     case 'Delete Playlist':
@@ -139,21 +135,49 @@ IconButton playIcon(WidgetRef ref) => IconButton(
           player.play();
           songSetState(ref, 0);
         }
+        playlistSwitchState(ref);
       },
     );
 
-IconButton skipSongIcon(WidgetRef ref, bool skipNext) => IconButton(
+IconButton skipSongIcon(WidgetRef ref, bool skipNext,
+        ConcatenatingAudioSource playlist, int index) =>
+    IconButton(
       icon: (skipNext)
           ? const Icon(Icons.skip_next)
           : const Icon(Icons.skip_previous),
       onPressed: () {
         /*Skip songs*/
+        bool changed = false;
         if (skipNext) {
-          player.seekToNext();
-        } else {
-          player.seekToPrevious();
+          if(index < playlist.length-1){
+            index++;
+            player.seekToNext();
+          } else{
+            index = 0;
+            player.seek(Duration.zero, index: 0);
+          }
+          changed = true;
+        } else if(!skipNext) {
+          if(index > 0){
+            index--;
+            player.seekToPrevious();
+          } else{
+            index = playlist.length-1;
+            player.seek(Duration.zero, index: playlist.length-1);
+          }
+          changed = true;
         }
-        songSetState(ref, 2);
+
+        if(changed) {
+          Navigator.pop(globalNavigatorKey.currentContext!);
+          Navigator.push(
+            globalNavigatorKey.currentContext!,
+            MaterialPageRoute(
+              builder: (context) => songPlayerScreen(ref, playlist, index),
+            ),
+          );
+          songSetState(ref, 2);
+        }
       },
     );
 
