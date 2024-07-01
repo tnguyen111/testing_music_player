@@ -4,8 +4,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:testing_api_twitter/src/models/models.dart';
-import 'package:testing_api_twitter/src/services/services.dart';
+import 'package:testing_music_player/src/models/models.dart';
+import 'package:testing_music_player/src/services/services.dart';
 
 import '../ui.dart';
 

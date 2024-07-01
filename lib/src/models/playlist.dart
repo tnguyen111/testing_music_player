@@ -6,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 class Playlist{
 
 
+
   String playlistName_;
   Image playlistImage_;
   ConcatenatingAudioSource songList_ = ConcatenatingAudioSource(children:[],useLazyPreparation: true,shuffleOrder: DefaultShuffleOrder());
@@ -13,6 +14,7 @@ class Playlist{
 
 
   Playlist({required this.playlistName_, required this.playlistImage_});
+
 
   String get playlistName =>  playlistName_;
   Image get playlistImage => playlistImage_;

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:testing_api_twitter/src/config/config.dart';
-import 'package:testing_api_twitter/src/ui/ui.dart';
-import 'package:testing_api_twitter/src/services/services.dart';
+import 'package:testing_music_player/src/config/config.dart';
+import 'package:testing_music_player/src/ui/ui.dart';
+import 'package:testing_music_player/src/services/services.dart';
 import '../../../main.dart';
 import '../../models/models.dart';
 
@@ -18,7 +18,7 @@ Container headerBlock(String header, WidgetRef ref) => Container(
             ),
           ),
           const SizedBox(width: 125),
-          sortIcon(ref,header),
+          sortIcon(ref, header),
           (header == 'Your Playlist')
               ? settingListIcon(ref)
               : addIcon(ref, songArray),
@@ -63,7 +63,8 @@ Container playlistBlock(WidgetRef ref, Playlist playlist) => Container(
                     playlist.playlistName_,
                   ),
                 ),
-                settingSongIcon(ref, playlist),
+                (playlistRemoving) ?
+                removePlaylistIcon(ref, playlist):settingSongIcon(ref, playlist),
               ],
             ),
           ],
@@ -77,10 +78,11 @@ Container playlistAddBlock(WidgetRef ref) => Container(
       child: GestureDetector(
         onTap: () async {
           playlistSwitchState(ref);
+          Playlist playlist = Playlist(playlistName_: '', playlistImage_: Image.network('https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/00f56557183915.59cbcc586d5b8.jpg'));
           Navigator.push(
             globalNavigatorKey.currentContext!,
             MaterialPageRoute(
-              builder: (context) => addPlaylistScreen(ref),
+              builder: (context) => addPlaylistScreen(ref, playlist),
             ),
           );
         },
@@ -114,12 +116,13 @@ Container playlistAddBlock(WidgetRef ref) => Container(
       ),
     );
 
-Container songBlock(WidgetRef ref, ConcatenatingAudioSource playlist, int index) => Container(
+Container songBlock(
+        WidgetRef ref, ConcatenatingAudioSource playlist, int index) =>
+    Container(
       margin: const EdgeInsets.only(
           left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
       child: GestureDetector(
         onTap: () {
-
           loadNewSong(ref, playlist, index);
         },
         child: Stack(
@@ -138,17 +141,22 @@ Container songBlock(WidgetRef ref, ConcatenatingAudioSource playlist, int index)
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text((playlist.children[index] as UriAudioSource)
+                            .tag
+                            .songName),
                         Text(
-                            (playlist[index] as UriAudioSource).tag.songName
-                        ),
-                        Text(
-                          (playlist[index] as UriAudioSource).tag.songAuthor,
+                          (playlist.children[index] as UriAudioSource)
+                              .tag
+                              .songAuthor,
                           textScaler: const TextScaler.linear(0.6),
                         ),
                       ]),
                 ),
-                Text((playlist[index] as UriAudioSource).tag.songDurationString),
-                removeIcon(ref, playlist,(playlist[index] as UriAudioSource)),
+                Text((playlist.children[index] as UriAudioSource)
+                    .tag
+                    .songDurationString),
+                removeIcon(ref, playlist,
+                    (playlist.children[index] as UriAudioSource), index),
               ],
             ),
           ],
@@ -187,16 +195,25 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
             children: [
               playIcon(ref),
               shuffleIcon(ref),
-              const Expanded(child: SizedBox()),
-              sortSongIcon(ref,playlist.songList),
-              addIcon(ref, playlist.songList),
+              const Expanded(
+                child: SizedBox(),
+              ),
+              sortSongIcon(
+                ref,
+                playlist.songList,
+              ),
+              addSongMenuIcon(
+                ref,
+                playlist,
+              ),
             ],
           ),
         ],
       ),
     );
 
-Widget songIconBlock(WidgetRef ref, ConcatenatingAudioSource playlist, int index) {
+Widget songIconBlock(
+    WidgetRef ref, ConcatenatingAudioSource playlist, int index) {
   songWatchState(ref);
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
     shuffleIcon(ref),
@@ -221,5 +238,43 @@ Widget songNameBlock(WidgetRef ref, UriAudioSource song) {
   );
 }
 
-
-
+Widget addSongBlock(ref, playlist, index) => Container(
+      margin: const EdgeInsets.only(
+          left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
+      child: GestureDetector(
+        onTap: () {
+          loadNewSong(ref, songArray, index);
+        },
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                color: currentThemeHeader(ref),
+              ),
+              height: 65,
+            ),
+            Row(
+              children: [
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text((songArray[index] as UriAudioSource).tag.songName),
+                        Text(
+                          (songArray[index] as UriAudioSource).tag.songAuthor,
+                          textScaler: const TextScaler.linear(0.6),
+                        ),
+                      ]),
+                ),
+                Text((songArray[index] as UriAudioSource)
+                    .tag
+                    .songDurationString),
+                listCheckbox(playlist, songArray[index], ref),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );

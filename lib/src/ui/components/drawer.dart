@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:testing_api_twitter/src/models/models.dart';
-import 'package:testing_api_twitter/src/services/services.dart';
+import 'package:testing_music_player/src/models/models.dart';
+import 'package:testing_music_player/src/services/services.dart';
 
 import '../../../main.dart';
 import '../ui.dart';

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:testing_api_twitter/src/services/services.dart';
 import '../utils/utils.dart';
-import 'package:testing_api_twitter/src/models/models.dart';
+import 'package:testing_music_player/src/models/models.dart';
 
 Widget songProgressBar(WidgetRef ref, ConcatenatingAudioSource currentPlaylist) {
   return SizedBox(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:testing_api_twitter/src/models/models.dart';
-import 'package:testing_api_twitter/src/services/services.dart';
-import 'package:testing_api_twitter/src/services/state_management/helper_funcs/helper_funcs.dart';
+import 'package:testing_music_player/src/models/models.dart';
+import 'package:testing_music_player/src/services/services.dart';
+import 'package:testing_music_player/src/services/state_management/helper_funcs/helper_funcs.dart';
 import '../../../main.dart';
 import '../ui.dart';
 
@@ -31,20 +31,28 @@ IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
           playlistArray
               .sort((a, b) => a.playlistName.compareTo(b.playlistName));
         } else {
-          songArray.children.sort((a, b) => (a as UriAudioSource).tag.songName.compareTo((b as UriAudioSource).tag.songName));
+          songArray.children.sort((a, b) => (a as UriAudioSource)
+              .tag
+              .songName
+              .compareTo((b as UriAudioSource).tag.songName));
         }
         playlistSwitchState(ref);
       },
     );
 
-IconButton sortSongIcon(WidgetRef ref, ConcatenatingAudioSource playlist) => IconButton(
-  icon: const Icon(Icons.sort),
-  onPressed: () {
-    /*Sort things*/
-    playlist.children.sort((a, b) => (a as UriAudioSource).tag.songName.compareTo((b as UriAudioSource).tag.songName));
-    playlistSwitchState(ref);
-  },
-);
+IconButton sortSongIcon(WidgetRef ref, ConcatenatingAudioSource playlist) =>
+    IconButton(
+      icon: const Icon(Icons.sort),
+      onPressed: () {
+        /*Sort things*/
+        playlist.children.sort((a, b) => (a as UriAudioSource)
+            .tag
+            .songName
+            .compareTo((b as UriAudioSource).tag.songName));
+        playlistSwitchState(ref);
+      },
+    );
+
 IconButton addIcon(WidgetRef ref, ConcatenatingAudioSource songList) =>
     IconButton(
       icon: const Icon(Icons.add),
@@ -57,11 +65,69 @@ IconButton addIcon(WidgetRef ref, ConcatenatingAudioSource songList) =>
       },
     );
 
-IconButton removeIcon(WidgetRef ref, ConcatenatingAudioSource playlist,AudioSource song) => IconButton(
+PopupMenuButton<String> addSongMenuIcon(WidgetRef ref, Playlist playlist) =>
+    PopupMenuButton<String>(
+      icon: const Icon(Icons.add),
+      onSelected: (value) {
+        handleAddSongMenu(value, ref, playlist);
+        playlistSwitchState(ref);
+      },
+      itemBuilder: (BuildContext context) {
+        return {'Add New Song', 'Add Songs From Songs List'}
+            .map((String choice) {
+          return PopupMenuItem<String>(
+            value: choice,
+            child: Text(choice),
+          );
+        }).toList();
+      },
+    );
+
+void handleAddSongMenu(String value, WidgetRef ref, Playlist playlist) {
+  switch (value) {
+    case 'Add New Song':
+      showDataAlert(globalNavigatorKey.currentContext!, ref, playlist.songList);
+      playlistSwitchState(ref);
+      break;
+    case 'Add Songs From Songs List':
+      Navigator.push(
+        globalNavigatorKey.currentContext!,
+        MaterialPageRoute(
+          builder: (context) => addSongScreen(
+            ref,
+            playlist.songList,
+          ),
+        ),
+      );
+      break;
+  }
+}
+
+IconButton removeIcon(WidgetRef ref, ConcatenatingAudioSource playlist,
+        AudioSource song, int index) =>
+    IconButton(
       icon: const Icon(Icons.close),
       onPressed: () {
         /*Remove things*/
-        playlist.children.remove(song);
+        if (playlist == songArray) {
+          for (int i = 0; i < playlistArray.length; i++) {
+            if (playlistArray[i].songList.children.contains(song)) {
+              playlistArray[i]
+                  .songList
+                  .removeAt(playlistArray[i].songList.children.indexOf(song));
+            }
+          }
+        }
+        playlist.removeAt(index);
+        playlistSwitchState(ref);
+      },
+    );
+
+IconButton removePlaylistIcon(WidgetRef ref, Playlist playlist) => IconButton(
+      icon: const Icon(Icons.close),
+      onPressed: () {
+        /*Remove things*/
+        playlistArray.remove(playlist);
         playlistSwitchState(ref);
       },
     );
@@ -84,12 +150,19 @@ PopupMenuButton<String> settingListIcon(WidgetRef ref) =>
 void handleSettingListClick(String value, WidgetRef ref) {
   switch (value) {
     case 'Add New Playlist':
+      Playlist playlist = Playlist(
+          playlistName_: '',
+          playlistImage_: Image.network(
+              'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/00f56557183915.59cbcc586d5b8.jpg'));
       Navigator.push(
         globalNavigatorKey.currentContext!,
-        MaterialPageRoute(builder: (context) => addPlaylistScreen(ref)),
+        MaterialPageRoute(
+            builder: (context) => addPlaylistScreen(ref, playlist)),
       );
       break;
     case 'Delete Playlist':
+      playlistRemoving = !playlistRemoving;
+      playlistSwitchState(ref);
       break;
   }
 }
@@ -159,26 +232,26 @@ IconButton skipSongIcon(WidgetRef ref, bool skipNext,
         /*Skip songs*/
         bool changed = false;
         if (skipNext) {
-          if(index < playlist.length-1){
+          if (index < playlist.length - 1) {
             index++;
             player.seekToNext();
-          } else{
+          } else {
             index = 0;
             player.seek(Duration.zero, index: 0);
           }
           changed = true;
-        } else if(!skipNext) {
-          if(index > 0){
+        } else if (!skipNext) {
+          if (index > 0) {
             index--;
             player.seekToPrevious();
-          } else{
-            index = playlist.length-1;
-            player.seek(Duration.zero, index: playlist.length-1);
+          } else {
+            index = playlist.length - 1;
+            player.seek(Duration.zero, index: playlist.length - 1);
           }
           changed = true;
         }
 
-        if(changed) {
+        if (changed) {
           skipSong(ref, playlist, index);
           songSetState(ref, 2);
         }

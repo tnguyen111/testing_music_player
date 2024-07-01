@@ -12,7 +12,7 @@ class EditPlaylistScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: editPlaylistForm(ref, playlist),
+      body: changePlaylistForm(ref, playlist, false),
     );
   }
 }

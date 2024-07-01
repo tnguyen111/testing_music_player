@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../models/models.dart';
 import '../components/components.dart';
 
-Scaffold addPlaylistScreen (WidgetRef ref){
+Scaffold addPlaylistScreen (WidgetRef ref, Playlist playlist){
     return Scaffold(
       appBar: AppBar(),
-      body: playlistForm(ref, Image.network('https://th.bing.com/th/id/OIP.D9khLX8H-gRPheV4jWHh7AHaHa?rs=1&pid=ImgDetMain')),
+      body: changePlaylistForm(ref, playlist, true),
     );
 }

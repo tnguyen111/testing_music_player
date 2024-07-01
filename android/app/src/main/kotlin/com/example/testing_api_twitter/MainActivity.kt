@@ -1,4 +1,4 @@
-package com.example.testing_api_twitter
+package com.example.testing_music_player
 
 import io.flutter.embedding.android.FlutterActivity
 

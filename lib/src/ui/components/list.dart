@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'components.dart';
-import 'package:testing_api_twitter/src/models/models.dart';
+import 'package:testing_music_player/src/models/models.dart';
 
 
 
@@ -33,7 +33,25 @@ Widget songList(WidgetRef ref,ConcatenatingAudioSource songList) {
         shrinkWrap: false,
         controller: scrollController,
         itemBuilder: (context, index) {
-          return songBlock(ref, songList, index);
+          if(songList.children.isNotEmpty) {
+            return songBlock(ref, songList, index);
+          }
+          return Container();
+        }),
+  );
+}
+
+Widget addSongList(WidgetRef ref,ConcatenatingAudioSource songList) {
+  final ScrollController scrollController = ScrollController();
+
+  return Expanded(
+    child: ListView.builder(
+        itemCount: songArray.children.length,
+        scrollDirection: Axis.vertical,
+        shrinkWrap: false,
+        controller: scrollController,
+        itemBuilder: (context, index) {
+          return addSongBlock(ref, songList, index);
         }),
   );
 }
