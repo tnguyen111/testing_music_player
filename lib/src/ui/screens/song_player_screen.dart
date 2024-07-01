@@ -8,7 +8,7 @@ Scaffold songPlayerScreen(WidgetRef ref, ConcatenatingAudioSource playlist, int 
     appBar: songAppBar(ref),
     body: Column(
       children: <Widget>[
-        SizedBox(height: 300),
+        const SizedBox(height: 300),
         songNameBlock(ref, playlist[index] as UriAudioSource),
         songProgressBar(ref, playlist),
         const SizedBox(height: 50),

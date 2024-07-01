@@ -45,9 +45,10 @@ dependencies:
   google_fonts: ^6.2.1
   path: ^1.9.0
   audio_video_progress_bar: ^2.0.3
-  shared_preferences: ^2.2.3
   sqflite: ^2.3.3+1
+  flutter_simple_dependency_injection: any
 
+  path_provider: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

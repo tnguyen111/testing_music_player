@@ -10,11 +10,13 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+    bool modeState = modeWatchState(ref);
     playlistWatchState(ref);
     int screenState = screenWatchState(ref);
     return MaterialApp(
       navigatorKey: globalNavigatorKey,
-      theme: (modeWatchState(ref)) ? lightTheme() : darkTheme(),
+      theme: (modeState) ? lightTheme() : darkTheme(),
       builder: (context, child) => ResponsiveBreakpoints.builder(
         child: child!,
         breakpoints: [

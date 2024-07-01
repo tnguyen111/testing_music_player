@@ -11,7 +11,6 @@ bool modeReadState(WidgetRef ref){
 
 void modeSwitchState(WidgetRef ref){
   ref.read(modeProvider.notifier).switchState();
-
   return;
 }
 

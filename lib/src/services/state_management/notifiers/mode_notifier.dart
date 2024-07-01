@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ModeNotifier extends Notifier<bool> {
 
+class ModeNotifier extends Notifier<bool> {
   @override
-  bool build() {
+  build()  {
+
     return false;
   }
 
