@@ -1,9 +1,17 @@
 
+
+import 'package:isar/isar.dart';
+
+@collection
 class SongDetails{
+  late Id id;
   String songName   = '';
   String songAuthor = '';
   String songDurationString = '';
+
+  @ignore
   late Duration songDuration;
+
 
   void setDuration(Duration duration){
     songDuration = duration;

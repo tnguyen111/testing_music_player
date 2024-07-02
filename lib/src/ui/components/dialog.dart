@@ -6,7 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:testing_music_player/src/models/models.dart';
 import 'package:testing_music_player/src/services/services.dart';
-
+import 'package:mime/mime.dart';
 import '../ui.dart';
 
 showDataAlert(
@@ -68,14 +68,17 @@ showDataAlert(
                       FilePickerResult? result =
                           await FilePicker.platform.pickFiles(
                         type: FileType.custom,
-                        allowedExtensions: ['mp3', 'wav'],
+                        allowedExtensions: ['mp3', 'wav','pcm', 'aiff', 'aac','wma','alac','flac','ogc'],
                       );
                       if (result != null) {
                         String pathInput = result.files.single.path!;
-                        songFile = File(pathInput);
-                        fileName = basename(songFile.path);
-                        playlistSwitchState(ref);
-                        print(fileName);
+                        if (!lookupMimeType(pathInput)!.startsWith("audio")){
+                          fileName = "Invalid File";
+                        } else {
+                          songFile = File(pathInput);
+                          fileName = basename(songFile.path);
+                          playlistSwitchState(ref);
+                        }
                       }
                     },
                     child: const Text(
@@ -87,7 +90,7 @@ showDataAlert(
                 Center(
                   child: Text(
                     textScaler: const TextScaler.linear(0.5),
-                    (fileName == '') ? '' : '"$fileName" uploaded',
+                    (fileName == '') ? '' : '"$fileName" Uploaded',
                   ),
                 ),
                 const SizedBox(),
@@ -97,7 +100,7 @@ showDataAlert(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     onPressed: () async {
-                      if (songFile.path.isNotEmpty && songName != '') {
+                      if (songFile.path.isNotEmpty && songName != '' && fileName != "Invalid File") {
                         Duration? newDuration = await getDuration(songFile);
                         AudioSource temp = AudioSource.uri(
                           Uri.parse(songFile.path),

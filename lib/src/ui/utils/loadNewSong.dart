@@ -16,9 +16,9 @@ void loadNewSong(WidgetRef ref, ConcatenatingAudioSource playlist, int i) async 
     print('new song');
 }
 
-
-
 void loadNewPlaylist(ConcatenatingAudioSource playlist) async{
+  player.startVisualizer();
+
     print('new playlist: ${playlist.length}');
     await player.setAudioSource(playlist);
 }

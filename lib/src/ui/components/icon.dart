@@ -58,9 +58,7 @@ IconButton addIcon(WidgetRef ref, ConcatenatingAudioSource songList) =>
       icon: const Icon(Icons.add),
       onPressed: () {
         /*Add things*/
-        print('bruh');
         showDataAlert(globalNavigatorKey.currentContext!, ref, songList);
-        print(songList);
         playlistSwitchState(ref);
       },
     );
@@ -152,8 +150,7 @@ void handleSettingListClick(String value, WidgetRef ref) {
     case 'Add New Playlist':
       Playlist playlist = Playlist(
           playlistName_: '',
-          playlistImage_: Image.network(
-              'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/00f56557183915.59cbcc586d5b8.jpg'));
+          playlistImage_: Image.asset("lib/assets/default_image.jpg"));
       Navigator.push(
         globalNavigatorKey.currentContext!,
         MaterialPageRoute(
@@ -198,9 +195,7 @@ void handleSettingSongClick(String value, WidgetRef ref, Playlist playlist) {
       );
       break;
     case 'Delete Playlist':
-      print(playlistArray);
       playlistArray.remove(playlist);
-      print(playlistArray);
       break;
   }
 }
@@ -212,11 +207,9 @@ IconButton playIcon(WidgetRef ref) => IconButton(
       onPressed: () {
         /*Play or Pause songs*/
         if (player.playing) {
-          player.pause();
-          songSetState(ref, 1);
+          pauseSong(ref);
         } else {
-          player.play();
-          songSetState(ref, 0);
+          startSong(ref);
         }
         playlistSwitchState(ref);
       },

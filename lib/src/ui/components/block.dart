@@ -7,6 +7,7 @@ import 'package:testing_music_player/src/services/services.dart';
 import '../../../main.dart';
 import '../../models/models.dart';
 
+
 Container headerBlock(String header, WidgetRef ref) => Container(
       margin: const EdgeInsets.only(
           left: kDefaultPadding, top: kSmallPadding, bottom: kSmallPadding),
@@ -229,6 +230,7 @@ Widget songIconBlock(
 Widget songNameBlock(WidgetRef ref, UriAudioSource song) {
   return Column(
     children: [
+      const SizedBox(height: 18),
       Text(
         song.tag.songName,
         style: currentThemeHeaderText(ref),
