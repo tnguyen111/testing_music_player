@@ -23,7 +23,7 @@ Widget changePlaylistForm(WidgetRef ref, Playlist playlist, bool addingPlaylist)
             child: SizedBox(
               width: 300,
               height: 300,
-              child: playlist.playlistImage,
+              child: playlist.getImage(),
             ),
           ),
           const SizedBox(height: 50),

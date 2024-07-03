@@ -1,35 +1,66 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:just_audio/just_audio.dart';
 
+import 'models.dart';
+
+part 'playlist.g.dart';
+
 @collection
-class Playlist{
+class Playlist {
   late Id id;
   String playlistName_;
 
-  @ignore
-  Image playlistImage_;
+  String imagePath_;
+  List<String> songNameList_ = [];
 
   @ignore
-  ConcatenatingAudioSource songList_ = ConcatenatingAudioSource(children:[],useLazyPreparation: true,shuffleOrder: DefaultShuffleOrder());
+  ConcatenatingAudioSource songList_ = ConcatenatingAudioSource(
+      children: [],
+      useLazyPreparation: true,
+      shuffleOrder: DefaultShuffleOrder());
 
-  @ignore
-  Playlist({required this.playlistName_, required this.playlistImage_});
+  Playlist({required this.playlistName_, required this.imagePath_});
 
-  String get playlistName =>  playlistName_;
+  String get playlistName => playlistName_;
 
-  @ignore
-  Image get playlistImage => playlistImage_;
+  String get imagePath => imagePath_;
+
+  List<String> get songNameList => songNameList_;
 
   @ignore
   ConcatenatingAudioSource get songList => songList_;
 
-  void setImage(Image newImage){
-    playlistImage_ = newImage;
+  void setAudioSource(SongDetails song) {
+    songList.add(
+      AudioSource.uri(
+        Uri.parse(song.songPath),
+        tag: song,
+      ),
+    );
+  }
+
+  Image getImage() {
+    if (imagePath.startsWith("lib/assets/")) {
+      return Image.asset(
+        imagePath,
+        fit: BoxFit.fill,
+      );
+    }
+    return Image.file(
+      File(imagePath),
+      fit: BoxFit.fill,
+    );
+  }
+
+  void setImage(String newImagePath) {
+    imagePath_ = newImagePath;
     return;
   }
 
-  void setName(String newName){
+  void setName(String newName) {
     playlistName_ = newName;
   }
 
@@ -37,7 +68,7 @@ class Playlist{
     songList_.children.add(newSong);
   }
 
-  void removeSong(AudioSource existedSong){
+  void removeSong(AudioSource existedSong) {
     songList_.children.remove(existedSong);
   }
 }

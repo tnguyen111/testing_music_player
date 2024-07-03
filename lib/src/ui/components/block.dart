@@ -55,7 +55,7 @@ Container playlistBlock(WidgetRef ref, Playlist playlist) => Container(
                   width: 90,
                   height: 90,
                   child: Container(
-                    child: playlist.playlistImage_,
+                    child: playlist.getImage(),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -79,7 +79,7 @@ Container playlistAddBlock(WidgetRef ref) => Container(
       child: GestureDetector(
         onTap: () async {
           playlistSwitchState(ref);
-          Playlist playlist = Playlist(playlistName_: '', playlistImage_: Image.network('https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/00f56557183915.59cbcc586d5b8.jpg'));
+          Playlist playlist = Playlist(playlistName_: '', imagePath_: 'lib/assets/default_image.jpg');
           Navigator.push(
             globalNavigatorKey.currentContext!,
             MaterialPageRoute(
@@ -175,7 +175,7 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
             child: SizedBox(
               width: 300,
               height: 300,
-              child: playlist.playlistImage,
+              child: playlist.getImage(),
             ),
             onTap: () async {
               await changePlaylistImage(playlist);

@@ -150,7 +150,7 @@ void handleSettingListClick(String value, WidgetRef ref) {
     case 'Add New Playlist':
       Playlist playlist = Playlist(
           playlistName_: '',
-          playlistImage_: Image.asset("lib/assets/default_image.jpg"));
+          imagePath_: "lib/assets/default_image.jpg");
       Navigator.push(
         globalNavigatorKey.currentContext!,
         MaterialPageRoute(

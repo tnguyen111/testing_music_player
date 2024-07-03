@@ -68,11 +68,21 @@ showDataAlert(
                       FilePickerResult? result =
                           await FilePicker.platform.pickFiles(
                         type: FileType.custom,
-                        allowedExtensions: ['mp3', 'wav','pcm', 'aiff', 'aac','wma','alac','flac','ogc'],
+                        allowedExtensions: [
+                          'mp3',
+                          'wav',
+                          'pcm',
+                          'aiff',
+                          'aac',
+                          'wma',
+                          'alac',
+                          'flac',
+                          'ogc'
+                        ],
                       );
                       if (result != null) {
                         String pathInput = result.files.single.path!;
-                        if (!lookupMimeType(pathInput)!.startsWith("audio")){
+                        if (!lookupMimeType(pathInput)!.startsWith("audio")) {
                           fileName = "Invalid File";
                         } else {
                           songFile = File(pathInput);
@@ -100,15 +110,19 @@ showDataAlert(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     onPressed: () async {
-                      if (songFile.path.isNotEmpty && songName != '' && fileName != "Invalid File") {
+                      if (songFile.path.isNotEmpty &&
+                          songName != '' &&
+                          fileName != "Invalid File") {
                         Duration? newDuration = await getDuration(songFile);
-                        AudioSource temp = AudioSource.uri(
-                          Uri.parse(songFile.path),
-                          tag: SongDetails(
+                        SongDetails newSong = SongDetails(
                             songName: songName,
                             authorName: authorName,
                             duration: newDuration,
-                          ),
+                            songPath: songFile.path,
+                        );
+                        AudioSource temp = AudioSource.uri(
+                          Uri.parse(newSong.songPath),
+                          tag: newSong,
                         );
                         if (songList != songArray) {
                           songList.add(
