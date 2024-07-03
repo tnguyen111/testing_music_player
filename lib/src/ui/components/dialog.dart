@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart';
 import 'package:file_picker/file_picker.dart';
@@ -115,11 +116,12 @@ showDataAlert(
                           fileName != "Invalid File") {
                         Duration? newDuration = await getDuration(songFile);
                         SongDetails newSong = SongDetails(
-                            songName: songName,
-                            authorName: authorName,
-                            duration: newDuration,
-                            songPath: songFile.path,
+                          songName: songName,
+                          songAuthor: authorName,
+                          songDurationData: newDuration.toString(),
+                          songPath: songFile.path,
                         );
+                        IsarHelper().saveSong(newSong);
                         AudioSource temp = AudioSource.uri(
                           Uri.parse(newSong.songPath),
                           tag: newSong,
@@ -186,6 +188,7 @@ editPlaylistNameDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
                     },
                     onSubmitted: (value) {
                       playlistName = value;
+                      IsarHelper().savePlaylist(playlist);
                     },
                   ),
                 ),
@@ -197,6 +200,7 @@ editPlaylistNameDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
                   child: ElevatedButton(
                     onPressed: () {
                       playlist.setName(playlistName);
+                      IsarHelper().savePlaylist(playlist);
                       playlistSwitchState(ref);
                       Navigator.of(context).pop();
                     },

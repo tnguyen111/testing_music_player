@@ -6,13 +6,20 @@ import '../main.dart';
 import 'ui/ui.dart';
 import 'services/services.dart';
 
+bool started = false;
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     bool modeState = modeWatchState(ref);
     playlistWatchState(ref);
     int screenState = screenWatchState(ref);
+    if(started == false) {
+      IsarHelper().setPlaylistList(ref);
+      started = true;
+    }
     return MaterialApp(
       navigatorKey: globalNavigatorKey,
       theme: (modeState) ? lightTheme() : darkTheme(),

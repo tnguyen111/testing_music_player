@@ -179,6 +179,7 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
             ),
             onTap: () async {
               await changePlaylistImage(playlist);
+              IsarHelper().savePlaylist(playlist);
               playlistSwitchState(ref);
             },
           ),

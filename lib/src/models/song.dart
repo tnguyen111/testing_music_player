@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-
+import 'package:duration/duration.dart';
 part 'song.g.dart';
 
 @collection
@@ -8,7 +8,7 @@ class SongDetails {
   String songName = '';
   String songAuthor = '';
   String songDurationData = '';
-  String songPath;
+  String songPath = '';
 
   @ignore
   String songDurationString = '';
@@ -16,9 +16,8 @@ class SongDetails {
   @ignore
   late Duration songDuration;
 
-  void setDuration(Duration duration) {
-    songDuration = duration;
-    songDurationData = duration.toString();
+  void setDuration(String durationData) {
+    songDuration = parseTime(durationData);
     if (songDuration.inMinutes < 10) {
       songDurationString = '0${songDuration.inMinutes}:';
     } else {
@@ -41,8 +40,7 @@ class SongDetails {
   }
 
   SongDetails(
-      {required this.songName, authorName, duration, required this.songPath}) {
-    songAuthor = authorName;
-    setDuration(duration);
+      {required this.songName, required this.songPath, required this.songAuthor, required this.songDurationData}) {
+    setDuration(songDurationData);
   }
 }

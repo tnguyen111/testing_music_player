@@ -36,6 +36,7 @@ IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
               .songName
               .compareTo((b as UriAudioSource).tag.songName));
         }
+
         playlistSwitchState(ref);
       },
     );
@@ -113,8 +114,10 @@ IconButton removeIcon(WidgetRef ref, ConcatenatingAudioSource playlist,
               playlistArray[i]
                   .songList
                   .removeAt(playlistArray[i].songList.children.indexOf(song));
+              IsarHelper().savePlaylist(playlistArray[i]);
             }
           }
+          IsarHelper().deleteSongFor((song as UriAudioSource).tag.songName);
         }
         playlist.removeAt(index);
         playlistSwitchState(ref);
@@ -125,6 +128,7 @@ IconButton removePlaylistIcon(WidgetRef ref, Playlist playlist) => IconButton(
       icon: const Icon(Icons.close),
       onPressed: () {
         /*Remove things*/
+        IsarHelper().deletePlaylistFor(playlist.playlistName);
         playlistArray.remove(playlist);
         playlistSwitchState(ref);
       },
@@ -195,6 +199,7 @@ void handleSettingSongClick(String value, WidgetRef ref, Playlist playlist) {
       );
       break;
     case 'Delete Playlist':
+      IsarHelper().deletePlaylistFor(playlist.playlistName);
       playlistArray.remove(playlist);
       break;
   }

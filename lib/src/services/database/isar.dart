@@ -1,69 +1,80 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:testing_music_player/src/services/services.dart';
 import '../../models/models.dart';
 
-class IsarHelper{
+class IsarHelper {
   late Future<Isar> db;
 
-  IsarHelper(){
+  IsarHelper() {
     db = openDB();
   }
 
-
   Future<Playlist?> getPlaylistFor(String name) async {
     final isar = await db;
-    final playlist =  await isar.playlists
-        .filter()
-        .playlistName_EqualTo(name)
-        .findFirst();
+    final playlist =
+        await isar.playlists.filter().playlistName_EqualTo(name).findFirst();
 
     return playlist;
   }
 
   Future<SongDetails?> getSongFor(String name) async {
     final isar = await db;
-    final song =  await isar.songDetails
-        .filter()
-        .songNameEqualTo(name)
-        .findFirst();
+    final song =
+        await isar.songDetails.filter().songNameEqualTo(name).findFirst();
 
     return song;
   }
 
-  Future<void> savePlaylist(Playlist newPlaylist)async {
+  Future<bool> playlistExisted(String name) async {
+    final isar = await db;
+    final playlist =
+        await isar.playlists.filter().playlistName_EqualTo(name).findFirst();
+
+    if (playlist == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> songExisted(String name) async {
+    final isar = await db;
+    final song =
+        await isar.songDetails.filter().songNameEqualTo(name).findFirst();
+
+    if (song == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  Future<void> savePlaylist(Playlist newPlaylist) async {
     final isar = await db;
     isar.writeTxnSync<int>(() => isar.playlists.putSync(newPlaylist));
   }
 
-
-  Future<void> saveSong(SongDetails newSong)async {
+  Future<void> saveSong(SongDetails newSong) async {
     final isar = await db;
     isar.writeTxnSync<int>(() => isar.songDetails.putSync(newSong));
   }
 
-  Future<void> deletePlaylistFor(String name)async {
+  void deletePlaylistFor(String name) async {
     final isar = await db;
-    await isar.writeTxn(() async {
-      final deleted = isar.playlists.filter()
-          .playlistName_EqualTo(name)
-          .deleteFirstSync();
-      print("Delete: $deleted");
-    });
+    await isar.writeTxn(
+        () => isar.playlists.filter().playlistName_EqualTo(name).deleteFirst());
   }
 
-  Future<void> deleteSongFor(String name)async {
+  Future<void> deleteSongFor(String name) async {
     final isar = await db;
-    await isar.writeTxn(() async {
-      final deleted = isar.songDetails.filter()
-          .songNameEqualTo(name)
-          .deleteFirstSync();
-      print("Delete: $deleted");
-    });
+    await isar.writeTxn(
+        () => isar.songDetails.filter().songNameEqualTo(name).deleteFirst());
   }
 
-
-  Future<List<Playlist>> getAllPlaylist() async{
+  Future<List<Playlist>> getAllPlaylist() async {
     final isar = await db;
     return await isar.playlists.where().findAll();
   }
@@ -73,16 +84,24 @@ class IsarHelper{
     return await isar.songDetails.where().findAll();
   }
 
-  Future<void> setPlaylistList() async{
+  Future<bool> setPlaylistList(WidgetRef ref) async {
+    await setSongList();
     playlistArray = await getAllPlaylist();
+    playlistSwitchState(ref);
+    return true;
   }
 
-  Future<void> setSongList() async{
+  Future<bool> setSongList() async {
+    print("hi");
     final songList = await getSongList();
-    for(int i = 0; i < songList.length; i++){
-      AudioSource newSong = AudioSource.uri(Uri.parse(songList[i].songPath), tag: songList[i]);
+    print("what");
+    for (int i = 0; i < songList.length; i++) {
+      AudioSource newSong =
+          AudioSource.uri(Uri.parse(songList[i].songPath), tag: songList[i]);
       songArray.add(newSong);
     }
+    print("hello");
+    return true;
   }
 
   Future<void> cleanDb() async {
@@ -95,10 +114,10 @@ class IsarHelper{
       final dir = await getApplicationDocumentsDirectory();
       return await Isar.open(
         [PlaylistSchema, SongDetailsSchema],
-        inspector: true, directory: dir.path,
+        inspector: true,
+        directory: dir.path,
       );
     }
     return Future.value(Isar.getInstance());
   }
-
 }

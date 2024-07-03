@@ -5,8 +5,10 @@ import '../../../main.dart';
 import '../../services/services.dart';
 import '../ui.dart';
 
-Widget changePlaylistForm(WidgetRef ref, Playlist playlist, bool addingPlaylist) {
+Widget changePlaylistForm(
+    WidgetRef ref, Playlist playlist, bool addingPlaylist) {
   String playlistName = playlist.playlistName;
+  String warning = '';
   TextEditingController controller =
       TextEditingController.fromValue(TextEditingValue(text: playlistName));
 
@@ -18,6 +20,9 @@ Widget changePlaylistForm(WidgetRef ref, Playlist playlist, bool addingPlaylist)
           GestureDetector(
             onTap: () async {
               await changePlaylistImage(playlist);
+              if(!addingPlaylist) {
+                IsarHelper().savePlaylist(playlist);
+              }
               playlistSwitchState(ref);
             },
             child: SizedBox(
@@ -30,6 +35,7 @@ Widget changePlaylistForm(WidgetRef ref, Playlist playlist, bool addingPlaylist)
           Form(
             child: Column(
               children: [
+                Text(warning),
                 TextField(
                   obscureText: false,
                   controller: controller,
@@ -39,16 +45,34 @@ Widget changePlaylistForm(WidgetRef ref, Playlist playlist, bool addingPlaylist)
                     constraints: BoxConstraints(maxWidth: 350),
                     label: Text('Playlist Name'),
                   ),
-                  onChanged: (String value) async {
+                  onTap: () {
+                    if(controller.value.text == "Name's Taken. Choose a different name!") {
+                      controller.value =
+                          TextEditingValue(text: playlistName);
+                      playlistSwitchState(ref);
+                    }
+                  },
+                  onChanged: (String value) {
                     playlistName = value;
+                    print(value);
+                  },
+                  onTapOutside: (event) {
+                    playlist.setName(playlistName);
                   },
                   onSubmitted: (String value) async {
                     if (playlistName != '') {
                       playlistName = value;
                       playlist.setName(playlistName);
-                      if(addingPlaylist){
-                        playlistArray.add(playlist);
+                      if (addingPlaylist) {
+                        if (!await IsarHelper().playlistExisted(playlistName)) {
+                          playlistArray.add(playlist);
+                        } else {
+                          controller.value =
+                              TextEditingValue(text: "Name's Taken. Choose a different name!");
+                          return;
+                        }
                       }
+                      IsarHelper().savePlaylist(playlist);
                       playlistSwitchState(ref);
                       Navigator.pop(globalNavigatorKey.currentContext!);
                     }
@@ -67,12 +91,19 @@ Widget changePlaylistForm(WidgetRef ref, Playlist playlist, bool addingPlaylist)
                 currentThemeSub(ref),
               ),
             ),
-            onPressed: () {
+            onPressed: () async {
               if (playlistName != '') {
                 playlist.setName(playlistName);
-                if(addingPlaylist){
-                  playlistArray.add(playlist);
+                if (addingPlaylist) {
+                  if (!await IsarHelper().playlistExisted(playlistName)) {
+                    playlistArray.add(playlist);
+                  } else {
+                    controller.value =
+                        TextEditingValue(text: "Name's Taken. Choose a different name!");
+                    return;
+                  }
                 }
+                IsarHelper().savePlaylist(playlist);
                 playlistSwitchState(ref);
                 Navigator.pop(globalNavigatorKey.currentContext!);
               }

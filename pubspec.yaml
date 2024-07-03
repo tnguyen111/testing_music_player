@@ -59,6 +59,7 @@ dependencies:
     hosted: https://pub.isar-community.dev/
   mime: ^1.0.5
   shared_preferences: ^2.2.3
+  duration: ^3.0.13
 
 dev_dependencies:
   flutter_test:
