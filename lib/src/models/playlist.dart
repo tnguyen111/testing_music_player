@@ -10,7 +10,7 @@ part 'playlist.g.dart';
 
 @collection
 class Playlist {
-  late Id id;
+  Id id = Isar.autoIncrement;
   String playlistName_;
 
   String imagePath_;
