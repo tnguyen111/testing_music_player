@@ -79,7 +79,7 @@ Container playlistAddBlock(WidgetRef ref) => Container(
       child: GestureDetector(
         onTap: () async {
           playlistSwitchState(ref);
-          Playlist playlist = Playlist(playlistName_: '', imagePath_: 'lib/assets/default_image.jpg');
+          Playlist playlist = Playlist(playlistName_: '', imagePath_: 'lib/assets/default_image.jpg', songNameList_: []);
           Navigator.push(
             globalNavigatorKey.currentContext!,
             MaterialPageRoute(

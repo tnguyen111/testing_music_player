@@ -127,9 +127,7 @@ showDataAlert(
                           tag: newSong,
                         );
                         if (songList != songArray) {
-                          songList.add(
-                            temp,
-                          );
+                          addSongToPlaylist(songList,temp);
                         }
                         songArray.add(
                           temp,

@@ -108,18 +108,25 @@ IconButton removeIcon(WidgetRef ref, ConcatenatingAudioSource playlist,
       icon: const Icon(Icons.close),
       onPressed: () {
         /*Remove things*/
+        String songName = (song as UriAudioSource).tag.songName;
         if (playlist == songArray) {
           for (int i = 0; i < playlistArray.length; i++) {
             if (playlistArray[i].songList.children.contains(song)) {
+              playlistArray[i]
+                  .songNameList
+                  .removeAt(playlistArray[i]
+                  .songNameList.indexOf(songName));
               playlistArray[i]
                   .songList
                   .removeAt(playlistArray[i].songList.children.indexOf(song));
               IsarHelper().savePlaylist(playlistArray[i]);
             }
           }
-          IsarHelper().deleteSongFor((song as UriAudioSource).tag.songName);
+          IsarHelper().deleteSongFor(songName);
+          playlist.removeAt(index);
+        } else {
+          deleteSongFromPlaylist(playlist,index,songName);
         }
-        playlist.removeAt(index);
         playlistSwitchState(ref);
       },
     );
@@ -153,8 +160,7 @@ void handleSettingListClick(String value, WidgetRef ref) {
   switch (value) {
     case 'Add New Playlist':
       Playlist playlist = Playlist(
-          playlistName_: '',
-          imagePath_: "lib/assets/default_image.jpg");
+          playlistName_: '', imagePath_: "lib/assets/default_image.jpg", songNameList_: List.empty(growable: true));
       Navigator.push(
         globalNavigatorKey.currentContext!,
         MaterialPageRoute(

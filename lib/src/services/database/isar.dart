@@ -22,9 +22,8 @@ class IsarHelper {
 
   Future<SongDetails?> getSongFor(String name) async {
     final isar = await db;
-    final song =
-        await isar.songDetails.filter().songNameEqualTo(name).findFirst();
-
+    final SongDetails? song;
+    song = await isar.songDetails.filter().songNameEqualTo(name).findFirst();
     return song;
   }
 
@@ -87,6 +86,12 @@ class IsarHelper {
   Future<bool> setPlaylistList(WidgetRef ref) async {
     await setSongList();
     playlistArray = await getAllPlaylist();
+    for(int i = 0; i < playlistArray.length; i++){
+      for(int j = 0; j < playlistArray[i].songNameList.length; j++){
+        var existingSong = await IsarHelper().getSongFor(playlistArray[i].songNameList[j]);
+        playlistArray[i].setAudioSource(existingSong!);
+      }
+    }
     playlistSwitchState(ref);
     return true;
   }

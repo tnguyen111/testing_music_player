@@ -5,18 +5,20 @@ import 'package:testing_music_player/src/models/models.dart';
 import '../../services/services.dart';
 import '../utils/utils.dart';
 
-Widget listCheckbox(ConcatenatingAudioSource playlist, AudioSource song, WidgetRef ref) {
+Widget listCheckbox(
+    ConcatenatingAudioSource playlist, AudioSource song, WidgetRef ref) {
   bool value = playlist.children.contains(song);
   return Checkbox(
     value: value,
     overlayColor: WidgetStatePropertyAll(currentThemeSmallText(ref).color),
     activeColor: currentThemeSmallText(ref).color,
-
     onChanged: (value) {
       if (value!) {
-        playlist.add(song);
-      } else{
-        playlist.removeAt(playlist.children.indexOf(song));
+        addSongToPlaylist(playlist, song);
+      } else {
+        int index = playlist.children.indexOf(song);
+        String songName = (song as UriAudioSource).tag.songName;
+        deleteSongFromPlaylist(playlist, index, songName);
       }
       print(playlist.children);
       print(songArray.children);
@@ -24,4 +26,3 @@ Widget listCheckbox(ConcatenatingAudioSource playlist, AudioSource song, WidgetR
     },
   );
 }
-

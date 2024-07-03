@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:testing_music_player/src/services/services.dart';
 
+import '../services/database/database.dart';
 import 'models.dart';
 
 part 'playlist.g.dart';
@@ -14,7 +16,7 @@ class Playlist {
   String playlistName_;
 
   String imagePath_;
-  List<String> songNameList_ = [];
+  List<String> songNameList_;
 
   @ignore
   ConcatenatingAudioSource songList_ = ConcatenatingAudioSource(
@@ -22,7 +24,9 @@ class Playlist {
       useLazyPreparation: true,
       shuffleOrder: DefaultShuffleOrder());
 
-  Playlist({required this.playlistName_, required this.imagePath_});
+  Playlist({required this.playlistName_, required this.imagePath_, required this.songNameList_}){
+    songNameList_.toList();
+  }
 
   String get playlistName => playlistName_;
 
@@ -33,6 +37,14 @@ class Playlist {
   @ignore
   ConcatenatingAudioSource get songList => songList_;
 
+  void getSongFromList() async{
+    for(int i = 0; i < songNameList.length; i++){
+      print("yo");
+      var existingSong = await IsarHelper().getSongFor(songNameList[i]);
+      setAudioSource(existingSong!);
+    }
+  }
+
   void setAudioSource(SongDetails song) {
     songList.add(
       AudioSource.uri(
@@ -40,6 +52,7 @@ class Playlist {
         tag: song,
       ),
     );
+    print("hey");
   }
 
   Image getImage() {
