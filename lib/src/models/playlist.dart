@@ -25,7 +25,7 @@ class Playlist {
       shuffleOrder: DefaultShuffleOrder());
 
   Playlist({required this.playlistName_, required this.imagePath_, required this.songNameList_}){
-    songNameList_.toList();
+    songNameList_ = songNameList_.toList(growable: true);
   }
 
   String get playlistName => playlistName_;
@@ -52,7 +52,6 @@ class Playlist {
         tag: song,
       ),
     );
-    print("hey");
   }
 
   Image getImage() {

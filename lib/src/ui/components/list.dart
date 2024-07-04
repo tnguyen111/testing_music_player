@@ -41,7 +41,7 @@ Widget songList(WidgetRef ref,ConcatenatingAudioSource songList) {
   );
 }
 
-Widget addSongList(WidgetRef ref,ConcatenatingAudioSource songList) {
+Widget addSongList(WidgetRef ref,Playlist playlist) {
   final ScrollController scrollController = ScrollController();
 
   return Expanded(
@@ -51,7 +51,7 @@ Widget addSongList(WidgetRef ref,ConcatenatingAudioSource songList) {
         shrinkWrap: false,
         controller: scrollController,
         itemBuilder: (context, index) {
-          return addSongBlock(ref, songList, index);
+          return addSongBlock(ref, playlist, index);
         }),
   );
 }

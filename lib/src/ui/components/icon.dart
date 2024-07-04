@@ -23,10 +23,10 @@ IconButton menuIcon(BuildContext context) => IconButton(
       },
     );
 
-IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
+/*IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
       icon: const Icon(Icons.sort),
       onPressed: () {
-        /*Sort things*/
+        Sort things
         if (typeSort == 'Your Playlist') {
           playlistArray
               .sort((a, b) => a.playlistName.compareTo(b.playlistName));
@@ -39,20 +39,20 @@ IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
 
         playlistSwitchState(ref);
       },
-    );
+    );*/
 
-IconButton sortSongIcon(WidgetRef ref, ConcatenatingAudioSource playlist) =>
+/*IconButton sortSongIcon(WidgetRef ref, ConcatenatingAudioSource playlist) =>
     IconButton(
       icon: const Icon(Icons.sort),
       onPressed: () {
-        /*Sort things*/
+        *//*Sort things*//*
         playlist.children.sort((a, b) => (a as UriAudioSource)
             .tag
             .songName
             .compareTo((b as UriAudioSource).tag.songName));
         playlistSwitchState(ref);
       },
-    );
+    );*/
 
 IconButton addIcon(WidgetRef ref, ConcatenatingAudioSource songList) =>
     IconButton(
@@ -94,7 +94,7 @@ void handleAddSongMenu(String value, WidgetRef ref, Playlist playlist) {
         MaterialPageRoute(
           builder: (context) => addSongScreen(
             ref,
-            playlist.songList,
+            playlist,
           ),
         ),
       );
@@ -114,8 +114,7 @@ IconButton removeIcon(WidgetRef ref, ConcatenatingAudioSource playlist,
             if (playlistArray[i].songList.children.contains(song)) {
               playlistArray[i]
                   .songNameList
-                  .removeAt(playlistArray[i]
-                  .songNameList.indexOf(songName));
+                  .remove(songName);
               playlistArray[i]
                   .songList
                   .removeAt(playlistArray[i].songList.children.indexOf(song));
@@ -125,7 +124,7 @@ IconButton removeIcon(WidgetRef ref, ConcatenatingAudioSource playlist,
           IsarHelper().deleteSongFor(songName);
           playlist.removeAt(index);
         } else {
-          deleteSongFromPlaylist(playlist,index,songName);
+          deleteSongFromPlaylist(playlist,song);
         }
         playlistSwitchState(ref);
       },

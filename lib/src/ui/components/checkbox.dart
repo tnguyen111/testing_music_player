@@ -6,23 +6,23 @@ import '../../services/services.dart';
 import '../utils/utils.dart';
 
 Widget listCheckbox(
-    ConcatenatingAudioSource playlist, AudioSource song, WidgetRef ref) {
-  bool value = playlist.children.contains(song);
+    Playlist playlist, AudioSource song, WidgetRef ref) {
+  String songName = (song as UriAudioSource).tag.songName;
+  bool value = playlist.songNameList.contains(songName);
   return Checkbox(
     value: value,
     overlayColor: WidgetStatePropertyAll(currentThemeSmallText(ref).color),
     activeColor: currentThemeSmallText(ref).color,
     onChanged: (value) {
       if (value!) {
-        addSongToPlaylist(playlist, song);
+        addSongToPlaylist(playlist.songList, song);
+        playlistSwitchState(ref);
       } else {
-        int index = playlist.children.indexOf(song);
-        String songName = (song as UriAudioSource).tag.songName;
-        deleteSongFromPlaylist(playlist, index, songName);
+        deleteSongFromPlaylist(playlist.songList, song);
+        playlistSwitchState(ref);
       }
-      print(playlist.children);
+      print(playlist.songList);
       print(songArray.children);
-      playlistSwitchState(ref);
     },
   );
 }

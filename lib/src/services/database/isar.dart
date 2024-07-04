@@ -97,15 +97,12 @@ class IsarHelper {
   }
 
   Future<bool> setSongList() async {
-    print("hi");
     final songList = await getSongList();
-    print("what");
     for (int i = 0; i < songList.length; i++) {
       AudioSource newSong =
           AudioSource.uri(Uri.parse(songList[i].songPath), tag: songList[i]);
       songArray.add(newSong);
     }
-    print("hello");
     return true;
   }
 

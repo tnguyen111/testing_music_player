@@ -15,6 +15,7 @@ showDataAlert(
   String songName = '';
   String authorName = '';
   String fileName = '';
+  String error = '';
   File songFile = File('');
 
   showDialog(
@@ -38,8 +39,12 @@ showDataAlert(
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
-                    decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
+                    onTap: () { error = '';
+                    playlistSwitchState(ref);
+                    },
+                    decoration: InputDecoration(
+                        errorText: (error != '') ? error: null,
+                        border: const OutlineInputBorder(),
                         hintText: 'Enter Song Name',
                         labelText: 'New Song Name'),
                     onChanged: (value) {
@@ -111,6 +116,11 @@ showDataAlert(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     onPressed: () async {
+                      if(await IsarHelper().songExisted(songName)){
+                        error = "Name's Already Taken!";
+                        playlistSwitchState(ref);
+                        return;
+                      }
                       if (songFile.path.isNotEmpty &&
                           songName != '' &&
                           fileName != "Invalid File") {

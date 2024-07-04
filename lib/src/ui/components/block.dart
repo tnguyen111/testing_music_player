@@ -19,7 +19,7 @@ Container headerBlock(String header, WidgetRef ref) => Container(
             ),
           ),
           const SizedBox(width: 125),
-          sortIcon(ref, header),
+          /*sortIcon(ref, header),*/
           (header == 'Your Playlist')
               ? settingListIcon(ref)
               : addIcon(ref, songArray),
@@ -200,10 +200,10 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
               const Expanded(
                 child: SizedBox(),
               ),
-              sortSongIcon(
+              /*sortSongIcon(
                 ref,
                 playlist.songList,
-              ),
+              ),*/
               addSongMenuIcon(
                 ref,
                 playlist,
