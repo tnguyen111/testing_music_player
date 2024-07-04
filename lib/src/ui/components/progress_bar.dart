@@ -27,12 +27,10 @@ class BarWavePainter extends CustomPainter {
     for (int i = 0; i < 45; i++) {
       final barHeight = amplitudes[i] + 10.0; // Normalize amplitude to fit
       final left = i * barWidth;
-      final rectCool = Rect.fromLTWH(left, 300, 5,barHeight-120);
       final rectSpacing =  Rect.fromLTWH(left, 300-barHeight, 5,barHeight);
       final rect = Rect.fromLTWH(left, 300 - barHeight, barWidth, barHeight);
       canvas.drawRect(rect, paint);
       canvas.drawRect(rectSpacing, spacing);
-      canvas.drawRect(rectCool, spacing);
     }
   }
   @override
