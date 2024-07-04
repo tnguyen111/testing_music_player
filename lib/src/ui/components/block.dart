@@ -202,7 +202,7 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
               ),
               /*sortSongIcon(
                 ref,
-                playlist.songList,
+                playlist,
               ),*/
               addSongMenuIcon(
                 ref,

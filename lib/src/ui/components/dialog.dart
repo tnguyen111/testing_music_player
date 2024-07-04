@@ -23,7 +23,7 @@ showDataAlert(
     builder: (_) {
       return AlertDialog(
         content: SizedBox(
-          height: 400,
+          height: 420,
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -39,6 +39,7 @@ showDataAlert(
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
+                    maxLength: 18,
                     onTap: () { error = '';
                     playlistSwitchState(ref);
                     },
@@ -55,6 +56,7 @@ showDataAlert(
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
+                    maxLength: 24,
                     decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'Enter Author Name',
@@ -64,7 +66,6 @@ showDataAlert(
                     },
                   ),
                 ),
-                const SizedBox(height: 20),
                 Container(
                   width: double.infinity,
                   height: 60,
@@ -109,7 +110,6 @@ showDataAlert(
                     (fileName == '') ? '' : '"$fileName" Uploaded',
                   ),
                 ),
-                const SizedBox(),
                 Container(
                   width: double.infinity,
                   height: 60,

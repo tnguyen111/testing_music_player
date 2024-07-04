@@ -10,7 +10,7 @@ AppBar headerBar(WidgetRef ref){
         return menuIcon(context);
       },
     ),
-    actions: [searchIcon(ref)],
+    /*actions: [searchIcon(ref)],*/
   );
 }
 
@@ -21,7 +21,7 @@ AppBar playlistAppBar(WidgetRef ref, String playlistName){
         return backIcon(context);
       },
     ),
-    actions: [searchIcon(ref)],
+    /*actions: [searchIcon(ref)],*/
     title: Text(playlistName, style: currentThemeHeaderText(ref),),
   );
 }
@@ -33,7 +33,7 @@ AppBar songAppBar(WidgetRef ref){
         return backIcon(context);
       },
     ),
-    actions: [searchIcon(ref)],
+    /*actions: [searchIcon(ref)],*/
     title: Text('Now Playing',style: currentThemeHeaderText(ref)),
   );
 }

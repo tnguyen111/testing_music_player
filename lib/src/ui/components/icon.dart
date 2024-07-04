@@ -7,13 +7,17 @@ import 'package:testing_music_player/src/services/state_management/helper_funcs/
 import '../../../main.dart';
 import '../ui.dart';
 
+/*
 IconButton searchIcon(WidgetRef ref) => IconButton(
       icon: const Icon(Icons.search),
       onPressed: () {
-        /*Search things*/
+        */
+/*Search things*//*
+
         modeSwitchState(ref);
       },
     );
+*/
 
 IconButton menuIcon(BuildContext context) => IconButton(
       icon: const Icon(Icons.menu),
@@ -25,31 +29,34 @@ IconButton menuIcon(BuildContext context) => IconButton(
 
 /*IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
       icon: const Icon(Icons.sort),
-      onPressed: () {
-        Sort things
+      onPressed: () async {
+        //Sort things
         if (typeSort == 'Your Playlist') {
-          playlistArray
-              .sort((a, b) => a.playlistName.compareTo(b.playlistName));
+          playlistArray = await IsarHelper().sortPlaylist();
+
         } else {
           songArray.children.sort((a, b) => (a as UriAudioSource)
               .tag
               .songName
               .compareTo((b as UriAudioSource).tag.songName));
+
+          await IsarHelper().sortSongList();
         }
 
         playlistSwitchState(ref);
       },
-    );*/
+    );
 
-/*IconButton sortSongIcon(WidgetRef ref, ConcatenatingAudioSource playlist) =>
+IconButton sortSongIcon(WidgetRef ref, Playlist playlist) =>
     IconButton(
       icon: const Icon(Icons.sort),
       onPressed: () {
-        *//*Sort things*//*
-        playlist.children.sort((a, b) => (a as UriAudioSource)
+        // Sort things
+        playlist.songList.children.sort((a, b) => (a as UriAudioSource)
             .tag
             .songName
             .compareTo((b as UriAudioSource).tag.songName));
+        IsarHelper().savePlaylist(playlist);
         playlistSwitchState(ref);
       },
     );*/

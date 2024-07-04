@@ -12,6 +12,7 @@ class IsarHelper {
     db = openDB();
   }
 
+
   Future<Playlist?> getPlaylistFor(String name) async {
     final isar = await db;
     final playlist =
@@ -72,6 +73,16 @@ class IsarHelper {
     await isar.writeTxn(
         () => isar.songDetails.filter().songNameEqualTo(name).deleteFirst());
   }
+
+/*  Future<List<Playlist>> sortPlaylist() async {
+    final isar = await db;
+    return await isar.playlists.where().sortByPlaylistName().findAll();
+  }
+
+  Future<List<SongDetails>> sortSongList() async {
+    final isar = await db;
+    return await isar.songDetails.where().sortBySongName().findAll();
+  }*/
 
   Future<List<Playlist>> getAllPlaylist() async {
     final isar = await db;
