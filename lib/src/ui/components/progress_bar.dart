@@ -49,6 +49,7 @@ class BarWavePainter extends CustomPainter {
       }
     }
   }
+
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true; // Repaint on every frame for animation
@@ -56,8 +57,6 @@ class BarWavePainter extends CustomPainter {
 }
 
 Widget songWaveForm(WidgetRef ref, bool isNotMiniplayer) {
-
-
   return SizedBox(
       width: (isNotMiniplayer) ? 300: MediaQuery.sizeOf(globalNavigatorKey.currentContext!).width,
       height: 300,

@@ -129,41 +129,37 @@ Container songBlock(
           loadNewSong(ref, playlist, index);
           playlistSwitchState(ref);
         },
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                color: currentThemeHeader(ref),
-              ),
-              height: 65,
-            ),
-            Row(
-              children: [
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text((playlist.children[index] as UriAudioSource)
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+            color: currentThemeHeader(ref),
+          ),
+          padding: const EdgeInsets.only(top: 9, bottom:9),
+          child: Row(
+            children: [
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text((playlist.children[index] as UriAudioSource)
+                          .tag
+                          .songName),
+                      Text(
+                        (playlist.children[index] as UriAudioSource)
                             .tag
-                            .songName),
-                        Text(
-                          (playlist.children[index] as UriAudioSource)
-                              .tag
-                              .songAuthor,
-                          textScaler: const TextScaler.linear(0.6),
-                        ),
-                      ]),
-                ),
-                Text((playlist.children[index] as UriAudioSource)
-                    .tag
-                    .songDurationString),
-                removeIcon(ref, playlist,
-                    (playlist.children[index] as UriAudioSource), index),
-              ],
-            ),
-          ],
+                            .songAuthor,
+                        textScaler: const TextScaler.linear(0.6),
+                      ),
+                    ]),
+              ),
+              Text((playlist.children[index] as UriAudioSource)
+                  .tag
+                  .songDurationString),
+              removeIcon(ref, playlist,
+                  (playlist.children[index] as UriAudioSource), index),
+            ],
+          ),
         ),
       ),
     );
@@ -257,36 +253,32 @@ Widget addSongBlock(ref, playlist, index) => Container(
         onTap: () {
           loadNewSong(ref, songArray, index);
         },
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                color: currentThemeHeader(ref),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+            color: currentThemeHeader(ref),
+          ),
+          padding: const EdgeInsets.only(top: 9, bottom:9),
+          child: Row(
+            children: [
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text((songArray[index] as UriAudioSource).tag.songName),
+                      Text(
+                        (songArray[index] as UriAudioSource).tag.songAuthor,
+                        textScaler: const TextScaler.linear(0.6),
+                      ),
+                    ]),
               ),
-              height: 65,
-            ),
-            Row(
-              children: [
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text((songArray[index] as UriAudioSource).tag.songName),
-                        Text(
-                          (songArray[index] as UriAudioSource).tag.songAuthor,
-                          textScaler: const TextScaler.linear(0.6),
-                        ),
-                      ]),
-                ),
-                Text((songArray[index] as UriAudioSource)
-                    .tag
-                    .songDurationString),
-                listCheckbox(playlist, songArray[index], ref),
-              ],
-            ),
-          ],
+              Text((songArray[index] as UriAudioSource)
+                  .tag
+                  .songDurationString),
+              listCheckbox(playlist, songArray[index], ref),
+            ],
+          ),
         ),
       ),
     );

@@ -63,6 +63,7 @@ dependencies:
   duration: ^3.0.13
   flutter_launcher_icons: ^0.13.1
   miniplayer: ^1.0.1
+  flutter_media_metadata: ^1.0.0+1
 
 dev_dependencies:
   flutter_test:

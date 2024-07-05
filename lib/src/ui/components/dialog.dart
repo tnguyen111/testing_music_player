@@ -8,15 +8,17 @@ import 'package:testing_music_player/src/models/models.dart';
 import 'package:testing_music_player/src/services/services.dart';
 import 'package:mime/mime.dart';
 import '../ui.dart';
+import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 
 showDataAlert(
     BuildContext context, WidgetRef ref, ConcatenatingAudioSource songList) {
   String songName = '';
-  String authorName = '';
+  String? authorName = '';
   String fileName = '';
   String error = '';
   File songFile = File('');
-
+  TextEditingController songNameController = TextEditingController();
+  TextEditingController authorNameController = TextEditingController();
   showDialog(
     context: context,
     builder: (_) {
@@ -38,7 +40,8 @@ showDataAlert(
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
-                    maxLength: 18,
+                    controller: songNameController,
+                    maxLength: 30,
                     onTap: () { error = '';
                     playlistSwitchState(ref);
                     },
@@ -55,7 +58,8 @@ showDataAlert(
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
-                    maxLength: 24,
+                    controller: authorNameController,
+                    maxLength: 30,
                     decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'Enter Author Name',
@@ -93,6 +97,13 @@ showDataAlert(
                         } else {
                           songFile = File(pathInput);
                           fileName = basename(songFile.path);
+                          final metadata = await MetadataRetriever.fromFile(songFile);
+                          String? trackName = metadata.trackName;
+                          String? trackArtistNames = metadata.trackArtistNames?.first;
+                          songName = trackName??songName;
+                          authorName = trackArtistNames??authorName;
+                          songNameController.text = songName;
+                          authorNameController.text = authorName!;
                           playlistSwitchState(ref);
                         }
                       }
@@ -126,7 +137,7 @@ showDataAlert(
                         Duration? newDuration = await getDuration(songFile);
                         SongDetails newSong = SongDetails(
                           songName: songName,
-                          songAuthor: authorName,
+                          songAuthor: authorName!,
                           songDurationData: newDuration.toString(),
                           songPath: songFile.path,
                         );
