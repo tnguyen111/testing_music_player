@@ -68,7 +68,7 @@ Widget changePlaylistForm(
                           playlistArray.add(playlist);
                         } else {
                           controller.value =
-                              TextEditingValue(text: "Name's Taken. Choose a different name!");
+                              const TextEditingValue(text: "Name's Taken. Choose a different name!");
                           return;
                         }
                       }
@@ -99,7 +99,7 @@ Widget changePlaylistForm(
                     playlistArray.add(playlist);
                   } else {
                     controller.value =
-                        TextEditingValue(text: "Name's Taken. Choose a different name!");
+                        const TextEditingValue(text: "Name's Taken. Choose a different name!");
                     return;
                   }
                 }

@@ -4,15 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import '../../../main.dart';
 import '../../models/models.dart';
+import '../../services/services.dart';
 import '../screens/screens.dart';
 
-void loadNewSong(WidgetRef ref, ConcatenatingAudioSource playlist, int i) async {
+void loadNewSong(WidgetRef ref, ConcatenatingAudioSource playlist, int i, ) async {
   Navigator.push(
       globalNavigatorKey.currentContext!,
       MaterialPageRoute(
         builder: (context) => songPlayerScreen(ref, playlist, i),
       ));
+
+  if(player.sequenceState?.currentSource != playlist.children[i]) {
     await player.seek(index: i, Duration.zero);
+  }
+  playlistSwitchState(ref);
     print('new song');
 }
 
@@ -32,13 +37,16 @@ Future<Duration?> getDuration(File songFile) async{
 }
 
 void skipSong(
-    WidgetRef ref, ConcatenatingAudioSource playlist, int i) async {
+    WidgetRef ref, ConcatenatingAudioSource playlist, int i, bool isNotMiniplayer) async {
   await player.seek(index: i, Duration.zero);
-  Navigator.pop(globalNavigatorKey.currentContext!);
-  Navigator.push(
-      globalNavigatorKey.currentContext!,
-      MaterialPageRoute(
-        builder: (context) => songPlayerScreen(ref, playlist, i),
-      ));
+  if(isNotMiniplayer) {
+    Navigator.pop(globalNavigatorKey.currentContext!);
+    Navigator.push(
+        globalNavigatorKey.currentContext!,
+        MaterialPageRoute(
+          builder: (context) => songPlayerScreen(ref, playlist, i),
+        ));
+  }
+  playlistSwitchState(ref);
   print('new song');
 }

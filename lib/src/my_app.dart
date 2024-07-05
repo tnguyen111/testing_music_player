@@ -1,10 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:miniplayer/miniplayer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:testing_music_player/src/services/state_management/helper_funcs/helper_funcs.dart';
 import '../main.dart';
 import 'ui/ui.dart';
 import 'services/services.dart';
@@ -14,15 +13,15 @@ bool started = false;
 Future micPerAsk() async {
   print('In Microphone permission method');
   var status = await Permission.microphone.status;
-  if(status.isDenied){
+  if (status.isDenied) {
     await Permission.microphone.request();
     status = await Permission.microphone.status;
-  } else if(status.isPermanentlyDenied) {
+  } else if (status.isPermanentlyDenied) {
     openAppSettings();
     status = await Permission.microphone.status;
   }
 
-  if(status.isPermanentlyDenied){
+  if (status.isPermanentlyDenied) {
     exit(0);
   }
 }
@@ -35,7 +34,7 @@ class MyApp extends ConsumerWidget {
     bool modeState = modeWatchState(ref);
     playlistWatchState(ref);
     int screenState = screenWatchState(ref);
-    if(started == false) {
+    if (started == false) {
       IsarHelper().setPlaylistList(ref);
       micPerAsk();
       started = true;
@@ -53,9 +52,9 @@ class MyApp extends ConsumerWidget {
         ],
       ),
       color: Colors.white,
-      home: (screenState == 0)
-          ? mainScreen(ref)
-          : songScreen(ref),
+      home: Stack(children: [
+        (screenState == 0) ? mainScreen(ref) : songScreen(ref),
+      ]),
     );
   }
 }

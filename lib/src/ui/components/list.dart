@@ -34,7 +34,7 @@ Widget songList(WidgetRef ref,ConcatenatingAudioSource songList) {
         controller: scrollController,
         itemBuilder: (context, index) {
           if(songList.children.isNotEmpty) {
-            return songBlock(ref, songList, index);
+            return songBlock(ref, songList , index);
           }
           return Container();
         }),

@@ -61,7 +61,8 @@ dependencies:
   mime: ^1.0.5
   permission_handler: ^11.3.1
   duration: ^3.0.13
-  flutter_launcher_icons: "^0.13.1"
+  flutter_launcher_icons: ^0.13.1
+  miniplayer: ^1.0.1
 
 dev_dependencies:
   flutter_test:

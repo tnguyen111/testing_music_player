@@ -33,7 +33,6 @@ Drawer sideBar(WidgetRef ref) {
           onTap: () {
             // Update the state of the app.
             // ...
-            loadNewPlaylist(songArray);
             screenSetState(ref, 1);
             Navigator.pop(globalNavigatorKey.currentContext!);
           },

@@ -38,7 +38,6 @@ Container playlistBlock(WidgetRef ref, Playlist playlist) => Container(
             MaterialPageRoute(
                 builder: (context) => playlistScreen(ref, playlist)),
           );
-          loadNewPlaylist(playlist.songList);
         },
         child: Stack(
           children: [
@@ -124,6 +123,9 @@ Container songBlock(
           left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
       child: GestureDetector(
         onTap: () {
+          if(player.audioSource != playlist){
+            loadNewPlaylist(playlist);
+          }
           loadNewSong(ref, playlist, index);
         },
         child: Stack(
@@ -215,16 +217,22 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
     );
 
 Widget songIconBlock(
-    WidgetRef ref, ConcatenatingAudioSource playlist, int index) {
+    WidgetRef ref, ConcatenatingAudioSource playlist, int index, bool isNotMiniplayer) {
+  double scaling = 2;
+  if(!isNotMiniplayer){
+    scaling = 1;
+  }
   songWatchState(ref);
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-    shuffleIcon(ref),
-    skipSongIcon(ref, false, playlist, index),
-    const SizedBox(width: 18),
-    Transform.scale(scale: 2, child: playIcon(ref)),
-    const SizedBox(width: 18),
-    skipSongIcon(ref, true, playlist, index),
-    loopIcon(ref),
+    (isNotMiniplayer) ?
+    shuffleIcon(ref): Container(),
+    skipSongIcon(ref, false, playlist, index, isNotMiniplayer),
+    SizedBox(width: 9*scaling),
+    Transform.scale(scale: scaling, child: playIcon(ref)),
+    SizedBox(width: 9*scaling),
+    skipSongIcon(ref, true, playlist, index, isNotMiniplayer),
+    (isNotMiniplayer) ?
+    loopIcon(ref): Container(),
   ]);
 }
 

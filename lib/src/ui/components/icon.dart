@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:testing_music_player/src/models/models.dart';
 import 'package:testing_music_player/src/services/services.dart';
-import 'package:testing_music_player/src/services/state_management/helper_funcs/helper_funcs.dart';
 import '../../../main.dart';
 import '../ui.dart';
 
@@ -218,7 +217,7 @@ void handleSettingSongClick(String value, WidgetRef ref, Playlist playlist) {
 }
 
 IconButton playIcon(WidgetRef ref) => IconButton(
-      icon: (player.playing)
+      icon: (!player.playing)
           ? const Icon(Icons.play_arrow)
           : const Icon(Icons.pause),
       onPressed: () {
@@ -233,7 +232,7 @@ IconButton playIcon(WidgetRef ref) => IconButton(
     );
 
 IconButton skipSongIcon(WidgetRef ref, bool skipNext,
-        ConcatenatingAudioSource playlist, int index) =>
+        ConcatenatingAudioSource playlist, int index,bool isNotMiniplayer) =>
     IconButton(
       icon: (skipNext)
           ? const Icon(Icons.skip_next)
@@ -262,7 +261,7 @@ IconButton skipSongIcon(WidgetRef ref, bool skipNext,
         }
 
         if (changed) {
-          skipSong(ref, playlist, index);
+          skipSong(ref, playlist, index, isNotMiniplayer);
           songSetState(ref, 2);
         }
       },

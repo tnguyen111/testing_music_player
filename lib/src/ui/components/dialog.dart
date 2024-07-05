@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart';
 import 'package:file_picker/file_picker.dart';
