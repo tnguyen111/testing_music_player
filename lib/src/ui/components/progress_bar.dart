@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import '../../../main.dart';
@@ -80,8 +79,9 @@ Widget songProgressBar(
         builder: (context, snapshot) {
           final durationState = snapshot.data;
           currentGlobalPlaylist = currentPlaylist;
-          if (durationState == player.duration && player.nextIndex != null) {
-              skipSong(ref, currentPlaylist, player.nextIndex!, isNotMiniplayer);
+          if (durationState == player.duration && player.nextIndex != null && player.processingState == ProcessingState.ready) {
+            print('song end');
+            skipSong(ref, currentPlaylist, player.nextIndex!, isNotMiniplayer);
           }
 
           return ProgressBar(

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:miniplayer/miniplayer.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import '../main.dart';
@@ -31,6 +31,10 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     bool modeState = modeWatchState(ref);
     playlistWatchState(ref);
     int screenState = screenWatchState(ref);
@@ -40,6 +44,7 @@ class MyApp extends ConsumerWidget {
       started = true;
     }
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       navigatorKey: globalNavigatorKey,
       theme: (modeState) ? lightTheme() : darkTheme(),
       builder: (context, child) => ResponsiveBreakpoints.builder(

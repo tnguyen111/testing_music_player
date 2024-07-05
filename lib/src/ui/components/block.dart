@@ -124,9 +124,10 @@ Container songBlock(
       child: GestureDetector(
         onTap: () {
           if(player.audioSource != playlist){
-            loadNewPlaylist(playlist);
+            loadNewPlaylist(playlist, index);
           }
           loadNewSong(ref, playlist, index);
+          playlistSwitchState(ref);
         },
         child: Stack(
           children: [
@@ -197,7 +198,7 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
           ),
           Row(
             children: [
-              playIcon(ref),
+              playIcon(ref, playlist.songList),
               shuffleIcon(ref),
               const Expanded(
                 child: SizedBox(),
@@ -228,7 +229,7 @@ Widget songIconBlock(
     shuffleIcon(ref): Container(),
     skipSongIcon(ref, false, playlist, index, isNotMiniplayer),
     SizedBox(width: 9*scaling),
-    Transform.scale(scale: scaling, child: playIcon(ref)),
+    Transform.scale(scale: scaling, child: playIcon(ref,playlist)),
     SizedBox(width: 9*scaling),
     skipSongIcon(ref, true, playlist, index, isNotMiniplayer),
     (isNotMiniplayer) ?

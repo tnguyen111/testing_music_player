@@ -116,14 +116,14 @@ IconButton removeIcon(WidgetRef ref, ConcatenatingAudioSource playlist,
         /*Remove things*/
         String songName = (song as UriAudioSource).tag.songName;
         if (playlist == songArray) {
+          print('delete in Array');
           for (int i = 0; i < playlistArray.length; i++) {
-            if (playlistArray[i].songList.children.contains(song)) {
+            if (playlistArray[i].songNameList.contains(songName)) {
+              print('deleted');
               playlistArray[i]
                   .songNameList
                   .remove(songName);
-              playlistArray[i]
-                  .songList
-                  .removeAt(playlistArray[i].songList.children.indexOf(song));
+              deleteSongFromPlaylist(playlistArray[i].songList,song);
               IsarHelper().savePlaylist(playlistArray[i]);
             }
           }
@@ -216,7 +216,7 @@ void handleSettingSongClick(String value, WidgetRef ref, Playlist playlist) {
   }
 }
 
-IconButton playIcon(WidgetRef ref) => IconButton(
+IconButton playIcon(WidgetRef ref, ConcatenatingAudioSource playlist) => IconButton(
       icon: (!player.playing)
           ? const Icon(Icons.play_arrow)
           : const Icon(Icons.pause),
@@ -225,6 +225,10 @@ IconButton playIcon(WidgetRef ref) => IconButton(
         if (player.playing) {
           pauseSong(ref);
         } else {
+          if(player.audioSource == null){
+            loadNewPlaylist(playlist, 0);
+            currentGlobalPlaylist = playlist;
+          }
           startSong(ref);
         }
         playlistSwitchState(ref);

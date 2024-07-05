@@ -18,14 +18,14 @@ void loadNewSong(WidgetRef ref, ConcatenatingAudioSource playlist, int i, ) asyn
     await player.seek(index: i, Duration.zero);
   }
   playlistSwitchState(ref);
-    print('new song');
+    print('new song loaded');
 }
 
-void loadNewPlaylist(ConcatenatingAudioSource playlist) async{
+void loadNewPlaylist(ConcatenatingAudioSource playlist, int index) async{
   player.startVisualizer();
 
     print('new playlist: ${playlist.length}');
-    await player.setAudioSource(playlist);
+    await player.setAudioSource(playlist,initialIndex: index);
 }
 
 Future<Duration?> getDuration(File songFile) async{
@@ -38,8 +38,10 @@ Future<Duration?> getDuration(File songFile) async{
 
 void skipSong(
     WidgetRef ref, ConcatenatingAudioSource playlist, int i, bool isNotMiniplayer) async {
+  print('skip');
   await player.seek(index: i, Duration.zero);
   if(isNotMiniplayer) {
+    print('pushed');
     Navigator.pop(globalNavigatorKey.currentContext!);
     Navigator.push(
         globalNavigatorKey.currentContext!,

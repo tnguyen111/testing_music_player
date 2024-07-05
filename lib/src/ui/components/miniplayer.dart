@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import '../../models/audio.dart';
 import '../ui.dart';
 
-Widget miniplayer(WidgetRef ref) {
+Widget miniplayer(WidgetRef ref, bool inPlaylist) {
   return (player.sequenceState?.currentSource != null &&
           currentGlobalPlaylist.children.isNotEmpty)
       ? Miniplayer(
           minHeight: 100,
-          maxHeight: 370,
+          maxHeight: (inPlaylist) ? 100: 370,
           builder: (height, percentage) {
             return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -29,7 +29,7 @@ Widget miniplayer(WidgetRef ref) {
                           child: songProgressBar(
                               ref, currentGlobalPlaylist, false)),
                     ],
-                  ),(height > 100) ? Container(height: height - 100, child: songWaveForm(ref, false)): Container(),
+                  ),(height > 100) ? SizedBox(height: height - 100, child: songWaveForm(ref, false)): Container(),
                 ]);
           },
         )
