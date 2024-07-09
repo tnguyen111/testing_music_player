@@ -1,4 +1,5 @@
-
+// Prevent MOST emojis in textField
+const String noEmoji = r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])';
 // App Padding Configurations
 const double kXXXXLPadding = 48.0;
 const double kXXXLPadding = 40.0;

@@ -234,6 +234,7 @@ Widget songIconBlock(
 }
 
 Widget songNameBlock(WidgetRef ref, UriAudioSource song) {
+
   return Column(
     children: [
       const SizedBox(height: 18),

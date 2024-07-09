@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path/path.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:testing_music_player/src/models/models.dart';
 import 'package:testing_music_player/src/services/services.dart';
 import 'package:mime/mime.dart';
+import '../../config/config.dart';
 import '../ui.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 
@@ -40,13 +42,19 @@ showDataAlert(
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.deny(
+                        RegExp(noEmoji),
+                      ),
+                    ],
                     controller: songNameController,
                     maxLength: 30,
-                    onTap: () { error = '';
-                    playlistSwitchState(ref);
+                    onTap: () {
+                      error = '';
+                      playlistSwitchState(ref);
                     },
                     decoration: InputDecoration(
-                        errorText: (error != '') ? error: null,
+                        errorText: (error != '') ? error : null,
                         border: const OutlineInputBorder(),
                         hintText: 'Enter Song Name',
                         labelText: 'New Song Name'),
@@ -58,6 +66,11 @@ showDataAlert(
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.deny(
+                        RegExp(noEmoji),
+                      ),
+                    ],
                     controller: authorNameController,
                     maxLength: 30,
                     decoration: const InputDecoration(
@@ -75,37 +88,53 @@ showDataAlert(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     onPressed: () async {
-                      FilePickerResult? result =
-                          await FilePicker.platform.pickFiles(
-                        type: FileType.custom,
-                        allowedExtensions: [
-                          'mp3',
-                          'wav',
-                          'pcm',
-                          'aiff',
-                          'aac',
-                          'wma',
-                          'alac',
-                          'flac',
-                          'ogc'
-                        ],
-                      );
-                      if (result != null) {
-                        String pathInput = result.files.single.path!;
-                        if (!lookupMimeType(pathInput)!.startsWith("audio")) {
-                          fileName = "Invalid File";
-                        } else {
+                      try {
+                        FilePickerResult? result =
+                            await FilePicker.platform.pickFiles(
+                          type: FileType.audio,
+                        );
+                        if (result != null) {
+                          String pathInput = result.files.single.path!;
+                          print(pathInput);
+                          if (!pathInput.endsWith('mp3') &&
+                              !pathInput.endsWith("aac") &&
+                              !pathInput.endsWith("flac") &&
+                              !pathInput.endsWith("wav") &&
+                              !pathInput.endsWith("oog") &&
+                              !pathInput.endsWith("opus") &&
+                              !pathInput.endsWith("amr") &&
+                              !pathInput.endsWith("mp4")) {
+                            fileName = "Invalid File";
+                            showDialog(
+                                context: context,
+                                builder: (_) {
+                                  return const AlertDialog(
+                                    content: SizedBox(
+                                      height: 200,
+                                      child: Text(
+                                          textAlign: TextAlign.center,
+                                          'Wrong File Format. Only These File Formats Can Be Used: aac, amr, flac, mp3, mp4, m4a, wav, oog, opus'),
+                                    ),
+                                  );
+                                });
+                            playlistSwitchState(ref);
+                            return;
+                          }
                           songFile = File(pathInput);
                           fileName = basename(songFile.path);
-                          final metadata = await MetadataRetriever.fromFile(songFile);
+                          final metadata =
+                              await MetadataRetriever.fromFile(songFile);
                           String? trackName = metadata.trackName;
-                          String? trackArtistNames = metadata.trackArtistNames?.first;
-                          songName = trackName??songName;
-                          authorName = trackArtistNames??authorName;
+                          String? trackArtistNames =
+                              metadata.trackArtistNames?.first;
+                          songName = trackName ?? songName;
+                          authorName = trackArtistNames ?? authorName;
                           songNameController.text = songName;
                           authorNameController.text = authorName!;
                           playlistSwitchState(ref);
                         }
+                      } catch (e) {
+                        print(e);
                       }
                     },
                     child: const Text(
@@ -126,7 +155,7 @@ showDataAlert(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     onPressed: () async {
-                      if(await IsarHelper().songExisted(songName)){
+                      if (await IsarHelper().songExisted(songName)) {
                         error = "Name's Already Taken!";
                         playlistSwitchState(ref);
                         return;
@@ -147,7 +176,7 @@ showDataAlert(
                           tag: newSong,
                         );
                         if (songList != songArray) {
-                          addSongToPlaylist(songList,temp);
+                          addSongToPlaylist(songList, temp);
                         }
                         songArray.add(
                           temp,

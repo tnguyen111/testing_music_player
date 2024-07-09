@@ -17,7 +17,7 @@ Widget miniplayer(WidgetRef ref, bool inPlaylist) {
                 children: [
                   Text((player.sequenceState!.currentSource as UriAudioSource)
                       .tag
-                      .songName),
+                      .songName,textAlign: TextAlign.center,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [

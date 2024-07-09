@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:testing_music_player/src/models/audio.dart';
 import '../main.dart';
 import 'ui/ui.dart';
 import 'services/services.dart';
@@ -32,34 +33,34 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
     ]);
     bool modeState = modeWatchState(ref);
     playlistWatchState(ref);
     int screenState = screenWatchState(ref);
     if (started == false) {
-      IsarHelper().setPlaylistList(ref);
-      micPerAsk();
-      started = true;
+    IsarHelper().setPlaylistList(ref);
+    micPerAsk();
+    started = true;
     }
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      navigatorKey: globalNavigatorKey,
-      theme: (modeState) ? lightTheme() : darkTheme(),
-      builder: (context, child) => ResponsiveBreakpoints.builder(
-        child: child!,
-        breakpoints: [
-          const Breakpoint(start: 0, end: 450, name: MOBILE),
-          const Breakpoint(start: 451, end: 800, name: TABLET),
-          const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-          const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
-        ],
-      ),
-      color: Colors.white,
-      home: Stack(children: [
-        (screenState == 0) ? mainScreen(ref) : songScreen(ref),
-      ]),
+    debugShowCheckedModeBanner: false,
+    navigatorKey: globalNavigatorKey,
+    theme: (modeState) ? lightTheme() : darkTheme(),
+    builder: (context, child) => ResponsiveBreakpoints.builder(
+    child: child!,
+    breakpoints: [
+    const Breakpoint(start: 0, end: 450, name: MOBILE),
+    const Breakpoint(start: 451, end: 800, name: TABLET),
+    const Breakpoint(start: 801, end: 1920, name: DESKTOP),
+    const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
+    ],
+    ),
+    color: Colors.white,
+    home: Stack(children: [
+    (screenState == 0) ? mainScreen(ref) : songScreen(ref),
+    ]),
     );
+    }
   }
-}
