@@ -7,7 +7,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:testing_music_player/src/models/models.dart';
 import 'package:testing_music_player/src/services/services.dart';
-import 'package:mime/mime.dart';
 import '../../config/config.dart';
 import '../ui.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';

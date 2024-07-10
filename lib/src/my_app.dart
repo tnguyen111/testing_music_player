@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-import 'package:testing_music_player/src/models/audio.dart';
 import '../main.dart';
 import 'ui/ui.dart';
 import 'services/services.dart';
