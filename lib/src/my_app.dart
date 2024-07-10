@@ -43,6 +43,7 @@ class MyApp extends ConsumerWidget {
     micPerAsk();
     started = true;
     }
+
     return MaterialApp(
     debugShowCheckedModeBanner: false,
     navigatorKey: globalNavigatorKey,

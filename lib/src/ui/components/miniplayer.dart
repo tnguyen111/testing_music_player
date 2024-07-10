@@ -17,7 +17,7 @@ Widget miniplayer(WidgetRef ref, bool inPlaylist) {
                 children: [
                   Text((player.sequenceState!.currentSource as UriAudioSource)
                       .tag
-                      .songName,textAlign: TextAlign.center,),
+                      .title,textAlign: TextAlign.center,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -29,7 +29,7 @@ Widget miniplayer(WidgetRef ref, bool inPlaylist) {
                           child: songProgressBar(
                               ref, currentGlobalPlaylist, false)),
                     ],
-                  ),(height > 100) ? SizedBox(height: height - 100, child: songWaveForm(ref, false)): Container(),
+                  ), (height > 100) ? SizedBox(height: height - 100, child: songWaveForm(ref, false)): Container(),
                 ]);
           },
         )

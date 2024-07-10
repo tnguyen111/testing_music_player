@@ -111,7 +111,7 @@ class IsarHelper {
     final songList = await getSongList();
     for (int i = 0; i < songList.length; i++) {
       AudioSource newSong =
-          AudioSource.uri(Uri.parse(songList[i].songPath), tag: songList[i]);
+          AudioSource.uri(Uri.parse(songList[i].songPath), tag: songList[i].toMediaItem());
       songArray.add(newSong);
     }
     return true;

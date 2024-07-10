@@ -5,7 +5,7 @@ import '../../services/services.dart';
 
 void pauseSong(WidgetRef ref){
   player.pause();
-  //player.stopVisualizer();
+  player.stopVisualizer();
   songSetState(ref, 1);
 }
 

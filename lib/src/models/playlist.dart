@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:testing_music_player/src/services/services.dart';
 
 import '../services/database/database.dart';
@@ -39,17 +40,17 @@ class Playlist {
 
   void getSongFromList() async{
     for(int i = 0; i < songNameList.length; i++){
-      print("yo");
       var existingSong = await IsarHelper().getSongFor(songNameList[i]);
       setAudioSource(existingSong!);
     }
   }
 
   void setAudioSource(SongDetails song) {
+    MediaItem newMediaItem = song.toMediaItem();
     songList.add(
       AudioSource.uri(
         Uri.parse(song.songPath),
-        tag: song,
+        tag: newMediaItem,
       ),
     );
   }

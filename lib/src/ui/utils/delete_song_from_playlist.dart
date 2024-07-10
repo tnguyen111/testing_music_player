@@ -5,7 +5,7 @@ import '../../services/database/database.dart';
 
 void deleteSongFromPlaylist(
     ConcatenatingAudioSource playlist, AudioSource song) {
-  String songName = (song as UriAudioSource).tag.songName;
+  String songName = (song as UriAudioSource).tag.title;
   for (int i = 0; i < playlistArray.length; i++) {
     if (playlistArray[i].songList == playlist) {
       print("huh");
@@ -13,7 +13,7 @@ void deleteSongFromPlaylist(
         playlistArray[i].songList.children.indexOf(
               playlistArray[i].songList.children.firstWhere(
                 (element) {
-                  return (element as UriAudioSource).tag.songName == songName;
+                  return (element as UriAudioSource).tag.title == songName;
                 },
               ),
             ),

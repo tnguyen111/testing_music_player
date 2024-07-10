@@ -43,10 +43,15 @@ dependencies:
   just_audio:
     git:
       #      url: https://github.com/Eittipat/just_audio.git
-      url: https://github.com/ryanheise/just_audio.git
+      url: https://github.com/tnguyen111/just_audio
       ref: visualizer
       path: just_audio
-#  just_audio_background: ^0.0.1-beta.12
+  just_audio_background:
+    git:
+      #      url: https://github.com/tnguyen111/just_audio
+      url: https://github.com/tnguyen111/just_audio
+      ref: visualizer
+      path: just_audio_background
   file_picker: ^8.0.5
   google_fonts: ^6.2.1
   path: ^1.9.0
@@ -87,7 +92,7 @@ dependency_overrides:
   just_audio_platform_interface:
     git:
       #      url: https://github.com/Eittipat/just_audio.git
-      url: https://github.com/ryanheise/just_audio.git
+      url: https://github.com/tnguyen111/just_audio
       ref: visualizer
       path: just_audio_platform_interface
 # For information on the generic Dart part of this file, see the

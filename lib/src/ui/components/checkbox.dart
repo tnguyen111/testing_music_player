@@ -7,7 +7,7 @@ import '../utils/utils.dart';
 
 Widget listCheckbox(
     Playlist playlist, AudioSource song, WidgetRef ref) {
-  String songName = (song as UriAudioSource).tag.songName;
+  String songName = (song as UriAudioSource).tag.title;
   bool value = playlist.songNameList.contains(songName);
   return Checkbox(
     value: value,

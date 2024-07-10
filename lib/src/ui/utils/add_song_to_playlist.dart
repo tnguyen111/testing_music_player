@@ -10,7 +10,7 @@ void addSongToPlaylist(ConcatenatingAudioSource songList, AudioSource song){
   for (int i = 0; i <= playlistArray.length; i++) {
     if (playlistArray[i].songList == songList) {
       songList.add(song);
-      playlistArray[i].songNameList.add((song as UriAudioSource).tag.songName);
+      playlistArray[i].songNameList.add((song as UriAudioSource).tag.title);
       IsarHelper().savePlaylist(playlistArray[i]);
       break;
     }

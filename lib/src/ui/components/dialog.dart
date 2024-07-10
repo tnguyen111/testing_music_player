@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path/path.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -170,9 +171,12 @@ showDataAlert(
                           songPath: songFile.path,
                         );
                         IsarHelper().saveSong(newSong);
+                        print('parse');
+                        MediaItem newMediaItem = newSong.toMediaItem();
+                        print('parse done');
                         AudioSource temp = AudioSource.uri(
                           Uri.parse(newSong.songPath),
-                          tag: newSong,
+                          tag: newMediaItem,
                         );
                         if (songList != songArray) {
                           addSongToPlaylist(songList, temp);
@@ -180,6 +184,7 @@ showDataAlert(
                         songArray.add(
                           temp,
                         );
+                        print('done');
                         Navigator.of(context).pop();
                         playlistSwitchState(ref);
                       }

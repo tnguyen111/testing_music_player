@@ -144,18 +144,18 @@ Container songBlock(
                     children: [
                       Text((playlist.children[index] as UriAudioSource)
                           .tag
-                          .songName),
+                          .title),
                       Text(
                         (playlist.children[index] as UriAudioSource)
                             .tag
-                            .songAuthor,
+                            .artist,
                         textScaler: const TextScaler.linear(0.6),
                       ),
                     ]),
               ),
               Text((playlist.children[index] as UriAudioSource)
                   .tag
-                  .songDurationString),
+                  .displayDescription),
               removeIcon(ref, playlist,
                   (playlist.children[index] as UriAudioSource), index),
             ],
@@ -233,16 +233,17 @@ Widget songIconBlock(
   ]);
 }
 
-Widget songNameBlock(WidgetRef ref, UriAudioSource song) {
-
+Widget songNameBlock(WidgetRef ref) {
+  String songName = player.sequenceState?.currentSource?.tag.title;
+  String authorName = player.sequenceState?.currentSource?.tag.artist;
   return Column(
     children: [
       const SizedBox(height: 18),
       Text(
-        song.tag.songName,
+      songName,
         style: currentThemeHeaderText(ref),
       ),
-      Text(song.tag.songAuthor),
+      Text(authorName),
     ],
   );
 }
@@ -267,16 +268,16 @@ Widget addSongBlock(ref, playlist, index) => Container(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text((songArray[index] as UriAudioSource).tag.songName),
+                      Text((songArray[index] as UriAudioSource).tag.title),
                       Text(
-                        (songArray[index] as UriAudioSource).tag.songAuthor,
+                        (songArray[index] as UriAudioSource).tag.artist,
                         textScaler: const TextScaler.linear(0.6),
                       ),
                     ]),
               ),
               Text((songArray[index] as UriAudioSource)
                   .tag
-                  .songDurationString),
+                  .displayDescription),
               listCheckbox(playlist, songArray[index], ref),
             ],
           ),

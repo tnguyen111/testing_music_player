@@ -76,6 +76,7 @@ Widget songProgressBar(
     child: StreamBuilder<Duration?>(
         stream: player.positionStream,
         builder: (context, snapshot) {
+
           final durationState = snapshot.data;
           currentGlobalPlaylist = currentPlaylist;
           if (durationState == player.duration && player.nextIndex != null && player.processingState == ProcessingState.ready) {

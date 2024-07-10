@@ -114,7 +114,7 @@ IconButton removeIcon(WidgetRef ref, ConcatenatingAudioSource playlist,
       icon: const Icon(Icons.close),
       onPressed: () {
         /*Remove things*/
-        String songName = (song as UriAudioSource).tag.songName;
+        String songName = (song as UriAudioSource).tag.title;
         if (playlist == songArray) {
           print('delete in Array');
           for (int i = 0; i < playlistArray.length; i++) {
