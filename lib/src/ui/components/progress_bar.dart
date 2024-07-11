@@ -79,7 +79,7 @@ Widget songProgressBar(
 
           final durationState = snapshot.data;
           currentGlobalPlaylist = currentPlaylist;
-          if (durationState == player.duration && player.nextIndex != null && player.processingState == ProcessingState.ready) {
+          if (durationState == player.duration && player.duration != Duration.zero && player.nextIndex != null && player.playing) {
             print('song end');
             skipSong(ref, currentPlaylist, player.nextIndex!, isNotMiniplayer);
           }

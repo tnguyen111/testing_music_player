@@ -7,7 +7,6 @@ import 'package:testing_music_player/src/services/services.dart';
 import '../../../main.dart';
 import '../../models/models.dart';
 
-
 Container headerBlock(String header, WidgetRef ref) => Container(
       margin: const EdgeInsets.only(
           left: kDefaultPadding, top: kSmallPadding, bottom: kSmallPadding),
@@ -19,7 +18,7 @@ Container headerBlock(String header, WidgetRef ref) => Container(
             ),
           ),
           const SizedBox(width: 125),
-          /*sortIcon(ref, header),*/
+          sortIcon(ref, header),
           (header == 'Your Playlist')
               ? settingListIcon(ref)
               : addIcon(ref, songArray),
@@ -63,8 +62,9 @@ Container playlistBlock(WidgetRef ref, Playlist playlist) => Container(
                     playlist.playlistName_,
                   ),
                 ),
-                (playlistRemoving) ?
-                removePlaylistIcon(ref, playlist):settingSongIcon(ref, playlist),
+                (playlistRemoving)
+                    ? removePlaylistIcon(ref, playlist)
+                    : settingSongIcon(ref, playlist),
               ],
             ),
           ],
@@ -78,7 +78,10 @@ Container playlistAddBlock(WidgetRef ref) => Container(
       child: GestureDetector(
         onTap: () async {
           playlistSwitchState(ref);
-          Playlist playlist = Playlist(playlistName_: '', imagePath_: 'lib/assets/default_image.jpg', songNameList_: []);
+          Playlist playlist = Playlist(
+              playlistName_: '',
+              imagePath_: 'lib/assets/default_image.jpg',
+              songNameList_: []);
           Navigator.push(
             globalNavigatorKey.currentContext!,
             MaterialPageRoute(
@@ -119,11 +122,12 @@ Container playlistAddBlock(WidgetRef ref) => Container(
 Container songBlock(
         WidgetRef ref, ConcatenatingAudioSource playlist, int index) =>
     Container(
+      key: Key('$index'),
       margin: const EdgeInsets.only(
           left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
       child: GestureDetector(
         onTap: () {
-          if(player.audioSource != playlist){
+          if (player.audioSource != playlist) {
             loadNewPlaylist(playlist, index);
           }
           loadNewSong(ref, playlist, index);
@@ -134,7 +138,7 @@ Container songBlock(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             color: currentThemeHeader(ref),
           ),
-          padding: const EdgeInsets.only(top: 9, bottom:9),
+          padding: const EdgeInsets.only(top: 9, bottom: 9),
           child: Row(
             children: [
               const SizedBox(width: 10),
@@ -146,9 +150,7 @@ Container songBlock(
                           .tag
                           .title),
                       Text(
-                        (playlist.children[index] as UriAudioSource)
-                            .tag
-                            .artist,
+                        (playlist.children[index] as UriAudioSource).tag.artist,
                         textScaler: const TextScaler.linear(0.6),
                       ),
                     ]),
@@ -199,10 +201,10 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
               const Expanded(
                 child: SizedBox(),
               ),
-              /*sortSongIcon(
+              sortSongIcon(
                 ref,
                 playlist,
-              ),*/
+              ),
               addSongMenuIcon(
                 ref,
                 playlist,
@@ -213,23 +215,21 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
       ),
     );
 
-Widget songIconBlock(
-    WidgetRef ref, ConcatenatingAudioSource playlist, int index, bool isNotMiniplayer) {
+Widget songIconBlock(WidgetRef ref, ConcatenatingAudioSource playlist,
+    int index, bool isNotMiniplayer) {
   double scaling = 2;
-  if(!isNotMiniplayer){
+  if (!isNotMiniplayer) {
     scaling = 1;
   }
   songWatchState(ref);
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-    (isNotMiniplayer) ?
-    shuffleIcon(ref): Container(),
+    (isNotMiniplayer) ? shuffleIcon(ref) : Container(),
     skipSongIcon(ref, false, playlist, index, isNotMiniplayer),
-    SizedBox(width: 9*scaling),
-    Transform.scale(scale: scaling, child: playIcon(ref,playlist)),
-    SizedBox(width: 9*scaling),
+    SizedBox(width: 9 * scaling),
+    Transform.scale(scale: scaling, child: playIcon(ref, playlist)),
+    SizedBox(width: 9 * scaling),
     skipSongIcon(ref, true, playlist, index, isNotMiniplayer),
-    (isNotMiniplayer) ?
-    loopIcon(ref): Container(),
+    (isNotMiniplayer) ? loopIcon(ref) : Container(),
   ]);
 }
 
@@ -240,7 +240,7 @@ Widget songNameBlock(WidgetRef ref) {
     children: [
       const SizedBox(height: 18),
       Text(
-      songName,
+        songName,
         style: currentThemeHeaderText(ref),
       ),
       Text(authorName),
@@ -260,7 +260,7 @@ Widget addSongBlock(ref, playlist, index) => Container(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             color: currentThemeHeader(ref),
           ),
-          padding: const EdgeInsets.only(top: 9, bottom:9),
+          padding: const EdgeInsets.only(top: 9, bottom: 9),
           child: Row(
             children: [
               const SizedBox(width: 10),
@@ -275,9 +275,7 @@ Widget addSongBlock(ref, playlist, index) => Container(
                       ),
                     ]),
               ),
-              Text((songArray[index] as UriAudioSource)
-                  .tag
-                  .displayDescription),
+              Text((songArray[index] as UriAudioSource).tag.displayDescription),
               listCheckbox(playlist, songArray[index], ref),
             ],
           ),

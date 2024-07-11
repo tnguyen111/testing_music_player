@@ -103,6 +103,7 @@ showDataAlert(
                               !pathInput.endsWith("oog") &&
                               !pathInput.endsWith("opus") &&
                               !pathInput.endsWith("amr") &&
+                              !pathInput.endsWith("m4a") &&
                               !pathInput.endsWith("mp4")) {
                             fileName = "Invalid File";
                             showDialog(
@@ -178,12 +179,7 @@ showDataAlert(
                           Uri.parse(newSong.songPath),
                           tag: newMediaItem,
                         );
-                        if (songList != songArray) {
-                          addSongToPlaylist(songList, temp);
-                        }
-                        songArray.add(
-                          temp,
-                        );
+                        addSongToPlaylist(songList, temp);
                         print('done');
                         Navigator.of(context).pop();
                         playlistSwitchState(ref);

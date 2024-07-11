@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:testing_music_player/src/services/services.dart';
 import '../../models/models.dart';
@@ -10,8 +11,8 @@ class IsarHelper {
 
   IsarHelper() {
     db = openDB();
-  }
 
+  }
 
   Future<Playlist?> getPlaylistFor(String name) async {
     final isar = await db;
@@ -62,6 +63,19 @@ class IsarHelper {
     isar.writeTxnSync<int>(() => isar.songDetails.putSync(newSong));
   }
 
+  Future<void> savePlaylistList(List<Playlist> playlistList) async{
+    final isar = await db;
+    await isar.writeTxn(() => isar.playlists.clear());
+    playlistArray.clear();
+    isar.writeTxnSync<List<int>>(() => isar.playlists.putAllSync(playlistList));
+  }
+
+  Future<void> saveSongList(List<SongDetails> songList) async{
+    final isar = await db;
+    await isar.writeTxn(() => isar.songDetails.clear());
+    isar.writeTxnSync<List<int>>(() => isar.songDetails.putAllSync(songList));
+  }
+
   void deletePlaylistFor(String name) async {
     final isar = await db;
     await isar.writeTxn(
@@ -74,15 +88,36 @@ class IsarHelper {
         () => isar.songDetails.filter().songNameEqualTo(name).deleteFirst());
   }
 
-/*  Future<List<Playlist>> sortPlaylist() async {
+  Future<void> sortPlaylist(WidgetRef ref) async {
     final isar = await db;
-    return await isar.playlists.where().sortByPlaylistName().findAll();
+    List<Playlist> newPlaylist = await isar.playlists.where().sortByPlaylistName().findAll();
+    for(int i = 0; i < newPlaylist.length; i++){
+      newPlaylist[i].id = i;
+    }
+    await savePlaylistList(newPlaylist);
+    await setPlaylistList(ref);
   }
 
-  Future<List<SongDetails>> sortSongList() async {
+  Future<void> sortSongList(WidgetRef ref) async {
     final isar = await db;
-    return await isar.songDetails.where().sortBySongName().findAll();
-  }*/
+    player.stop();
+    List<SongDetails> newSongList =  await isar.songDetails.where().sortBySongName().findAll();
+    for(int i = 0; i < newSongList.length; i++){
+      newSongList[i].id = i;
+    }
+
+    await saveSongList(newSongList);
+
+    Playlist? temp = await getPlaylistFor('');
+    temp?.songList.clear();
+    temp?.songNameList.clear();
+    savePlaylist(temp!);
+    songArray.clear();
+
+    await setSongList();
+    playlistSwitchState(ref);
+    return;
+  }
 
   Future<List<Playlist>> getAllPlaylist() async {
     final isar = await db;
@@ -95,7 +130,6 @@ class IsarHelper {
   }
 
   Future<bool> setPlaylistList(WidgetRef ref) async {
-    await setSongList();
     playlistArray = await getAllPlaylist();
     for(int i = 0; i < playlistArray.length; i++){
       for(int j = 0; j < playlistArray[i].songNameList.length; j++){
@@ -108,12 +142,22 @@ class IsarHelper {
   }
 
   Future<bool> setSongList() async {
+    if(!await IsarHelper().playlistExisted('')){
+      savePlaylist(Playlist(playlistName_: '', imagePath_: '', songNameList_: []));
+    }
+    Playlist? playlist = await getPlaylistFor('');
     final songList = await getSongList();
     for (int i = 0; i < songList.length; i++) {
+      MediaItem newMediaItem = songList[i].toMediaItem();
       AudioSource newSong =
-          AudioSource.uri(Uri.parse(songList[i].songPath), tag: songList[i].toMediaItem());
+          AudioSource.uri(Uri.parse(songList[i].songPath), tag: newMediaItem);
       songArray.add(newSong);
+      if(playlist!.songNameList.length < songList.length){
+        playlist.songNameList.add(newMediaItem.title);
+        savePlaylist(playlist);
+      }
     }
+    playlist?.songList_ = songArray;
     return true;
   }
 

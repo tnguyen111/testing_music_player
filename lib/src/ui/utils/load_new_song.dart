@@ -36,7 +36,7 @@ void loadNewPlaylist(ConcatenatingAudioSource playlist, int index) async {
 Future<Duration?> getDuration(File songFile) async {
   bool changed = false;
   bool playing = player.playing;
-  var tempConcar;
+  AudioSource? tempConcar;
   int? tempIndex;
   Duration tempDura = Duration.zero;
 
@@ -56,7 +56,7 @@ Future<Duration?> getDuration(File songFile) async {
   newDuration = await player.setAudioSource(tempAudio);
 
   if(changed){
-    await player.setAudioSource(tempConcar,initialIndex: tempIndex,initialPosition: tempDura);
+    await player.setAudioSource(tempConcar!,initialIndex: tempIndex,initialPosition: tempDura);
 
     if(playing) player.play();
 

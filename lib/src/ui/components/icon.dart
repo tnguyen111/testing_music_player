@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:testing_music_player/src/models/models.dart';
 import 'package:testing_music_player/src/services/services.dart';
 import '../../../main.dart';
@@ -26,20 +27,28 @@ IconButton menuIcon(BuildContext context) => IconButton(
       },
     );
 
-/*IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
+IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
       icon: const Icon(Icons.sort),
       onPressed: () async {
         //Sort things
         if (typeSort == 'Your Playlist') {
-          playlistArray = await IsarHelper().sortPlaylist();
-
+          await IsarHelper().sortPlaylist(ref);
         } else {
-          songArray.children.sort((a, b) => (a as UriAudioSource)
-              .tag
-              .songName
-              .compareTo((b as UriAudioSource).tag.songName));
+          String currentName = '';
+          Duration currentPos = Duration.zero;
 
-          await IsarHelper().sortSongList();
+          if(player.audioSource == songArray) {
+            currentName = player.sequenceState?.currentSource?.tag.title;
+            print(currentName);
+            currentPos = player.position;
+          }
+          await IsarHelper().sortSongList(ref);
+
+          for(int i = 0; i < songArray.length; i++){
+            if(currentName != '' && currentName == (songArray[i] as UriAudioSource).tag.title){
+              await player.setAudioSource(songArray, initialIndex: i, initialPosition: currentPos);
+            }
+          }
         }
 
         playlistSwitchState(ref);
@@ -49,16 +58,29 @@ IconButton menuIcon(BuildContext context) => IconButton(
 IconButton sortSongIcon(WidgetRef ref, Playlist playlist) =>
     IconButton(
       icon: const Icon(Icons.sort),
-      onPressed: () {
+      onPressed: () async {
         // Sort things
-        playlist.songList.children.sort((a, b) => (a as UriAudioSource)
-            .tag
-            .songName
-            .compareTo((b as UriAudioSource).tag.songName));
+        playlist.songNameList.sort((a, b) => a.compareTo(b));
         IsarHelper().savePlaylist(playlist);
+        String currentName = '';
+        Duration currentPos = Duration.zero;
+        if(player.audioSource == playlist.songList) {
+          currentName = player.sequenceState?.currentSource?.tag.title;
+          currentPos = player.position;
+        }
+        playlist.songList.clear();
+        for(int i = 0; i < playlist.songNameList.length; i++){
+          SongDetails? existSong = await IsarHelper().getSongFor(playlist.songNameList[i]);
+          MediaItem? newMediaItem = existSong?.toMediaItem();
+          AudioSource newSong = AudioSource.uri(Uri.parse(existSong!.songPath), tag: newMediaItem);
+          playlist.songList.add(newSong);
+          if(currentName != '' && currentName == newMediaItem?.title){
+            await player.setAudioSource(playlist.songList, initialIndex: i, initialPosition: currentPos);
+          }
+        }
         playlistSwitchState(ref);
       },
-    );*/
+    );
 
 IconButton addIcon(WidgetRef ref, ConcatenatingAudioSource songList) =>
     IconButton(
@@ -117,7 +139,7 @@ IconButton removeIcon(WidgetRef ref, ConcatenatingAudioSource playlist,
         String songName = (song as UriAudioSource).tag.title;
         if (playlist == songArray) {
           print('delete in Array');
-          for (int i = 0; i < playlistArray.length; i++) {
+          for (int i = 1; i < playlistArray.length; i++) {
             if (playlistArray[i].songNameList.contains(songName)) {
               print('deleted');
               playlistArray[i]
@@ -127,8 +149,9 @@ IconButton removeIcon(WidgetRef ref, ConcatenatingAudioSource playlist,
               IsarHelper().savePlaylist(playlistArray[i]);
             }
           }
+          deleteSongFromPlaylist(playlistArray[0].songList,song);
+          IsarHelper().savePlaylist(playlistArray[0]);
           IsarHelper().deleteSongFor(songName);
-          playlist.removeAt(index);
         } else {
           deleteSongFromPlaylist(playlist,song);
         }
