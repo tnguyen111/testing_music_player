@@ -13,9 +13,13 @@ Future<void> main() async {
     androidNotificationOngoing: true,
 
   );
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  try {
+    runApp(
+      const ProviderScope(
+        child: MyApp(),
+      ),
+    );
+  } catch(e){
+    print(e);
+  }
 }

@@ -7,3 +7,4 @@ export 'add_song_to_playlist.dart';
 export 'delete_song_from_playlist.dart';
 export 'swap_song_in_playlist.dart';
 export 'media_to_song.dart';
+export 'sort_playlist.dart';

@@ -5,13 +5,15 @@ import '../../services/database/database.dart';
 Future<void> swapSongsInPlaylist(ConcatenatingAudioSource songList, int oldIndex, int newIndex) async {
   if(songList == songArray){
     List<SongDetails> tempSongList = [];
+
     await swapSong(0, oldIndex, newIndex);
     songArray = playlistArray[0].songList;
+    await IsarHelper().savePlaylist(playlistArray[0]);
+
     for(int i = 0; i < songList.length; i++){
       tempSongList.add(toSongDetails((songList[i] as UriAudioSource).tag));
     }
-    IsarHelper().savePlaylist(playlistArray[0]);
-    IsarHelper().saveSongList(tempSongList);
+    await IsarHelper().saveSongList(tempSongList);
     return;
   }
 

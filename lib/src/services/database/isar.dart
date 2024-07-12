@@ -5,6 +5,7 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:testing_music_player/src/services/services.dart';
 import '../../models/models.dart';
+import '../../ui/ui.dart';
 
 class IsarHelper {
   late Future<Isar> db;
@@ -100,7 +101,6 @@ class IsarHelper {
 
   Future<void> sortSongList(WidgetRef ref) async {
     final isar = await db;
-    player.stop();
     List<SongDetails> newSongList =  await isar.songDetails.where().sortBySongName().findAll();
     for(int i = 0; i < newSongList.length; i++){
       newSongList[i].id = i;
@@ -108,14 +108,10 @@ class IsarHelper {
 
     await saveSongList(newSongList);
 
-    Playlist? temp = await getPlaylistFor('');
-    temp?.songList.clear();
-    temp?.songNameList.clear();
-    savePlaylist(temp!);
-    songArray.clear();
-
-    await setSongList();
-    playlistSwitchState(ref);
+    Playlist? playlist = await getPlaylistFor('');
+    await sortingPlaylist(playlist!);
+    await savePlaylist(playlist);
+    songArray = playlist.songList;
     return;
   }
 
@@ -142,10 +138,12 @@ class IsarHelper {
   }
 
   Future<bool> setSongList() async {
-    if(!await IsarHelper().playlistExisted('')){
-      savePlaylist(Playlist(playlistName_: '', imagePath_: '', songNameList_: []));
+    if(!await IsarHelper().playlistExisted('')) {
+      savePlaylist(
+          Playlist(playlistName_: '', imagePath_: '', songNameList_: []));
     }
     Playlist? playlist = await getPlaylistFor('');
+    playlist?.songNameList.clear();
     final songList = await getSongList();
     for (int i = 0; i < songList.length; i++) {
       MediaItem newMediaItem = songList[i].toMediaItem();

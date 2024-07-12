@@ -34,21 +34,7 @@ IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
         if (typeSort == 'Your Playlist') {
           await IsarHelper().sortPlaylist(ref);
         } else {
-          String currentName = '';
-          Duration currentPos = Duration.zero;
-
-          if(player.audioSource == songArray) {
-            currentName = player.sequenceState?.currentSource?.tag.title;
-            print(currentName);
-            currentPos = player.position;
-          }
           await IsarHelper().sortSongList(ref);
-
-          for(int i = 0; i < songArray.length; i++){
-            if(currentName != '' && currentName == (songArray[i] as UriAudioSource).tag.title){
-              await player.setAudioSource(songArray, initialIndex: i, initialPosition: currentPos);
-            }
-          }
         }
 
         playlistSwitchState(ref);
@@ -60,24 +46,7 @@ IconButton sortSongIcon(WidgetRef ref, Playlist playlist) =>
       icon: const Icon(Icons.sort),
       onPressed: () async {
         // Sort things
-        playlist.songNameList.sort((a, b) => a.compareTo(b));
-        IsarHelper().savePlaylist(playlist);
-        String currentName = '';
-        Duration currentPos = Duration.zero;
-        if(player.audioSource == playlist.songList) {
-          currentName = player.sequenceState?.currentSource?.tag.title;
-          currentPos = player.position;
-        }
-        playlist.songList.clear();
-        for(int i = 0; i < playlist.songNameList.length; i++){
-          SongDetails? existSong = await IsarHelper().getSongFor(playlist.songNameList[i]);
-          MediaItem? newMediaItem = existSong?.toMediaItem();
-          AudioSource newSong = AudioSource.uri(Uri.parse(existSong!.songPath), tag: newMediaItem);
-          playlist.songList.add(newSong);
-          if(currentName != '' && currentName == newMediaItem?.title){
-            await player.setAudioSource(playlist.songList, initialIndex: i, initialPosition: currentPos);
-          }
-        }
+        await sortingPlaylist(playlist);
         playlistSwitchState(ref);
       },
     );
