@@ -39,7 +39,7 @@ class MyApp extends ConsumerWidget {
     playlistWatchState(ref);
     int screenState = screenWatchState(ref);
     if (started == false) {
-      IsarHelper().setSongList();
+      IsarHelper().setSongList(ref);
       IsarHelper().setPlaylistList(ref);
       micPerAsk();
       started = true;

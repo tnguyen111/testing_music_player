@@ -4,26 +4,43 @@ import '../../models/models.dart';
 import '../../services/database/database.dart';
 
 Future<Playlist> sortingPlaylist(Playlist playlist) async {
-  playlist.songNameList.sort((a, b) => a.compareTo(b));
-  IsarHelper().savePlaylist(playlist);
+  final List<SongDetails> newSongList = await IsarHelper().getSongList();
   String currentName = '';
   Duration currentPos = Duration.zero;
+  bool isPlaying = false;
+  playlist.songNameList.clear();
 
-  if(player.audioSource == playlist.songList) {
+  if(player.audioSource == songArray) {
     currentName = player.sequenceState?.currentSource?.tag.title;
     currentPos = player.position;
+    if(player.playing){
+      isPlaying = true;
+    }
+    await player.stop();
   }
 
-  playlist.songList.clear();
-  for(int i = 0; i < playlist.songNameList.length; i++){
-    SongDetails? existSong = await IsarHelper().getSongFor(playlist.songNameList[i]);
-    MediaItem? newMediaItem = existSong?.toMediaItem();
-    AudioSource newSong = AudioSource.uri(Uri.parse(existSong!.songPath), tag: newMediaItem);
-    playlist.songList.add(newSong);
-    if(currentName != '' && currentName == newMediaItem?.title){
+  await songArray.clear();
+
+  for (int i = 0; i < newSongList.length; i++) {
+    MediaItem newMediaItem = newSongList[i].toMediaItem();
+    AudioSource newSong =
+    AudioSource.uri(Uri.parse(newSongList[i].songPath), tag: newMediaItem);
+    await songArray.add(newSong);
+
+    if(currentName != '' && currentName == newMediaItem.title){
       await player.setAudioSource(songArray, initialIndex: i, initialPosition: currentPos);
+      if(isPlaying){
+        player.play();
+        player.startVisualizer();
+      }
+    }
+
+    if(playlist.songNameList.length < newSongList.length){
+      playlist.songNameList.add(newMediaItem.title);
+      IsarHelper().savePlaylist(playlist);
     }
   }
+  playlist.songList_ = songArray;
 
   return playlist;
 }

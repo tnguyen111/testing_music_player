@@ -99,9 +99,23 @@ class IsarHelper {
     await setPlaylistList(ref);
   }
 
-  Future<void> sortSongList(WidgetRef ref) async {
+  Future<void> sortSongList(WidgetRef ref, String sortType) async {
     final isar = await db;
-    List<SongDetails> newSongList =  await isar.songDetails.where().sortBySongName().findAll();
+    List<SongDetails> newSongList = [];
+    if(sortType == 'Sort By Duration'){
+      newSongList = await isar.songDetails.where()
+          .sortBySongDurationData()
+          .findAll();
+    } else if(sortType == 'Sort By Artist'){
+      newSongList = await isar.songDetails.where()
+          .sortBySongAuthor()
+          .findAll();
+    } else{
+      newSongList = await isar.songDetails.where()
+          .sortBySongName()
+          .findAll();
+    }
+
     for(int i = 0; i < newSongList.length; i++){
       newSongList[i].id = i;
     }
@@ -109,9 +123,10 @@ class IsarHelper {
     await saveSongList(newSongList);
 
     Playlist? playlist = await getPlaylistFor('');
+
     await sortingPlaylist(playlist!);
-    await savePlaylist(playlist);
-    songArray = playlist.songList;
+
+    playlistSwitchState(ref);
     return;
   }
 
@@ -137,25 +152,14 @@ class IsarHelper {
     return true;
   }
 
-  Future<bool> setSongList() async {
+  Future<bool> setSongList(WidgetRef ref) async {
     if(!await IsarHelper().playlistExisted('')) {
-      savePlaylist(
+      await savePlaylist(
           Playlist(playlistName_: '', imagePath_: '', songNameList_: []));
     }
     Playlist? playlist = await getPlaylistFor('');
-    playlist?.songNameList.clear();
-    final songList = await getSongList();
-    for (int i = 0; i < songList.length; i++) {
-      MediaItem newMediaItem = songList[i].toMediaItem();
-      AudioSource newSong =
-          AudioSource.uri(Uri.parse(songList[i].songPath), tag: newMediaItem);
-      songArray.add(newSong);
-      if(playlist!.songNameList.length < songList.length){
-        playlist.songNameList.add(newMediaItem.title);
-        savePlaylist(playlist);
-      }
-    }
-    playlist?.songList_ = songArray;
+    await sortingPlaylist(playlist!);
+    playlistSwitchState(ref);
     return true;
   }
 

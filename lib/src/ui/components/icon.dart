@@ -27,17 +27,31 @@ IconButton menuIcon(BuildContext context) => IconButton(
       },
     );
 
-IconButton sortIcon(WidgetRef ref, String typeSort) => IconButton(
+IconButton sortPlaylistIcon(WidgetRef ref, String typeSort) => IconButton(
       icon: const Icon(Icons.sort),
       onPressed: () async {
-        //Sort things
-        if (typeSort == 'Your Playlist') {
-          await IsarHelper().sortPlaylist(ref);
-        } else {
-          await IsarHelper().sortSongList(ref);
-        }
+        //Sort playlists
+        await IsarHelper().sortPlaylist(ref);
 
         playlistSwitchState(ref);
+      },
+    );
+
+PopupMenuButton<String> sortSongListIcon(WidgetRef ref) =>
+    PopupMenuButton<String>(
+      icon: const Icon(Icons.sort),
+      onSelected: (value) async {
+        await IsarHelper().sortSongList(ref, value);
+        playlistSwitchState(ref);
+      },
+      itemBuilder: (BuildContext context) {
+        return {'Sort By Name', 'Sort By Artist', 'Sort By Duration'}
+            .map((String choice) {
+          return PopupMenuItem<String>(
+            value: choice,
+            child: Text(choice),
+          );
+        }).toList();
       },
     );
 

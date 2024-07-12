@@ -7,13 +7,13 @@ Future<void> swapSongsInPlaylist(ConcatenatingAudioSource songList, int oldIndex
     List<SongDetails> tempSongList = [];
 
     await swapSong(0, oldIndex, newIndex);
+    IsarHelper().savePlaylist(playlistArray[0]);
     songArray = playlistArray[0].songList;
-    await IsarHelper().savePlaylist(playlistArray[0]);
 
     for(int i = 0; i < songList.length; i++){
       tempSongList.add(toSongDetails((songList[i] as UriAudioSource).tag));
     }
-    await IsarHelper().saveSongList(tempSongList);
+    IsarHelper().saveSongList(tempSongList);
     return;
   }
 
