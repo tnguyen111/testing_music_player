@@ -3,11 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../ui/components/components.dart';
 import '../../models/models.dart';
 
-class PlaylistSongSearch extends SearchDelegate {
+class PlaylistSearch extends SearchDelegate {
   final WidgetRef ref;
-  final Playlist playlist;
 
-  PlaylistSongSearch(this.ref, this.playlist);
+  PlaylistSearch(this.ref);
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -34,29 +33,29 @@ class PlaylistSongSearch extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    final List<String> suggestionList = query.isEmpty
+    final List<Playlist> suggestionList = query.isEmpty
         ? []
-        : playlist.songNameList
-            .where(
-              (p) => p.toLowerCase().contains(
-                    query.toLowerCase(),
-                  ),
-            )
-            .toList();
-    return suggestionSongListWidget(ref, suggestionList);
+        : playlistArray
+        .where(
+          (p) => p.playlistName.toLowerCase().contains(
+        query.toLowerCase(),
+      ),
+    )
+        .toList();
+    return suggestionPlaylistWidget(ref, suggestionList);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final List<String> suggestionList = query.isEmpty
-        ? playlist.songNameList
-        : playlist.songNameList
-            .where(
-              (p) => p.toLowerCase().contains(
-                    query.toLowerCase(),
-                  ),
-            )
-            .toList();
-    return suggestionSongListWidget(ref, suggestionList);
+    final List<Playlist> suggestionList = query.isEmpty
+        ? playlistArray.getRange(1, playlistArray.length).toList()
+        : playlistArray
+        .where(
+          (p) => p.playlistName.toLowerCase().contains(
+        query.toLowerCase(),
+      ),
+    )
+        .toList();
+    return suggestionPlaylistWidget(ref, suggestionList);
   }
 }

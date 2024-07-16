@@ -20,7 +20,7 @@ Container headerBlock(String header, WidgetRef ref) => Container(
           const SizedBox(width: 125),
           (header == 'Your Playlist')
               ? sortPlaylistIcon(ref)
-              : sortSongListIcon(ref),
+              : sortSongIcon(ref, playlistArray[0]),
           (header == 'Your Playlist')
               ? settingListIcon(ref)
               : addIcon(ref, playlistArray[0]),

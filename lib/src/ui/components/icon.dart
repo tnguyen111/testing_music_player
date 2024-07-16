@@ -6,7 +6,7 @@ import 'package:testing_music_player/src/services/services.dart';
 import '../../../main.dart';
 import '../ui.dart';
 
-IconButton searchIcon(WidgetRef ref, Playlist playlist) => IconButton(
+IconButton searchSongIcon(WidgetRef ref, Playlist playlist) => IconButton(
       icon: const Icon(Icons.search),
       onPressed: () {
         // Search things
@@ -16,6 +16,17 @@ IconButton searchIcon(WidgetRef ref, Playlist playlist) => IconButton(
         );
       },
     );
+
+IconButton searchPlaylistIcon (WidgetRef ref) => IconButton(
+  icon: const Icon(Icons.search),
+  onPressed: () {
+    // Search things
+    showSearch(
+      context: globalNavigatorKey.currentContext!,
+      delegate: PlaylistSearch(ref),
+    );
+  },
+);
 
 IconButton menuIcon(BuildContext context) => IconButton(
       icon: const Icon(Icons.menu),
@@ -35,11 +46,15 @@ IconButton sortPlaylistIcon(WidgetRef ref) => IconButton(
       },
     );
 
-PopupMenuButton<String> sortSongListIcon(WidgetRef ref) =>
+PopupMenuButton<String> sortSongIcon(WidgetRef ref, Playlist playlist) =>
     PopupMenuButton<String>(
       icon: const Icon(Icons.sort),
       onSelected: (value) async {
-        await IsarHelper().sortSongList(ref, value);
+        if(playlist == playlistArray[0]){
+          await IsarHelper().sortSongList(ref, value);
+        } else {
+          sortingPlaylist(playlist, value);
+        }
         playlistSwitchState(ref);
       },
       itemBuilder: (BuildContext context) {
@@ -50,19 +65,6 @@ PopupMenuButton<String> sortSongListIcon(WidgetRef ref) =>
             child: Text(choice),
           );
         }).toList();
-      },
-    );
-
-IconButton sortSongIcon(WidgetRef ref, Playlist playlist) => IconButton(
-      icon: const Icon(Icons.sort),
-      onPressed: () async {
-        // Sort things
-        playlist.songList.children.sort((a, b) =>
-            ((a as UriAudioSource).tag.title)
-                .compareTo((b as UriAudioSource).tag.title));
-        playlist.songNameList.sort((a, b) => a.compareTo(b));
-        IsarHelper().savePlaylist(playlist);
-        playlistSwitchState(ref);
       },
     );
 

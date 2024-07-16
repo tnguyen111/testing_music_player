@@ -117,7 +117,7 @@ class IsarHelper {
 
     Playlist? playlist = playlistArray[0];
 
-    await sortingPlaylist(playlist);
+    await sortingPlaylist(playlist, sortType);
 
     playlistSwitchState(ref);
     return;
@@ -158,7 +158,7 @@ class IsarHelper {
           Playlist(playlistName_: '', imagePath_: '', songNameList_: []));
     }
     Playlist? playlist = await getPlaylistFor('');
-    await sortingPlaylist(playlist!);
+    await sortingPlaylist(playlist!, '');
     playlistSwitchState(ref);
     return true;
   }

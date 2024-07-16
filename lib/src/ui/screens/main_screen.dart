@@ -5,7 +5,7 @@ import '../components/components.dart';
 
 Scaffold mainScreen(WidgetRef ref) {
   return Scaffold(
-    appBar: headerBar(ref),
+    appBar: headerBar(ref, false),
     body: Column(
       children: [
         headerBlock('Your Playlist', ref),
