@@ -9,38 +9,51 @@ Future<Playlist> sortingPlaylist(Playlist playlist) async {
   Duration currentPos = Duration.zero;
   bool isPlaying = false;
   playlist.songNameList.clear();
-
-  if(player.audioSource == songArray) {
-    currentName = player.sequenceState?.currentSource?.tag.title;
+  for(int i = 0; i < playlistArray.length; i++) {
+    if (playlist == playlistArray[i]) {
+      print('bruh: $i');
+    }
+  }
+  if (player.audioSource == playlist.songList) {
+    currentName = await player.sequenceState?.currentSource?.tag.title ?? "";
     currentPos = player.position;
-    if(player.playing){
+    if (player.playing) {
       isPlaying = true;
     }
     await player.stop();
   }
 
-  await songArray.clear();
+  await playlist.songList.clear();
 
   for (int i = 0; i < newSongList.length; i++) {
     MediaItem newMediaItem = newSongList[i].toMediaItem();
     AudioSource newSong =
-    AudioSource.uri(Uri.parse(newSongList[i].songPath), tag: newMediaItem);
-    await songArray.add(newSong);
+        AudioSource.uri(Uri.parse(newSongList[i].songPath), tag: newMediaItem);
 
-    if(currentName != '' && currentName == newMediaItem.title){
-      await player.setAudioSource(songArray, initialIndex: i, initialPosition: currentPos);
-      if(isPlaying){
+    await playlist.addSong(newSong as UriAudioSource);
+    print("name: ${newSong.tag.title}");
+
+    if (currentName != '' && currentName == newMediaItem.title) {
+      try {
+        await player.setAudioSource(playlist.songList,
+            initialIndex: i, initialPosition: currentPos);
+      } on PlayerInterruptedException {
+        // do nothing
+        print('expected throw');
+      }
+
+      if (isPlaying) {
         player.play();
         player.startVisualizer();
       }
     }
 
-    if(playlist.songNameList.length < newSongList.length){
+    if (playlist.songNameList.length < newSongList.length) {
       playlist.songNameList.add(newMediaItem.title);
       IsarHelper().savePlaylist(playlist);
     }
   }
-  playlist.songList_ = songArray;
+
 
   return playlist;
 }

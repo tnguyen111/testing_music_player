@@ -5,24 +5,29 @@ import 'package:testing_music_player/src/models/models.dart';
 import '../../services/services.dart';
 import '../utils/utils.dart';
 
-Widget listCheckbox(
-    Playlist playlist, AudioSource song, WidgetRef ref) {
+Widget listCheckbox(Playlist playlist, AudioSource song, WidgetRef ref) {
   String songName = (song as UriAudioSource).tag.title;
   bool value = playlist.songNameList.contains(songName);
   return Checkbox(
     value: value,
     overlayColor: WidgetStatePropertyAll(currentThemeSmallText(ref).color),
     activeColor: currentThemeSmallText(ref).color,
-    onChanged: (value) {
-      if (value!) {
-        addSongToPlaylist(playlist.songList, song);
-        playlistSwitchState(ref);
-      } else {
-        deleteSongFromPlaylist(playlist.songList, song);
-        playlistSwitchState(ref);
+    onChanged: (value) async {
+      try {
+        if (value!) {
+          await addSongToPlaylist(ref, playlist, song);
+        } else {
+          await deleteSongFromPlaylist(ref, playlist, song);
+        }
+      } catch(e){
+       print(e);
       }
+
       print(playlist.songList);
-      print(songArray.children);
+      print(playlist.songList.children);
+      print(playlistArray[0].songList.children);
+      
+      playlistSwitchState(ref);
     },
   );
 }

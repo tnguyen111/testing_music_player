@@ -1,24 +1,26 @@
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:testing_music_player/src/services/services.dart';
 
 import '../../models/models.dart';
 import '../../services/database/database.dart';
 
-void addSongToPlaylist(ConcatenatingAudioSource songList, AudioSource song){
-  if(songList == songArray){
-    playlistArray[0].addSong(song);
-    playlistArray[0].songNameList.add((song as UriAudioSource).tag.title);
-    IsarHelper().savePlaylist(playlistArray[0]);
-    songArray = playlistArray[0].songList;
+Future<void> addSongToPlaylist(WidgetRef ref, Playlist playlist, AudioSource song) async {
+
+  if (playlist == playlistArray[0]) {
+    print("songArray add");
+    await playlistArray[0].addSong(song as UriAudioSource);
+    playlistArray[0].songNameList.add(song.tag.title);
+    await IsarHelper().savePlaylist(playlistArray[0]);
+    playlistSwitchState(ref);
     return;
   }
 
-  for (int i = 1; i <= playlistArray.length; i++) {
-    if (playlistArray[i].songList == songList) {
-      songList.add(song);
-      playlistArray[i].songNameList.add((song as UriAudioSource).tag.title);
-      IsarHelper().savePlaylist(playlistArray[i]);
-      break;
-    }
-  }
+  await playlist.addSong(song as UriAudioSource);
+
+  playlist.songNameList.add(song.tag.title);
+
+  await IsarHelper().savePlaylist(playlist);
+  playlistSwitchState(ref);
+  return;
 }

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 Widget addSongScreen(WidgetRef ref, Playlist  playlist){
   return Scaffold(
-    appBar: playlistAppBar(ref,''),
+    appBar: addSongAppBar(ref,playlist),
     body: Column(
       children: [
         headerBlock('Your Songs', ref),

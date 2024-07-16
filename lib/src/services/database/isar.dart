@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:testing_music_player/src/services/services.dart';
 import '../../models/models.dart';
@@ -12,7 +11,6 @@ class IsarHelper {
 
   IsarHelper() {
     db = openDB();
-
   }
 
   Future<Playlist?> getPlaylistFor(String name) async {
@@ -64,14 +62,14 @@ class IsarHelper {
     isar.writeTxnSync<int>(() => isar.songDetails.putSync(newSong));
   }
 
-  Future<void> savePlaylistList(List<Playlist> playlistList) async{
+  Future<void> savePlaylistList(List<Playlist> playlistList) async {
     final isar = await db;
     await isar.writeTxn(() => isar.playlists.clear());
     playlistArray.clear();
     isar.writeTxnSync<List<int>>(() => isar.playlists.putAllSync(playlistList));
   }
 
-  Future<void> saveSongList(List<SongDetails> songList) async{
+  Future<void> saveSongList(List<SongDetails> songList) async {
     final isar = await db;
     await isar.writeTxn(() => isar.songDetails.clear());
     isar.writeTxnSync<List<int>>(() => isar.songDetails.putAllSync(songList));
@@ -91,8 +89,9 @@ class IsarHelper {
 
   Future<void> sortPlaylist(WidgetRef ref) async {
     final isar = await db;
-    List<Playlist> newPlaylist = await isar.playlists.where().sortByPlaylistName().findAll();
-    for(int i = 0; i < newPlaylist.length; i++){
+    List<Playlist> newPlaylist =
+        await isar.playlists.where().sortByPlaylistName().findAll();
+    for (int i = 0; i < newPlaylist.length; i++) {
       newPlaylist[i].id = i;
     }
     await savePlaylistList(newPlaylist);
@@ -102,29 +101,23 @@ class IsarHelper {
   Future<void> sortSongList(WidgetRef ref, String sortType) async {
     final isar = await db;
     List<SongDetails> newSongList = [];
-    if(sortType == 'Sort By Duration'){
-      newSongList = await isar.songDetails.where()
-          .sortBySongDurationData()
-          .findAll();
-    } else if(sortType == 'Sort By Artist'){
-      newSongList = await isar.songDetails.where()
-          .sortBySongAuthor()
-          .findAll();
-    } else{
-      newSongList = await isar.songDetails.where()
-          .sortBySongName()
-          .findAll();
+    if (sortType == 'Sort By Duration') {
+      newSongList = await isar.songDetails.where().sortBySongDurationData().findAll();
+    } else if (sortType == 'Sort By Artist') {
+      newSongList = await isar.songDetails.where().sortBySongAuthor().findAll();
+    } else {
+      newSongList = await isar.songDetails.where().sortBySongName().findAll();
     }
 
-    for(int i = 0; i < newSongList.length; i++){
+    for (int i = 0; i < newSongList.length; i++) {
       newSongList[i].id = i;
     }
 
     await saveSongList(newSongList);
 
-    Playlist? playlist = await getPlaylistFor('');
+    Playlist? playlist = playlistArray[0];
 
-    await sortingPlaylist(playlist!);
+    await sortingPlaylist(playlist);
 
     playlistSwitchState(ref);
     return;
@@ -142,10 +135,17 @@ class IsarHelper {
 
   Future<bool> setPlaylistList(WidgetRef ref) async {
     playlistArray = await getAllPlaylist();
-    for(int i = 0; i < playlistArray.length; i++){
-      for(int j = 0; j < playlistArray[i].songNameList.length; j++){
-        var existingSong = await IsarHelper().getSongFor(playlistArray[i].songNameList[j]);
-        playlistArray[i].setAudioSource(existingSong!);
+    for (int i = 0; i < playlistArray.length; i++) {
+      for (int j = 0; j < playlistArray[i].songNameList.length; j++) {
+        var existingSong =
+            await IsarHelper().getSongFor(playlistArray[i].songNameList[j]);
+
+        try {
+          playlistArray[i].setAudioSource(existingSong!);
+        } on PlayerInterruptedException {
+          // do nothing
+          print('expected throw');
+        }
       }
     }
     playlistSwitchState(ref);
@@ -153,7 +153,7 @@ class IsarHelper {
   }
 
   Future<bool> setSongList(WidgetRef ref) async {
-    if(!await IsarHelper().playlistExisted('')) {
+    if (!await IsarHelper().playlistExisted('')) {
       await savePlaylist(
           Playlist(playlistName_: '', imagePath_: '', songNameList_: []));
     }

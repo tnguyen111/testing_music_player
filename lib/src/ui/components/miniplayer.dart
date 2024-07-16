@@ -7,7 +7,7 @@ import '../ui.dart';
 
 Widget miniplayer(WidgetRef ref, bool inPlaylist) {
   return (player.sequenceState?.currentSource != null &&
-          currentGlobalPlaylist.children.isNotEmpty)
+          currentGlobalPlaylist.songList.children.isNotEmpty)
       ? Miniplayer(
           minHeight: 100,
           maxHeight: (inPlaylist) ? 100: 370,

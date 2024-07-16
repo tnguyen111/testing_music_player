@@ -25,7 +25,10 @@ class Playlist {
       useLazyPreparation: true,
       shuffleOrder: DefaultShuffleOrder());
 
-  Playlist({required this.playlistName_, required this.imagePath_, required this.songNameList_}){
+  Playlist(
+      {required this.playlistName_,
+      required this.imagePath_,
+      required this.songNameList_}) {
     songNameList_ = songNameList_.toList(growable: true);
   }
 
@@ -38,10 +41,11 @@ class Playlist {
   @ignore
   ConcatenatingAudioSource get songList => songList_;
 
-  void getSongFromList() async{
-    for(int i = 0; i < songNameList.length; i++){
+  void getSongFromList() async {
+    for (int i = 0; i < songNameList.length; i++) {
       var existingSong = await IsarHelper().getSongFor(songNameList[i]);
       setAudioSource(existingSong!);
+
     }
   }
 
@@ -77,11 +81,55 @@ class Playlist {
     playlistName_ = newName;
   }
 
-  void addSong(AudioSource newSong) {
-    songList_.children.add(newSong);
+  Future<void> addSong(UriAudioSource newSong) async {
+    bool switched = false;
+    bool playing = player.playing;
+    AudioSource? tempConcar;
+    int? tempIndex;
+    Duration tempDura = Duration.zero;
+
+    if (songList != player.audioSource && player.audioSource != null) {
+      switched = true;
+      playing = player.playing;
+      tempConcar = player.audioSource;
+      tempIndex = player.currentIndex;
+      tempDura = player.position;
+      await player.setAudioSource(songList);
+    }
+
+    await songList_.add(newSong);
+
+    if (switched) {
+      await player.setAudioSource(tempConcar!,
+            initialIndex: tempIndex, initialPosition: tempDura);
+      if(playing) player.play();
+    }
   }
 
-  void removeSong(AudioSource existedSong) {
-    songList_.children.remove(existedSong);
+  Future<void> removeSong(int index) async {
+    bool switched = false;
+    bool playing = player.playing;
+    AudioSource? tempConcar;
+    int? tempIndex;
+    Duration tempDura = Duration.zero;
+
+    if (songList != player.audioSource && player.audioSource != null) {
+      switched = true;
+      playing = player.playing;
+      tempConcar = player.audioSource;
+      tempIndex = player.currentIndex;
+      tempDura = player.position;
+      await player.setAudioSource(songList);
+
+    }
+
+    await songList_.removeAt(index);
+
+    if (switched) {
+      await player.setAudioSource(tempConcar!,
+            initialIndex: tempIndex, initialPosition: tempDura);
+      if(playing) player.play();
+    }
+
   }
 }

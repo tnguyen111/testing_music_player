@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:testing_music_player/src/models/models.dart';
 import 'package:testing_music_player/src/services/services.dart';
 import '../../../main.dart';
 import '../ui.dart';
 
-/*
-IconButton searchIcon(WidgetRef ref) => IconButton(
+IconButton searchIcon(WidgetRef ref, Playlist playlist) => IconButton(
       icon: const Icon(Icons.search),
       onPressed: () {
-        */
-/*Search things*//*
-
-        modeSwitchState(ref);
+        // Search things
+        showSearch(
+          context: globalNavigatorKey.currentContext!,
+          delegate: PlaylistSongSearch(ref, playlist),
+        );
       },
     );
-*/
 
 IconButton menuIcon(BuildContext context) => IconButton(
       icon: const Icon(Icons.menu),
@@ -27,7 +25,7 @@ IconButton menuIcon(BuildContext context) => IconButton(
       },
     );
 
-IconButton sortPlaylistIcon(WidgetRef ref, String typeSort) => IconButton(
+IconButton sortPlaylistIcon(WidgetRef ref) => IconButton(
       icon: const Icon(Icons.sort),
       onPressed: () async {
         //Sort playlists
@@ -55,22 +53,24 @@ PopupMenuButton<String> sortSongListIcon(WidgetRef ref) =>
       },
     );
 
-IconButton sortSongIcon(WidgetRef ref, Playlist playlist) =>
-    IconButton(
+IconButton sortSongIcon(WidgetRef ref, Playlist playlist) => IconButton(
       icon: const Icon(Icons.sort),
       onPressed: () async {
         // Sort things
-        await sortingPlaylist(playlist);
+        playlist.songList.children.sort((a, b) =>
+            ((a as UriAudioSource).tag.title)
+                .compareTo((b as UriAudioSource).tag.title));
+        playlist.songNameList.sort((a, b) => a.compareTo(b));
+        IsarHelper().savePlaylist(playlist);
         playlistSwitchState(ref);
       },
     );
 
-IconButton addIcon(WidgetRef ref, ConcatenatingAudioSource songList) =>
-    IconButton(
+IconButton addIcon(WidgetRef ref, Playlist playlist) => IconButton(
       icon: const Icon(Icons.add),
       onPressed: () {
         /*Add things*/
-        showDataAlert(globalNavigatorKey.currentContext!, ref, songList);
+        showDataAlert(globalNavigatorKey.currentContext!, ref, playlist);
         playlistSwitchState(ref);
       },
     );
@@ -96,7 +96,7 @@ PopupMenuButton<String> addSongMenuIcon(WidgetRef ref, Playlist playlist) =>
 void handleAddSongMenu(String value, WidgetRef ref, Playlist playlist) {
   switch (value) {
     case 'Add New Song':
-      showDataAlert(globalNavigatorKey.currentContext!, ref, playlist.songList);
+      showDataAlert(globalNavigatorKey.currentContext!, ref, playlist);
       playlistSwitchState(ref);
       break;
     case 'Add Songs From Songs List':
@@ -113,30 +113,28 @@ void handleAddSongMenu(String value, WidgetRef ref, Playlist playlist) {
   }
 }
 
-IconButton removeIcon(WidgetRef ref, ConcatenatingAudioSource playlist,
-        AudioSource song, int index) =>
+IconButton removeIcon(
+        WidgetRef ref, Playlist playlist, AudioSource song, int index) =>
     IconButton(
       icon: const Icon(Icons.close),
-      onPressed: () {
+      onPressed: () async {
         /*Remove things*/
         String songName = (song as UriAudioSource).tag.title;
-        if (playlist == songArray) {
+        if (playlistArray[0] == playlist) {
           print('delete in Array');
           for (int i = 1; i < playlistArray.length; i++) {
+            print(i);
             if (playlistArray[i].songNameList.contains(songName)) {
               print('deleted');
-              playlistArray[i]
-                  .songNameList
-                  .remove(songName);
-              deleteSongFromPlaylist(playlistArray[i].songList,song);
+              await deleteSongFromPlaylist(ref, playlistArray[i], song);
               IsarHelper().savePlaylist(playlistArray[i]);
             }
           }
-          deleteSongFromPlaylist(playlistArray[0].songList,song);
-          IsarHelper().savePlaylist(playlistArray[0]);
+
+          await deleteSongFromPlaylist(ref, playlistArray[0], song);
           IsarHelper().deleteSongFor(songName);
         } else {
-          deleteSongFromPlaylist(playlist,song);
+          await deleteSongFromPlaylist(ref, playlist, song);
         }
         playlistSwitchState(ref);
       },
@@ -171,7 +169,9 @@ void handleSettingListClick(String value, WidgetRef ref) {
   switch (value) {
     case 'Add New Playlist':
       Playlist playlist = Playlist(
-          playlistName_: '', imagePath_: "lib/assets/default_image.jpg", songNameList_: List.empty(growable: true));
+          playlistName_: '',
+          imagePath_: "lib/assets/default_image.jpg",
+          songNameList_: List.empty(growable: true));
       Navigator.push(
         globalNavigatorKey.currentContext!,
         MaterialPageRoute(
@@ -222,7 +222,7 @@ void handleSettingSongClick(String value, WidgetRef ref, Playlist playlist) {
   }
 }
 
-IconButton playIcon(WidgetRef ref, ConcatenatingAudioSource playlist) => IconButton(
+IconButton playIcon(WidgetRef ref, Playlist playlist) => IconButton(
       icon: (!player.playing)
           ? const Icon(Icons.play_arrow)
           : const Icon(Icons.pause),
@@ -231,8 +231,8 @@ IconButton playIcon(WidgetRef ref, ConcatenatingAudioSource playlist) => IconBut
         if (player.playing) {
           pauseSong(ref);
         } else {
-          if(player.audioSource == null){
-            loadNewPlaylist(playlist, 0);
+          if (player.audioSource == null) {
+            loadSong(ref, playlist, 0);
             currentGlobalPlaylist = playlist;
           }
           startSong(ref);
@@ -241,8 +241,8 @@ IconButton playIcon(WidgetRef ref, ConcatenatingAudioSource playlist) => IconBut
       },
     );
 
-IconButton skipSongIcon(WidgetRef ref, bool skipNext,
-        ConcatenatingAudioSource playlist, int index,bool isNotMiniplayer) =>
+IconButton skipSongIcon(WidgetRef ref, bool skipNext, Playlist playlist,
+        int index, bool isNotMiniplayer) =>
     IconButton(
       icon: (skipNext)
           ? const Icon(Icons.skip_next)
@@ -251,7 +251,7 @@ IconButton skipSongIcon(WidgetRef ref, bool skipNext,
         /*Skip songs*/
         bool changed = false;
         if (skipNext) {
-          if (index < playlist.length - 1) {
+          if (index < playlist.songList.length - 1) {
             index++;
             player.seekToNext();
           } else {
@@ -264,8 +264,8 @@ IconButton skipSongIcon(WidgetRef ref, bool skipNext,
             index--;
             player.seekToPrevious();
           } else {
-            index = playlist.length - 1;
-            player.seek(Duration.zero, index: playlist.length - 1);
+            index = playlist.songList.length - 1;
+            player.seek(Duration.zero, index: playlist.songList.length - 1);
           }
           changed = true;
         }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:testing_music_player/src/services/services.dart';
 import '../ui.dart';
 import 'package:testing_music_player/src/models/models.dart';
@@ -14,34 +13,33 @@ Widget playlistList(WidgetRef ref) {
         shrinkWrap: false,
         controller: scrollController,
         itemBuilder: (context, index) {
-          return (index < playlistArray.length-1)
-              ? playlistBlock(ref, playlistArray[index+1])
+          return (index < playlistArray.length - 1)
+              ? playlistBlock(ref, playlistArray[index + 1])
               : playlistAddBlock(ref);
         }),
   );
 }
 
-Widget songList(WidgetRef ref, ConcatenatingAudioSource songList) {
+Widget songList(WidgetRef ref, Playlist playlist) {
   final ScrollController scrollController = ScrollController();
 
   return Expanded(
     child: ReorderableListView.builder(
       scrollController: scrollController,
-      itemCount: songList.children.length,
+      itemCount: playlist.songList.length,
       scrollDirection: Axis.vertical,
       shrinkWrap: false,
       itemBuilder: (context, index) {
-        if (songList.children.isNotEmpty) {
-          return songBlock(ref, songList, index);
+        if (playlist.songList.children.isNotEmpty) {
+          return songBlock(ref, playlist, index);
         }
         return Container();
       },
-
       onReorder: (int oldIndex, int newIndex) async {
         if (oldIndex < newIndex) {
           newIndex -= 1;
         }
-        await swapSongsInPlaylist(songList, oldIndex, newIndex);
+        await swapSongsInPlaylist(playlist, oldIndex, newIndex);
         playlistSwitchState(ref);
       },
     ),
@@ -50,10 +48,9 @@ Widget songList(WidgetRef ref, ConcatenatingAudioSource songList) {
 
 Widget addSongList(WidgetRef ref, Playlist playlist) {
   final ScrollController scrollController = ScrollController();
-
   return Expanded(
     child: ListView.builder(
-        itemCount: songArray.children.length,
+        itemCount: playlistArray[0].songList.children.length,
         scrollDirection: Axis.vertical,
         shrinkWrap: false,
         controller: scrollController,
@@ -61,4 +58,30 @@ Widget addSongList(WidgetRef ref, Playlist playlist) {
           return addSongBlock(ref, playlist, index);
         }),
   );
+}
+
+Widget suggestionListWidget(WidgetRef ref, List<String> playlistString) {
+  final ScrollController scrollController = ScrollController();
+
+  return ListView.builder(
+      itemCount: playlistString.length,
+      scrollDirection: Axis.vertical,
+      shrinkWrap: false,
+      controller: scrollController,
+      itemBuilder: (context, index) {
+        return ListTile(
+          onTap: () {
+            print(playlistString[index]);
+            Playlist playlist = playlistArray.firstWhere(
+                (p) => p.playlistName == playlistString[index],
+                orElse: () => playlistArray[0]);
+            loadSong(ref, playlist,
+                playlist.songNameList.indexOf(playlistString[index]));
+          },
+          title: Text(
+            playlistString[index],
+            style: currentThemeSmallText(ref),
+          ),
+        );
+      });
 }

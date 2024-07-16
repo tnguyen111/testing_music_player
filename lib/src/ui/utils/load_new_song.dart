@@ -10,7 +10,7 @@ import '../screens/screens.dart';
 
 void loadNewSong(
   WidgetRef ref,
-  ConcatenatingAudioSource playlist,
+  Playlist playlist,
   int i,
 ) async {
   Navigator.push(
@@ -18,19 +18,18 @@ void loadNewSong(
       MaterialPageRoute(
         builder: (context) => songPlayerScreen(ref, playlist, i),
       ));
-
-  if (player.sequenceState?.currentSource != playlist.children[i]) {
-    await player.seek(index: i, Duration.zero);
+  if (player.sequenceState?.currentSource != playlist.songList[i]) {
+    await player.seek(Duration.zero, index: i);
   }
+
   playlistSwitchState(ref);
   print('new song loaded');
 }
 
-void loadNewPlaylist(ConcatenatingAudioSource playlist, int index) async {
-  player.startVisualizer();
-
-  print('new playlist: ${playlist.length}');
-  await player.setAudioSource(playlist, initialIndex: index);
+void loadNewPlaylist(Playlist playlist, int index) async {
+  print('new playlist: ${playlist.songList.length}');
+  await player.setAudioSource(playlist.songList, initialIndex: index);
+  await player.startVisualizer();
 }
 
 Future<Duration?> getDuration(File songFile) async {
@@ -40,7 +39,7 @@ Future<Duration?> getDuration(File songFile) async {
   int? tempIndex;
   Duration tempDura = Duration.zero;
 
-  if(player.audioSource != null){
+  if (player.audioSource != null) {
     tempConcar = player.audioSource;
     tempIndex = player.currentIndex;
     tempDura = player.position;
@@ -53,23 +52,25 @@ Future<Duration?> getDuration(File songFile) async {
     tag: const MediaItem(id: '-1', title: ' '),
   );
 
-  newDuration = await player.setAudioSource(tempAudio);
+  try {
+    newDuration = await player.setAudioSource(tempAudio);
+  } on PlayerInterruptedException {
+    // do nothing
+    print('expected throw');
+  }
 
-  if(changed){
-    await player.setAudioSource(tempConcar!,initialIndex: tempIndex,initialPosition: tempDura);
-
-    if(playing) player.play();
-
-  } else {
-    player.stop();
+  if (changed) {
+    await player.setAudioSource(tempConcar!,
+        initialIndex: tempIndex, initialPosition: tempDura);
+    if (playing) player.play();
   }
 
   print('New Duration: $newDuration');
   return newDuration;
 }
 
-void skipSong(WidgetRef ref, ConcatenatingAudioSource playlist, int i,
-    bool isNotMiniplayer) async {
+void skipSong(
+    WidgetRef ref, Playlist playlist, int i, bool isNotMiniplayer) async {
   print('skip');
   await player.seek(index: i, Duration.zero);
   if (isNotMiniplayer) {

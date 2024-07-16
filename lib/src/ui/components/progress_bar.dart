@@ -7,7 +7,7 @@ import '../../../main.dart';
 import '../utils/utils.dart';
 import 'package:testing_music_player/src/models/models.dart';
 
-ConcatenatingAudioSource currentGlobalPlaylist = ConcatenatingAudioSource(children: []);
+Playlist currentGlobalPlaylist = Playlist(playlistName_: 'global', imagePath_: '', songNameList_: []);
 
 class BarWavePainter extends CustomPainter {
   final Uint8List  amplitudes;
@@ -70,7 +70,7 @@ Widget songWaveForm(WidgetRef ref, bool isNotMiniplayer) {
 }
 
 Widget songProgressBar(
-    WidgetRef ref, ConcatenatingAudioSource currentPlaylist, bool isNotMiniplayer) {
+    WidgetRef ref, Playlist currentPlaylist, bool isNotMiniplayer) {
   return SizedBox(
     width: 330,
     child: StreamBuilder<Duration?>(
@@ -79,7 +79,7 @@ Widget songProgressBar(
 
           final durationState = snapshot.data;
           currentGlobalPlaylist = currentPlaylist;
-          if (durationState == player.duration && player.duration != Duration.zero && player.nextIndex != null && player.playing) {
+          if (durationState == player.duration && player.duration != Duration.zero && player.position != Duration.zero && player.nextIndex != null && player.playing) {
             print('song end');
             skipSong(ref, currentPlaylist, player.nextIndex!, isNotMiniplayer);
           }

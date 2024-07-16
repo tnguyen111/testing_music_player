@@ -6,7 +6,7 @@ import '../components/components.dart';
 
 Scaffold playlistScreen(WidgetRef ref, Playlist playlist) {
   return Scaffold(
-    appBar: playlistAppBar(ref, playlist.playlistName),
+    appBar: playlistAppBar(ref, playlist),
     body:
       SingleChildScrollView(
         child: SizedBox(
@@ -15,7 +15,7 @@ Scaffold playlistScreen(WidgetRef ref, Playlist playlist) {
           child: Column(
             children: <Widget>[
               playlistMenuBlock(ref,playlist),
-              songList(ref,playlist.songList),
+              songList(ref,playlist),
               miniplayer(ref, true),
             ],
           ),

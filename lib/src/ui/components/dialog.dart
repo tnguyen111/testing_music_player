@@ -13,7 +13,7 @@ import '../ui.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 
 showDataAlert(
-    BuildContext context, WidgetRef ref, ConcatenatingAudioSource songList) {
+    BuildContext context, WidgetRef ref, Playlist playlist) {
   String songName = '';
   String? authorName = '';
   String fileName = '';
@@ -179,7 +179,10 @@ showDataAlert(
                           Uri.parse(newSong.songPath),
                           tag: newMediaItem,
                         );
-                        addSongToPlaylist(songList, temp);
+                        if(playlist != playlistArray[0]){
+                          addSongToPlaylist(ref, playlist, temp);
+                        }
+                        addSongToPlaylist(ref, playlistArray[0], temp);
                         print('done');
                         Navigator.of(context).pop();
                         playlistSwitchState(ref);
