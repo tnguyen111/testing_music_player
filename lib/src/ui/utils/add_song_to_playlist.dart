@@ -7,7 +7,6 @@ import '../../models/models.dart';
 Future<void> addSongToPlaylist(
     WidgetRef ref, Playlist playlist, AudioSource song) async {
   if (playlist == playlistArray[0]) {
-    print("songArray add");
     await playlistArray[0].addSong(song as UriAudioSource);
     playlistArray[0].songNameList.add(song.tag.title);
     await IsarHelper().savePlaylist(playlistArray[0]);

@@ -65,16 +65,13 @@ Future<Duration?> getDuration(File songFile) async {
     if (playing) player.play();
   }
 
-  print('New Duration: $newDuration');
   return newDuration;
 }
 
 void skipSong(
     WidgetRef ref, Playlist playlist, int i, bool isNotMiniplayer) async {
-  print('skip');
   await player.seek(index: i, Duration.zero);
   if (isNotMiniplayer) {
-    print('pushed');
     Navigator.pop(globalNavigatorKey.currentContext!);
     Navigator.push(
         globalNavigatorKey.currentContext!,
@@ -83,5 +80,4 @@ void skipSong(
         ));
   }
   playlistSwitchState(ref);
-  print('new song');
 }

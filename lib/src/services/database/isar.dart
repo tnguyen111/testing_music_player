@@ -161,9 +161,8 @@ class IsarHelper {
     for (int i = 0; i < playlist.songNameList.length; i++) {
       var existingSong =
       await IsarHelper().getSongFor(playlist.songNameList[i]);
-      print(existingSong!.songName);
       try {
-        await playlist.setAudioSource(existingSong);
+        await playlist.setAudioSource(existingSong!);
       } on PlayerInterruptedException {
         // do nothing
         print('expected throw');

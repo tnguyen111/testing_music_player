@@ -22,10 +22,6 @@ Widget listCheckbox(Playlist playlist, AudioSource song, WidgetRef ref) {
       } catch(e){
        print(e);
       }
-
-      print(playlist.songList);
-      print(playlist.songList.children);
-      print(playlistArray[0].songList.children);
       
       playlistSwitchState(ref);
     },

@@ -122,11 +122,8 @@ IconButton removeIcon(
         /*Remove things*/
         String songName = (song as UriAudioSource).tag.title;
         if (playlistArray[0] == playlist) {
-          print('delete in Array');
           for (int i = 1; i < playlistArray.length; i++) {
-            print(i);
             if (playlistArray[i].songNameList.contains(songName)) {
-              print('deleted');
               await deleteSongFromPlaylist(ref, playlistArray[i], song);
               IsarHelper().savePlaylist(playlistArray[i]);
             }

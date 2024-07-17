@@ -8,7 +8,6 @@ Future<void> deleteSongFromPlaylist(WidgetRef ref, Playlist playlist, AudioSourc
   String songName = (song as UriAudioSource).tag.title;
 
   if (playlist == playlistArray[0]) {
-    print("songArray remove");
     await playlistArray[0]
         .removeSong(playlistArray[0].songNameList.indexOf(songName));
     playlistArray[0].songNameList.remove(songName);
@@ -17,7 +16,6 @@ Future<void> deleteSongFromPlaylist(WidgetRef ref, Playlist playlist, AudioSourc
     return;
   }
 
-  print("huh");
   await playlist.removeSong(playlist.songNameList.indexOf(songName));
   playlist.songNameList.remove(songName);
   IsarHelper().savePlaylist(playlist);

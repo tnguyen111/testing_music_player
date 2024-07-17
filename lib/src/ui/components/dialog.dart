@@ -172,18 +172,16 @@ showDataAlert(
                           songPath: songFile.path,
                         );
                         IsarHelper().saveSong(newSong);
-                        print('parse');
                         MediaItem newMediaItem = newSong.toMediaItem();
-                        print('parse done');
                         AudioSource temp = AudioSource.uri(
                           Uri.parse(newSong.songPath),
                           tag: newMediaItem,
                         );
                         if(playlist != playlistArray[0]){
-                          addSongToPlaylist(ref, playlist, temp);
+                          print('added to playlist');
+                          await addSongToPlaylist(ref, playlist, temp);
                         }
-                        addSongToPlaylist(ref, playlistArray[0], temp);
-                        print('done');
+                        await addSongToPlaylist(ref, playlistArray[0], temp);
                         Navigator.of(context).pop();
                         playlistSwitchState(ref);
                       }

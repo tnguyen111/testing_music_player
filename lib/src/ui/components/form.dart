@@ -54,7 +54,6 @@ Widget changePlaylistForm(
                   },
                   onChanged: (String value) {
                     playlistName = value;
-                    print(value);
                   },
                   onTapOutside: (event) {
                     playlist.setName(playlistName);

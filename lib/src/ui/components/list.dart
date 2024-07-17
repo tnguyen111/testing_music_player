@@ -72,7 +72,6 @@ Widget suggestionSongListWidget(WidgetRef ref, List<String> playlistString) {
     itemBuilder: (context, index) {
       return ListTile(
         onTap: () {
-          print(playlistString[index]);
           Playlist playlist = playlistArray.firstWhere(
               (p) => p.playlistName == playlistString[index],
               orElse: () => playlistArray[0]);
@@ -99,7 +98,6 @@ Widget suggestionPlaylistWidget(WidgetRef ref, List<Playlist> playlistList) {
     itemBuilder: (context, index) {
       return ListTile(
         onTap: () {
-          print(playlistList[index].playlistName);
           Navigator.push(
             globalNavigatorKey.currentContext!,
             MaterialPageRoute(
