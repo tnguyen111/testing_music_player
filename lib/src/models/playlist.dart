@@ -1,14 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:testing_music_player/src/services/services.dart';
-
-import '../services/database/database.dart';
 import 'models.dart';
-
 part 'playlist.g.dart';
 
 @collection
@@ -41,17 +36,9 @@ class Playlist {
   @ignore
   ConcatenatingAudioSource get songList => songList_;
 
-  void getSongFromList() async {
-    for (int i = 0; i < songNameList.length; i++) {
-      var existingSong = await IsarHelper().getSongFor(songNameList[i]);
-      setAudioSource(existingSong!);
-
-    }
-  }
-
-  void setAudioSource(SongDetails song) {
+  Future<void> setAudioSource(SongDetails song) async {
     MediaItem newMediaItem = song.toMediaItem();
-    songList.add(
+    await songList.add(
       AudioSource.uri(
         Uri.parse(song.songPath),
         tag: newMediaItem,
@@ -82,33 +69,34 @@ class Playlist {
   }
 
   Future<void> addSong(UriAudioSource newSong) async {
-    bool switched = false;
-    bool playing = player.playing;
+    bool changed = false;
+    bool playing = false;
     AudioSource? tempConcar;
     int? tempIndex;
     Duration tempDura = Duration.zero;
 
     if (songList != player.audioSource && player.audioSource != null) {
-      switched = true;
+      changed = true;
       playing = player.playing;
       tempConcar = player.audioSource;
       tempIndex = player.currentIndex;
       tempDura = player.position;
+
       await player.setAudioSource(songList);
     }
 
     await songList_.add(newSong);
 
-    if (switched) {
+    if (changed) {
       await player.setAudioSource(tempConcar!,
-            initialIndex: tempIndex, initialPosition: tempDura);
-      if(playing) player.play();
+          initialIndex: tempIndex, initialPosition: tempDura);
+      if (playing) player.play();
     }
   }
 
   Future<void> removeSong(int index) async {
     bool switched = false;
-    bool playing = player.playing;
+    bool playing = false;
     AudioSource? tempConcar;
     int? tempIndex;
     Duration tempDura = Duration.zero;
@@ -120,16 +108,65 @@ class Playlist {
       tempIndex = player.currentIndex;
       tempDura = player.position;
       await player.setAudioSource(songList);
-
     }
 
     await songList_.removeAt(index);
 
     if (switched) {
       await player.setAudioSource(tempConcar!,
-            initialIndex: tempIndex, initialPosition: tempDura);
-      if(playing) player.play();
+          initialIndex: tempIndex, initialPosition: tempDura);
+      if (playing) player.play();
+    }
+  }
+
+  Future<void> moveSong(int oldIndex, int newIndex) async {
+    bool switched = false;
+    bool playing = false;
+    AudioSource? tempConcar;
+    int? tempIndex;
+    Duration tempDura = Duration.zero;
+
+    if (songList != player.audioSource && player.audioSource != null) {
+      switched = true;
+      playing = player.playing;
+      tempConcar = player.audioSource;
+      tempIndex = player.currentIndex;
+      tempDura = player.position;
+      await player.setAudioSource(songList);
     }
 
+    await songList.move(oldIndex, newIndex);
+
+    if (switched) {
+      await player.setAudioSource(tempConcar!,
+          initialIndex: tempIndex, initialPosition: tempDura);
+      if (playing) player.play();
+    }
+  }
+
+  Future<void> clearSong() async {
+    bool switched = false;
+    bool playing = false;
+    AudioSource? tempConcar;
+    int? tempIndex;
+    Duration tempDura = Duration.zero;
+
+    if (songList != player.audioSource && player.audioSource != null) {
+      switched = true;
+      playing = player.playing;
+      tempConcar = player.audioSource;
+      tempIndex = player.currentIndex;
+      tempDura = player.position;
+      await player.setAudioSource(songList);
+    }
+
+    await songList.clear();
+
+    if (switched) {
+      await player.setAudioSource(tempConcar!,
+          initialIndex: tempIndex, initialPosition: tempDura);
+      if (playing) player.play();
+    }
   }
 }
+

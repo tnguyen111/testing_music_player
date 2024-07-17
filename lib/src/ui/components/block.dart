@@ -82,7 +82,7 @@ Container playlistAddBlock(WidgetRef ref) => Container(
           playlistSwitchState(ref);
           Playlist playlist = Playlist(
               playlistName_: '',
-              imagePath_: 'lib/assets/default_image.jpg',
+              imagePath_: 'lib/assets/default_image.png',
               songNameList_: []);
           Navigator.push(
             globalNavigatorKey.currentContext!,

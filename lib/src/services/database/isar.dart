@@ -65,7 +65,6 @@ class IsarHelper {
   Future<void> savePlaylistList(List<Playlist> playlistList) async {
     final isar = await db;
     await isar.writeTxn(() => isar.playlists.clear());
-    playlistArray.clear();
     isar.writeTxnSync<List<int>>(() => isar.playlists.putAllSync(playlistList));
   }
 
@@ -87,15 +86,15 @@ class IsarHelper {
         () => isar.songDetails.filter().songNameEqualTo(name).deleteFirst());
   }
 
-  Future<void> sortPlaylist(WidgetRef ref) async {
+  Future<void> sortPlaylistList(WidgetRef ref) async {
     final isar = await db;
     List<Playlist> newPlaylist =
         await isar.playlists.where().sortByPlaylistName().findAll();
     for (int i = 0; i < newPlaylist.length; i++) {
       newPlaylist[i].id = i;
     }
+    playlistArray.sort((a, b) => a.playlistName.compareTo(b.playlistName));
     await savePlaylistList(newPlaylist);
-    await setPlaylistList(ref);
   }
 
   Future<void> sortSongList(WidgetRef ref, String sortType) async {
@@ -136,30 +135,56 @@ class IsarHelper {
   Future<bool> setPlaylistList(WidgetRef ref) async {
     playlistArray = await getAllPlaylist();
     for (int i = 0; i < playlistArray.length; i++) {
-      for (int j = 0; j < playlistArray[i].songNameList.length; j++) {
-        var existingSong =
-            await IsarHelper().getSongFor(playlistArray[i].songNameList[j]);
-
-        try {
-          playlistArray[i].setAudioSource(existingSong!);
-        } on PlayerInterruptedException {
-          // do nothing
-          print('expected throw');
-        }
-      }
+      setPlaylist(playlistArray[i]);
     }
     playlistSwitchState(ref);
     return true;
+  }
+
+  Future<Playlist> setPlaylist(Playlist playlist) async {
+    bool changed = false;
+    bool playing = false;
+    AudioSource? tempConcar;
+    int? tempIndex;
+    Duration tempDura = Duration.zero;
+
+    if (playlist.songList != player.audioSource && player.audioSource != null) {
+      changed = true;
+      playing = player.playing;
+      tempConcar = player.audioSource;
+      tempIndex = player.currentIndex;
+      tempDura = player.position;
+
+      await player.setAudioSource(playlist.songList);
+    }
+
+    for (int i = 0; i < playlist.songNameList.length; i++) {
+      var existingSong =
+      await IsarHelper().getSongFor(playlist.songNameList[i]);
+      print(existingSong!.songName);
+      try {
+        await playlist.setAudioSource(existingSong);
+      } on PlayerInterruptedException {
+        // do nothing
+        print('expected throw');
+      }
+    }
+
+    if (changed) {
+      await player.setAudioSource(tempConcar!,
+          initialIndex: tempIndex, initialPosition: tempDura);
+      if (playing) player.play();
+    }
+
+    return playlist;
   }
 
   Future<bool> setSongList(WidgetRef ref) async {
     if (!await IsarHelper().playlistExisted('')) {
       await savePlaylist(
           Playlist(playlistName_: '', imagePath_: '', songNameList_: []));
+      playlistSwitchState(ref);
     }
-    Playlist? playlist = await getPlaylistFor('');
-    await sortingPlaylist(playlist!, '');
-    playlistSwitchState(ref);
     return true;
   }
 

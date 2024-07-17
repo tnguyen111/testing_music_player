@@ -40,8 +40,7 @@ IconButton sortPlaylistIcon(WidgetRef ref) => IconButton(
       icon: const Icon(Icons.sort),
       onPressed: () async {
         //Sort playlists
-        await IsarHelper().sortPlaylist(ref);
-
+        await IsarHelper().sortPlaylistList(ref);
         playlistSwitchState(ref);
       },
     );
@@ -53,7 +52,7 @@ PopupMenuButton<String> sortSongIcon(WidgetRef ref, Playlist playlist) =>
         if(playlist == playlistArray[0]){
           await IsarHelper().sortSongList(ref, value);
         } else {
-          sortingPlaylist(playlist, value);
+          await sortingPlaylist(playlist, value);
         }
         playlistSwitchState(ref);
       },
@@ -172,7 +171,7 @@ void handleSettingListClick(String value, WidgetRef ref) {
     case 'Add New Playlist':
       Playlist playlist = Playlist(
           playlistName_: '',
-          imagePath_: "lib/assets/default_image.jpg",
+          imagePath_: "lib/assets/default_image.png",
           songNameList_: List.empty(growable: true));
       Navigator.push(
         globalNavigatorKey.currentContext!,

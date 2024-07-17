@@ -28,6 +28,10 @@ Future<void> swapSongsInPlaylist(Playlist playlist, int oldIndex, int newIndex) 
 Future<void> swapSong(int playlistIndex, int oldIndex, int newIndex) async {
   final String temp = playlistArray[playlistIndex].songNameList.removeAt(oldIndex);
   playlistArray[playlistIndex].songNameList.insert(newIndex, temp);
-  await playlistArray[playlistIndex].songList.move(oldIndex, newIndex);
+  try {
+    await playlistArray[playlistIndex].songList.move(oldIndex, newIndex);
+  } catch(e){
+    print(e);
+  }
   return;
 }
