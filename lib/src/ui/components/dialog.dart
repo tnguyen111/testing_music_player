@@ -75,8 +75,8 @@ showDataAlert(
                     maxLength: 30,
                     decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: 'Enter Author Name',
-                        labelText: 'New Author Name'),
+                        hintText: 'Enter Artist Name',
+                        labelText: 'New Artist Name'),
                     onChanged: (value) {
                       authorName = value;
                     },
