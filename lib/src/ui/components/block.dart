@@ -140,17 +140,28 @@ Container songBlock(WidgetRef ref, Playlist playlist, int index) => Container(
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text((playlist.songList[index] as UriAudioSource)
-                          .tag
-                          .title),
-                      Text(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        (playlist.songList[index] as UriAudioSource).tag.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
                         (playlist.songList[index] as UriAudioSource).tag.artist,
+                        overflow: TextOverflow.ellipsis,
                         textScaler: const TextScaler.linear(0.6),
                       ),
-                    ]),
+                    ),
+                  ],
+                ),
               ),
+              const SizedBox(width: 18),
               Text((playlist.songList[index] as UriAudioSource)
                   .tag
                   .displayDescription),
@@ -220,11 +231,11 @@ Widget songIconBlock(
   songWatchState(ref);
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
     (isNotMiniplayer) ? shuffleIcon(ref) : Container(),
-    skipSongIcon(ref, false, playlist, index, isNotMiniplayer),
+    skipSongIcon(ref, false, playlist, isNotMiniplayer),
     SizedBox(width: 9 * scaling),
     Transform.scale(scale: scaling, child: playIcon(ref, playlist)),
     SizedBox(width: 9 * scaling),
-    skipSongIcon(ref, true, playlist, index, isNotMiniplayer),
+    skipSongIcon(ref, true, playlist, isNotMiniplayer),
     (isNotMiniplayer) ? loopIcon(ref) : Container(),
   ]);
 }
@@ -235,11 +246,24 @@ Widget songNameBlock(WidgetRef ref) {
   return Column(
     children: [
       const SizedBox(height: 18),
-      Text(
-        songName,
-        style: currentThemeHeaderText(ref),
+      Padding(
+        padding: const EdgeInsets.only(left: 30, right: 30),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Text(
+            songName,
+            style: currentThemeHeaderText(ref),
+            maxLines: 1,
+          ),
+        ),
       ),
-      Text(authorName),
+      Padding(
+        padding: const EdgeInsets.only(left: 50, right: 50),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Text(authorName),
+        ),
+      ),
     ],
   );
 }
@@ -264,17 +288,25 @@ Widget addSongBlock(ref, playlist, index) => Container(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text((playlistArray[0].songList[index] as UriAudioSource)
-                          .tag
-                          .title),
-                      Text(
-                        (playlistArray[0].songList[index] as UriAudioSource)
-                            .tag
-                            .artist,
-                        textScaler: const TextScaler.linear(0.6),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Text(
+                            (playlistArray[0].songList[index] as UriAudioSource)
+                                .tag
+                                .title),
+                      ),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Text(
+                          (playlistArray[0].songList[index] as UriAudioSource)
+                              .tag
+                              .artist,
+                          textScaler: const TextScaler.linear(0.6),
+                        ),
                       ),
                     ]),
               ),
+              const SizedBox(width: 18),
               Text((playlistArray[0].songList[index] as UriAudioSource)
                   .tag
                   .displayDescription),

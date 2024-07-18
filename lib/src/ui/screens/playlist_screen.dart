@@ -10,13 +10,13 @@ Scaffold playlistScreen(WidgetRef ref, Playlist playlist) {
     body:
       SingleChildScrollView(
         child: SizedBox(
-          height: MediaQuery.sizeOf(globalNavigatorKey.currentContext!).height - 100,
+          height: MediaQuery.sizeOf(globalNavigatorKey.currentContext!).height - 90,
           width: MediaQuery.sizeOf(globalNavigatorKey.currentContext!).width,
           child: Column(
             children: <Widget>[
               playlistMenuBlock(ref,playlist),
               songList(ref,playlist),
-              miniplayer(ref, true),
+              miniplayer(ref),
             ],
           ),
         ),

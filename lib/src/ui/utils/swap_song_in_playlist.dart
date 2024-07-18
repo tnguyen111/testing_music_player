@@ -12,7 +12,7 @@ Future<void> swapSongsInPlaylist(Playlist playlist, int oldIndex, int newIndex) 
     for(int i = 0; i < playlist.songList.length; i++){
       tempSongList.add(toSongDetails((playlist.songList[i] as UriAudioSource).tag));
     }
-    IsarHelper().saveSongList(tempSongList);
+    await IsarHelper().saveSongList(tempSongList);
     return;
   }
 

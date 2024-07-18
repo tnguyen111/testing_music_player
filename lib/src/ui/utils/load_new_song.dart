@@ -71,13 +71,5 @@ Future<Duration?> getDuration(File songFile) async {
 void skipSong(
     WidgetRef ref, Playlist playlist, int i, bool isNotMiniplayer) async {
   await player.seek(index: i, Duration.zero);
-  if (isNotMiniplayer) {
-    Navigator.pop(globalNavigatorKey.currentContext!);
-    Navigator.push(
-        globalNavigatorKey.currentContext!,
-        MaterialPageRoute(
-          builder: (context) => songPlayerScreen(ref, playlist, i),
-        ));
-  }
   playlistSwitchState(ref);
 }

@@ -17,16 +17,16 @@ IconButton searchSongIcon(WidgetRef ref, Playlist playlist) => IconButton(
       },
     );
 
-IconButton searchPlaylistIcon (WidgetRef ref) => IconButton(
-  icon: const Icon(Icons.search),
-  onPressed: () {
-    // Search things
-    showSearch(
-      context: globalNavigatorKey.currentContext!,
-      delegate: PlaylistSearch(ref),
+IconButton searchPlaylistIcon(WidgetRef ref) => IconButton(
+      icon: const Icon(Icons.search),
+      onPressed: () {
+        // Search things
+        showSearch(
+          context: globalNavigatorKey.currentContext!,
+          delegate: PlaylistSearch(ref),
+        );
+      },
     );
-  },
-);
 
 IconButton menuIcon(BuildContext context) => IconButton(
       icon: const Icon(Icons.menu),
@@ -49,10 +49,10 @@ PopupMenuButton<String> sortSongIcon(WidgetRef ref, Playlist playlist) =>
     PopupMenuButton<String>(
       icon: const Icon(Icons.sort),
       onSelected: (value) async {
-        if(playlist == playlistArray[0]){
+        if (playlist == playlistArray[0]) {
           await IsarHelper().sortSongList(ref, value);
         } else {
-          await sortingPlaylist(playlist, value);
+          await sortingPlaylist(ref, playlist, value);
         }
         playlistSwitchState(ref);
       },
@@ -124,7 +124,7 @@ IconButton removeIcon(
         if (playlistArray[0] == playlist) {
           for (int i = 1; i < playlistArray.length; i++) {
             if (playlistArray[i].songNameList.contains(songName)) {
-              await deleteSongFromPlaylist(ref, playlistArray[i], song);
+              deleteSongFromPlaylist(ref, playlistArray[i], song);
               IsarHelper().savePlaylist(playlistArray[i]);
             }
           }
@@ -132,7 +132,7 @@ IconButton removeIcon(
           await deleteSongFromPlaylist(ref, playlistArray[0], song);
           IsarHelper().deleteSongFor(songName);
         } else {
-          await deleteSongFromPlaylist(ref, playlist, song);
+          deleteSongFromPlaylist(ref, playlist, song);
         }
         playlistSwitchState(ref);
       },
@@ -240,38 +240,26 @@ IconButton playIcon(WidgetRef ref, Playlist playlist) => IconButton(
     );
 
 IconButton skipSongIcon(WidgetRef ref, bool skipNext, Playlist playlist,
-        int index, bool isNotMiniplayer) =>
+        bool isNotMiniplayer) =>
     IconButton(
       icon: (skipNext)
           ? const Icon(Icons.skip_next)
           : const Icon(Icons.skip_previous),
-      onPressed: () {
+      onPressed: () async {
         /*Skip songs*/
-        bool changed = false;
+        int index = playlist.songNameList
+            .indexOf(player.sequenceState?.currentSource?.tag.title);
         if (skipNext) {
-          if (index < playlist.songList.length - 1) {
-            index++;
-            player.seekToNext();
-          } else {
-            index = 0;
-            player.seek(Duration.zero, index: 0);
-          }
-          changed = true;
+          (player.currentIndex! < playlist.songList.length - 1)
+              ? await player.seekToNext()
+              : await player.seek(Duration.zero, index: 0);
         } else if (!skipNext) {
-          if (index > 0) {
-            index--;
-            player.seekToPrevious();
-          } else {
-            index = playlist.songList.length - 1;
-            player.seek(Duration.zero, index: playlist.songList.length - 1);
-          }
-          changed = true;
+          (index > 0)
+              ? await player.seekToPrevious()
+              : await player.seek(Duration.zero,
+                  index: playlist.songList.length - 1);
         }
-
-        if (changed) {
-          skipSong(ref, playlist, index, isNotMiniplayer);
-          songSetState(ref, 2);
-        }
+        songSetState(ref, 2);
       },
     );
 

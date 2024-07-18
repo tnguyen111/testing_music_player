@@ -4,6 +4,7 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import '../../../main.dart';
+import '../themes/source_colors.dart';
 import '../utils/utils.dart';
 import 'package:testing_music_player/src/models/models.dart';
 
@@ -38,14 +39,14 @@ class BarWavePainter extends CustomPainter {
         canvas.drawRect(rectSpacing, spacing);
       }
     } else{
-      const barWidth = 300 / 60;
-      for (int i = 0; i <100; i++) {
-        final barHeight = amplitudes[i] + 0.0; // Normalize amplitude to fit
+      const barWidth = 300 / 50;
+      for (int i = 0; i <6; i++) {
+        final barHeight = amplitudes[i]/4.5; // Normalize amplitude to fit
         final left = i * barWidth;
-        final rectSpacing = Rect.fromCenter(center: Offset(left, 150), width: 4.0,height:barHeight);
-        final rect = Rect.fromCenter(center: Offset(left, 150), width: barWidth,height:barHeight);
-        canvas.drawRect(rect, paint);
-        canvas.drawRect(rectSpacing, spacing);
+        final rectSpacing = Rect.fromCenter(center: Offset(left, 10), width: 3,height:barHeight + 0.0);
+        final rect = Rect.fromCenter(center: Offset(left, 10), width: barWidth,height:barHeight + 0.0);
+        canvas.drawRRect(RRect.fromRectAndRadius(rect, const Radius.circular(0)), spacing);
+        canvas.drawRRect(RRect.fromRectAndRadius(rectSpacing, const Radius.circular(15)), paint);
       }
     }
   }
@@ -58,7 +59,7 @@ class BarWavePainter extends CustomPainter {
 
 Widget songWaveForm(WidgetRef ref, bool isNotMiniplayer) {
   return SizedBox(
-      width: (isNotMiniplayer) ? 300: MediaQuery.sizeOf(globalNavigatorKey.currentContext!).width,
+      width: (isNotMiniplayer) ? 300: 30,
       height: 300,
       child: StreamBuilder<VisualizerWaveformCapture>(
         stream: player.visualizerWaveformStream,
@@ -76,7 +77,6 @@ Widget songProgressBar(
     child: StreamBuilder<Duration?>(
         stream: player.positionStream,
         builder: (context, snapshot) {
-
           final durationState = snapshot.data;
           currentGlobalPlaylist = currentPlaylist;
           if (durationState == player.duration && player.duration != Duration.zero && player.position != Duration.zero && player.nextIndex != null && player.playing) {
@@ -93,9 +93,11 @@ Widget songProgressBar(
             barHeight: 5,
             progressBarColor: currentThemeHeaderText(ref).color,
             bufferedBarColor: currentThemeSub(ref),
+            thumbRadius: (isNotMiniplayer) ? 10: 3,
+
             thumbColor: currentThemeHeaderText(ref).color,
             baseBarColor: currentThemeHeader(ref),
-            timeLabelLocation: TimeLabelLocation.above,
+            timeLabelLocation: (isNotMiniplayer) ? TimeLabelLocation.above: TimeLabelLocation.none,
             timeLabelTextStyle: currentThemeSmallText(ref),
           );
         }),

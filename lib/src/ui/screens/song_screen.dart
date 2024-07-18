@@ -10,7 +10,7 @@ Scaffold songScreen(WidgetRef ref) {
       children: [
         headerBlock('Your Songs', ref),
         songList(ref, playlistArray[0]),
-        miniplayer(ref, false),
+        miniplayer(ref),
       ],
     ),
     drawer: sideBar(ref),

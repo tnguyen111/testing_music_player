@@ -1,8 +1,9 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:testing_music_player/src/services/services.dart';
 import '../../models/models.dart';
-import '../../services/database/database.dart';
 
-Future<Playlist> sortingPlaylist(Playlist playlist, String sortType) async {
+Future<Playlist> sortingPlaylist(WidgetRef ref, Playlist playlist, String sortType) async {
   bool changed = false;
   String currentName = '';
   Duration currentPos = Duration.zero;
@@ -53,6 +54,7 @@ Future<Playlist> sortingPlaylist(Playlist playlist, String sortType) async {
         initialIndex: playlist.songNameList.indexOf(currentName),
         initialPosition: currentPos);
   }
+  playlistSwitchState(ref);
 
   return playlist;
 }

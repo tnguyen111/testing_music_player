@@ -4,6 +4,7 @@ import 'text_theme.dart';
 
 ThemeData darkTheme() {
   return ThemeData(
+    useMaterial3: true,
     appBarTheme: AppBarTheme(
       backgroundColor: darkThemeHeader(),
       toolbarHeight: 60,

@@ -42,13 +42,13 @@ showDataAlert(
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
+                    maxLength: 50,
                     inputFormatters: [
                       FilteringTextInputFormatter.deny(
                         RegExp(noEmoji),
                       ),
                     ],
                     controller: songNameController,
-                    maxLength: 30,
                     onTap: () {
                       error = '';
                       playlistSwitchState(ref);
@@ -66,13 +66,13 @@ showDataAlert(
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
+                    maxLength: 50,
                     inputFormatters: [
                       FilteringTextInputFormatter.deny(
                         RegExp(noEmoji),
                       ),
                     ],
                     controller: authorNameController,
-                    maxLength: 30,
                     decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'Enter Artist Name',
@@ -128,8 +128,8 @@ showDataAlert(
                           String? trackName = metadata.trackName;
                           String? trackArtistNames =
                               metadata.trackArtistNames?.first;
-                          songName = trackName ?? songName;
-                          authorName = trackArtistNames ?? authorName;
+                          songName = trackName?.substring(0,(trackName.length <= 50) ? trackName.length: 51) ?? songName;
+                          authorName = trackArtistNames?.substring(0,(trackArtistNames.length <= 50) ? trackArtistNames.length: 51) ?? authorName;
                           songNameController.text = songName;
                           authorNameController.text = authorName!;
                           playlistSwitchState(ref);
@@ -226,6 +226,7 @@ editPlaylistNameDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
+                    maxLength: 50,
                     controller: controller,
                     decoration: const InputDecoration(
                         border: OutlineInputBorder(),

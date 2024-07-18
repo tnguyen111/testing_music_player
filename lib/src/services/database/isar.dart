@@ -116,7 +116,7 @@ class IsarHelper {
 
     Playlist? playlist = playlistArray[0];
 
-    await sortingPlaylist(playlist, sortType);
+    await sortingPlaylist(ref, playlist, sortType);
 
     playlistSwitchState(ref);
     return;
