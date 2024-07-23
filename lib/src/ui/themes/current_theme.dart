@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../main.dart';
 import '../../services/services.dart';
 import 'themes.dart';
-import '../../my_app.dart';
 
 ThemeData currentTheme(WidgetRef ref) {
   if (modeReadState(ref)) {
@@ -74,6 +72,10 @@ Color currentThemeOnSecondary(WidgetRef ref){
 
 Color currentThemeOnSecondaryContainer(WidgetRef ref){
   return currentTheme(ref).colorScheme.onSecondaryContainer;
+}
+
+Color currentThemeErrorContainer(WidgetRef ref){
+  return currentTheme(ref).colorScheme.errorContainer;
 }
 
 

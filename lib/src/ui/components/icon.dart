@@ -149,6 +149,24 @@ IconButton removePlaylistIcon(WidgetRef ref, Playlist playlist) => IconButton(
       },
     );
 
+
+IconButton addPlaylistIcon(WidgetRef ref) => IconButton(
+  icon: const Icon(Icons.add),
+  onPressed: () {
+    /*Add things*/
+    Playlist playlist = Playlist(
+        playlistName_: '',
+        imagePath_: "lib/assets/default_image.png",
+        songNameList_: List.empty(growable: true));
+    Navigator.push(
+      ContextKey.navKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => addPlaylistScreen(ref, playlist)),
+    );
+    playlistSwitchState(ref);
+  },
+);
+
 PopupMenuButton<String> settingListIcon(WidgetRef ref) =>
     PopupMenuButton<String>(
       onSelected: (value) {
@@ -261,6 +279,7 @@ IconButton skipSongIcon(WidgetRef ref, bool skipNext, Playlist playlist,
                   index: playlist.songList.length - 1);
         }
         songSetState(ref, 2);
+        playlistSwitchState(ref);
       },
     );
 

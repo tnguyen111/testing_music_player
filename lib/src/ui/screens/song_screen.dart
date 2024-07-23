@@ -13,7 +13,7 @@ class SongScreen extends ConsumerWidget{
       appBar: headerBar(ref, true),
       body: Column(
         children: [
-          headerBlock('Your Songs', ref),
+          headerBlock('${playlistArray[0].songList.length} Song${(playlistArray[0].songList.length > 1) ? 's': ''}', ref),
           songList(ref, playlistArray[0]),
           miniplayer(ref),
         ],

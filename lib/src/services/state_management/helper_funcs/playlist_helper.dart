@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../main.dart';
 import '../providers/providers.dart';
 
 bool playlistWatchState(WidgetRef ref){
@@ -10,7 +11,9 @@ bool playlistReadState(WidgetRef ref){
 }
 
 void playlistSwitchState(WidgetRef ref){
-  ref.read(playlistProvider.notifier).switchState();
+  if(ContextKey.navKey.currentContext!.mounted) {
+    ref.read(playlistProvider.notifier).switchState();
+  }
   return;
 }
 

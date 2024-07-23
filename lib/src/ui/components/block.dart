@@ -6,11 +6,10 @@ import 'package:testing_music_player/src/ui/ui.dart';
 import 'package:testing_music_player/src/services/services.dart';
 import '../../../main.dart';
 import '../../models/models.dart';
-import '../../my_app.dart';
 
 Container headerBlock(String header, WidgetRef ref) => Container(
-      margin: const EdgeInsets.only(
-          left: kDefaultPadding, right: kMediumPadding),
+      margin:
+          const EdgeInsets.only(left: kDefaultPadding, right: kMediumPadding),
       child: Row(
         children: [
           Expanded(
@@ -27,146 +26,94 @@ Container headerBlock(String header, WidgetRef ref) => Container(
     );
 
 Widget playlistBlock(WidgetRef ref, Playlist playlist) => Row(
-  key: Key('${playlistArray.indexOf(playlist)}'),
-  mainAxisAlignment: MainAxisAlignment.start,
-  children: [
-    Expanded(
-      child: Card(
-        clipBehavior: Clip.hardEdge,
-          child: Container(
-            color: currentThemeSurfaceContainer(ref),
-            width: 160,
-            child: GestureDetector(
-              onTap: () {
-                // Change!
-                Navigator.push(
-                  ContextKey.navKey.currentContext!,
-                  MaterialPageRoute(
-                      builder: (context) => playlistScreen(ref, playlist)),
-                );
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 160,
-                    height: 140,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                      child: playlist.getImage(),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 14, top: 8.0, bottom: 8.0, right: 14),
-                    child: playlistText(
-                      ref,
-                      playlist.playlistName_,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-    ),
-  ],
-);
-
-Container playlistAddBlock(WidgetRef ref) => Container(
-      margin: const EdgeInsets.only(
-          left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
-      child: GestureDetector(
-        onTap: () async {
-          playlistSwitchState(ref);
-          Playlist playlist = Playlist(
-              playlistName_: '',
-              imagePath_: 'lib/assets/default_image.png',
-              songNameList_: []);
-          Navigator.push(
-            ContextKey.navKey.currentContext!,
-            MaterialPageRoute(
-              builder: (context) => addPlaylistScreen(ref, playlist),
-            ),
-          );
-        },
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                color: currentThemeSurfaceContainerLow(ref),
-              ),
-              height: 90,
-            ),
-            Row(children: [
-              const SizedBox(
-                width: 90,
-                height: 90,
-                child: Icon(Icons.add),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: playlistText(
-                  ref,
-                  'Add New Playlist',
-                ),
-              ),
-            ]),
-          ],
-        ),
-      ),
-    );
-
-Container songBlock(WidgetRef ref, Playlist playlist, int index) => Container(
-      key: Key('$index'),
-      margin: const EdgeInsets.only(
-          left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
-      child: GestureDetector(
-        onTap: () {
-          loadSong(ref, playlist, index);
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-            color: currentThemeSurfaceContainer(ref),
-          ),
-          padding: const EdgeInsets.only(top: kXSPadding, bottom: kXSPadding),
-          child: Row(
-            children: [
-              const SizedBox(width: kXSPadding),
-              Expanded(
+      key: Key('${playlistArray.indexOf(playlist)}'),
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Card(
+            clipBehavior: Clip.hardEdge,
+            child: Container(
+              color: currentThemeSurfaceContainer(ref),
+              width: 160,
+              child: GestureDetector(
+                onTap: () {
+                  // Change!
+                  Navigator.push(
+                    ContextKey.navKey.currentContext!,
+                    MaterialPageRoute(
+                        builder: (context) => playlistScreen(ref, playlist)),
+                  );
+                },
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: songText(
-                        ref,
-                        (playlist.songList[index] as UriAudioSource).tag.title,
+                    SizedBox(
+                      width: 160,
+                      height: 140,
+                      child: ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(kDefaultBorderRadius),
+                        child: playlist.getImage(),
                       ),
                     ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: artistText(
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 14, top: 8.0, bottom: 8.0, right: 14),
+                      child: playlistText(
                         ref,
-                        (playlist.songList[index] as UriAudioSource).tag.artist,
+                        playlist.playlistName_,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: kDefaultSmallPadding),
-              timeText(
-                ref,
-                (playlist.songList[index] as UriAudioSource)
-                    .tag
-                    .displayDescription,
-              ),
-              removeIcon(ref, playlist,
-                  (playlist.songList[index] as UriAudioSource), index),
-            ],
+            ),
+          ),
+        ),
+      ],
+    );
+
+Container songBlock(WidgetRef ref, Playlist playlist, int index) => Container(
+      key: Key(playlist.songNameList[index]),
+      child: GestureDetector(
+        onTap: () {
+          loadSong(ref, playlist, index);
+        },
+        child: Container(
+          color: currentThemeSurface(ref),
+          child: Padding(
+            padding: const EdgeInsets.only(
+                top: kMediumPadding,
+                bottom: kMediumPadding,
+                left: kDefaultSmallPadding,
+                right: kDefaultSmallPadding),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      songText(
+                        ref,
+                        (playlist.songList[index] as UriAudioSource).tag.title,
+                      ),
+                      artistText(
+                        ref,
+                        (playlist.songList[index] as UriAudioSource).tag.artist,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: kDefaultSmallPadding),
+                timeText(
+                  ref,
+                  (playlist.songList[index] as UriAudioSource)
+                      .tag
+                      .displayDescription,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -223,7 +170,7 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
 
 Widget songIconBlock(
     WidgetRef ref, Playlist playlist, int index, bool isNotMiniplayer) {
-  double scaling = 2;
+  double scaling = 4;
   if (!isNotMiniplayer) {
     scaling = 1;
   }
@@ -231,9 +178,9 @@ Widget songIconBlock(
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
     (isNotMiniplayer) ? shuffleIcon(ref) : Container(),
     skipSongIcon(ref, false, playlist, isNotMiniplayer),
-    SizedBox(width: 8 * scaling),
-    Transform.scale(scale: scaling, child: playIcon(ref, playlist)),
-    SizedBox(width: 8 * scaling),
+    SizedBox(width: 4 * scaling),
+    Transform.scale(scale: (isNotMiniplayer) ? 2: 1, child: playIcon(ref, playlist)),
+    SizedBox(width: 4 * scaling),
     skipSongIcon(ref, true, playlist, isNotMiniplayer),
     (isNotMiniplayer) ? loopIcon(ref) : Container(),
   ]);
@@ -273,7 +220,7 @@ Widget songNameBlock(WidgetRef ref) {
                 .textTheme
                 .headlineSmall
                 ?.apply(
-                  color: currentThemeOnSurface(ref),
+                  color: currentThemeOnSurfaceVar(ref),
                 ),
           ),
         ),
@@ -283,52 +230,45 @@ Widget songNameBlock(WidgetRef ref) {
 }
 
 Widget addSongBlock(ref, playlist, index) => Container(
-      margin: const EdgeInsets.only(
-          left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
       child: GestureDetector(
         onTap: () {
           loadSong(ref, playlistArray[0], index);
         },
         child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-            color: currentThemeSurfaceContainerHigh(ref),
-          ),
-          padding: const EdgeInsets.only(top: 9, bottom: 9),
-          child: Row(
-            children: [
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
+          color: currentThemeSurface(ref),
+          child: Padding(
+            padding: const EdgeInsets.only(
+                top: kMediumPadding,
+                bottom: kMediumPadding,
+                left: kDefaultSmallPadding,
+                right: kDefaultSmallPadding),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: songText(
-                            ref,
-                            (playlistArray[0].songList[index] as UriAudioSource)
-                                .tag
-                                .title),
+                      songText(
+                        ref,
+                        (playlistArray[0].songList[index] as UriAudioSource).tag.title,
                       ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: artistText(
-                          ref,
-                          (playlistArray[0].songList[index] as UriAudioSource)
-                              .tag
-                              .artist,
-                        ),
+                      artistText(
+                        ref,
+                        (playlistArray[0].songList[index] as UriAudioSource).tag.artist,
                       ),
-                    ]),
-              ),
-              const SizedBox(width: 18),
-              timeText(
-                  ref,
-                  (playlistArray[0].songList[index] as UriAudioSource)
-                      .tag
-                      .displayDescription),
-              listCheckbox(playlist, playlistArray[0].songList[index], ref),
-            ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: kDefaultSmallPadding),
+                timeText(
+                    ref,
+                    (playlistArray[0].songList[index] as UriAudioSource)
+                        .tag
+                        .displayDescription),
+                const SizedBox(width: kXSPadding),
+                listCheckbox(playlist, playlistArray[0].songList[index], ref),
+              ],
+            ),
           ),
         ),
       ),

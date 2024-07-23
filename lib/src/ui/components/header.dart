@@ -20,7 +20,7 @@ AppBar headerBar(WidgetRef ref, bool isSongList) {
       (isSongList)
           ? searchSongIcon(ref, playlistArray[0])
           : searchPlaylistIcon(ref),
-      (isSongList) ? addIcon(ref, playlistArray[0]) : settingListIcon(ref),
+      (isSongList) ? addIcon(ref, playlistArray[0]) : addPlaylistIcon(ref),
     ],
   );
 }

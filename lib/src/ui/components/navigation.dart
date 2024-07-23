@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:testing_music_player/src/services/services.dart';
-import '../../../main.dart';
 import '../../config/config.dart';
-import '../themes/current_theme.dart';
 
 // selectedItemColor: currentThemeOnSurface(ref),
 // unselectedItemColor: currentThemeOnSurfaceVar(ref),

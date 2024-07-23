@@ -12,9 +12,9 @@ import '../../../main.dart';
 import '../../config/config.dart';
 import '../ui.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
-import 'package:path_provider/path_provider.dart';
-showDataAlert(
-    BuildContext context, WidgetRef ref, Playlist playlist) {
+
+showDataAlert(BuildContext context, WidgetRef ref, Playlist playlist) {
+  bool loading = false;
   String songName = '';
   String? authorName = '';
   String fileName = '';
@@ -37,7 +37,8 @@ showDataAlert(
                 Padding(
                   padding: const EdgeInsets.all(18.0),
                   child: Center(
-                    child: headerText(ref,
+                    child: headerText(
+                      ref,
                       "Add New Song",
                     ),
                   ),
@@ -49,8 +50,8 @@ showDataAlert(
                         .textTheme
                         .bodyLarge
                         ?.apply(
-                      color: currentThemeOnSurface(ref),
-                    ),
+                          color: currentThemeOnSurface(ref),
+                        ),
                     maxLength: 50,
                     inputFormatters: [
                       FilteringTextInputFormatter.deny(
@@ -79,8 +80,8 @@ showDataAlert(
                         .textTheme
                         .bodyLarge
                         ?.apply(
-                      color: currentThemeOnSurface(ref),
-                    ),
+                          color: currentThemeOnSurface(ref),
+                        ),
                     maxLength: 50,
                     inputFormatters: [
                       FilteringTextInputFormatter.deny(
@@ -104,6 +105,7 @@ showDataAlert(
                   child: ElevatedButton(
                     onPressed: () async {
                       try {
+                        loading = true;
                         FilePickerResult? result =
                             await FilePicker.platform.pickFiles(
                           type: FileType.audio,
@@ -112,7 +114,8 @@ showDataAlert(
                         if (result != null) {
                           String pathInput = result.files.single.path!;
                           String directPath = result.files.single.identifier!;
-                          print('direct path: ${result.files.single.identifier}');
+                          print(
+                              'direct path: ${result.files.single.identifier}');
                           print('path: $pathInput');
                           if (!pathInput.endsWith('mp3') &&
                               !pathInput.endsWith("aac") &&
@@ -131,12 +134,14 @@ showDataAlert(
                                     content: SizedBox(
                                       height: 200,
                                       child: Text(
-                                          style: Theme.of(ContextKey.navKey.currentContext!)
+                                          style: Theme.of(ContextKey
+                                                  .navKey.currentContext!)
                                               .textTheme
                                               .titleLarge
                                               ?.apply(
-                                            color: currentThemeOnSurface(ref),
-                                          ),
+                                                color:
+                                                    currentThemeOnSurface(ref),
+                                              ),
                                           textAlign: TextAlign.center,
                                           '''Wrong File Format
                                           Only These File Formats Can Be Used:
@@ -144,6 +149,7 @@ showDataAlert(
                                     ),
                                   );
                                 });
+                            loading = false;
                             playlistSwitchState(ref);
                             return;
                           }
@@ -154,10 +160,21 @@ showDataAlert(
                           String? trackName = metadata.trackName;
                           String? trackArtistNames =
                               metadata.trackArtistNames?.first;
-                          songName = trackName?.substring(0,(trackName.length <= 50) ? trackName.length: 51) ?? songName;
-                          authorName = trackArtistNames?.substring(0,(trackArtistNames.length <= 50) ? trackArtistNames.length: 51) ?? authorName;
+                          songName = trackName?.substring(
+                                  0,
+                                  (trackName.length <= 50)
+                                      ? trackName.length
+                                      : 51) ??
+                              songName;
+                          authorName = trackArtistNames?.substring(
+                                  0,
+                                  (trackArtistNames.length <= 50)
+                                      ? trackArtistNames.length
+                                      : 51) ??
+                              authorName;
                           songNameController.text = songName;
                           authorNameController.text = authorName!;
+                          loading = false;
                           playlistSwitchState(ref);
                         }
                       } catch (e) {
@@ -176,8 +193,8 @@ showDataAlert(
                         .textTheme
                         .bodySmall
                         ?.apply(
-                      color: currentThemeOnSurface(ref),
-                    ),
+                          color: currentThemeOnSurface(ref),
+                        ),
                     (fileName == '') ? '' : '"$fileName" Uploaded',
                   ),
                 ),
@@ -194,27 +211,33 @@ showDataAlert(
                       }
                       if (songFile.path.isNotEmpty &&
                           songName != '' &&
-                          fileName != "Invalid File") {
+                          fileName != "Invalid File" &&
+                          !loading) {
+                        loading = true;
                         Duration? newDuration = await getDuration(songFile);
-                        SongDetails newSong = SongDetails(
-                          songName: songName,
-                          songAuthor: authorName!,
-                          songDurationData: newDuration.toString(),
-                          songPath: songFile.path,
-                        );
-                        IsarHelper().saveSong(newSong);
-                        MediaItem newMediaItem = newSong.toMediaItem();
-                        AudioSource temp = AudioSource.uri(
-                          Uri.parse(newSong.songPath),
-                          tag: newMediaItem,
-                        );
-                        if(playlist != playlistArray[0]){
-                          print('added to playlist');
-                          await addSongToPlaylist(ref, playlist, temp);
+                        if (loading) {
+                          SongDetails newSong = SongDetails(
+                            songName: songName,
+                            songAuthor: authorName!,
+                            songDurationData: newDuration.toString(),
+                            songPath: songFile.path,
+                          );
+                          await IsarHelper().saveSong(newSong);
+                          MediaItem newMediaItem = newSong.toMediaItem();
+                          AudioSource temp = AudioSource.uri(
+                            Uri.parse(newSong.songPath),
+                            tag: newMediaItem,
+                          );
+                          if (playlist != playlistArray[0]) {
+                            print('added to playlist');
+                            await addSongToPlaylist(ref, playlist, temp);
+                          }
+                          await addSongToPlaylist(ref, playlistArray[0], temp);
+                          if (loading) {
+                            Navigator.of(context).pop();
+                            playlistSwitchState(ref);
+                          }
                         }
-                        await addSongToPlaylist(ref, playlistArray[0], temp);
-                        Navigator.of(context).pop();
-                        playlistSwitchState(ref);
                       }
                     },
                     child: const Text(
@@ -248,15 +271,15 @@ editPlaylistNameDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                 Padding(
-                  padding: EdgeInsets.all(kDefaultPadding),
+                Padding(
+                  padding: const EdgeInsets.all(kDefaultPadding),
                   child: Text(
                     style: Theme.of(ContextKey.navKey.currentContext!)
                         .textTheme
                         .titleLarge
                         ?.apply(
-                      color: currentThemeOnSurface(ref),
-                    ),
+                          color: currentThemeOnSurface(ref),
+                        ),
                     "Change Playlist Name",
                   ),
                 ),
@@ -267,8 +290,8 @@ editPlaylistNameDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
                         .textTheme
                         .bodyLarge
                         ?.apply(
-                      color: currentThemeOnSurface(ref),
-                    ),
+                          color: currentThemeOnSurface(ref),
+                        ),
                     maxLength: 50,
                     controller: controller,
                     decoration: const InputDecoration(

@@ -1,9 +1,3 @@
-import 'package:flutter/material.dart';
-import '../../config/config.dart';
-import 'source_colors.dart';
-import 'text_theme.dart';
-import 'current_theme.dart';
-import '../../my_app.dart';
 
 // ThemeData darkTheme() {
 //   return ThemeData(

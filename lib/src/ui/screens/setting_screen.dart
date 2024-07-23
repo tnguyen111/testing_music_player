@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:testing_music_player/src/ui/ui.dart';
-import '../../../main.dart';
-import '../../config/config.dart';
-import '../../models/global_list.dart';
-import '../../models/models.dart';
+import '../../services/services.dart';
 import '../components/components.dart';
 
 class SettingScreen extends ConsumerWidget {
@@ -21,6 +18,7 @@ class SettingScreen extends ConsumerWidget {
           headerBlock(
               'Settings',
               ref),
+          IconButton(onPressed: (){modeSwitchState(ref);}, icon: const Icon(Icons.abc),),
           miniplayer(ref),
         ],
       ),

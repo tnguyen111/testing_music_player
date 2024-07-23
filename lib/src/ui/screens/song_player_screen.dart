@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/models.dart';
-import '../../services/services.dart';
 import '../components/components.dart';
 
 Scaffold songPlayerScreen(WidgetRef ref, Playlist playlist, int index) {

@@ -33,10 +33,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     TextTheme textTheme = createTextTheme(context, "Roboto", "Roboto");
     MaterialTheme theme = MaterialTheme(textTheme);
-    if (context.mounted) {
-      print('resume');
-      AppLifecycleListener(onResume: () => playlistSwitchState(ref));
-    }
+    AppLifecycleListener(onResume: () => playlistSwitchState(ref));
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

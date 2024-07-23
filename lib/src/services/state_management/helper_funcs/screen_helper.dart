@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../main.dart';
 import '../providers/providers.dart';
 
 int screenWatchState(WidgetRef ref){
@@ -6,17 +7,19 @@ int screenWatchState(WidgetRef ref){
 }
 
 void screenSetState(WidgetRef ref, int state){
-  if(state == 0){
-    ref.read(screenProvider.notifier).settingMenuScreen();
-    return;
-  }
+  if(ContextKey.navKey.currentContext!.mounted) {
+    if (state == 0) {
+      ref.read(screenProvider.notifier).settingMenuScreen();
+      return;
+    }
 
-  if(state == 1){
-    ref.read(screenProvider.notifier).mainMenuScreen();
-  }
+    if (state == 1) {
+      ref.read(screenProvider.notifier).mainMenuScreen();
+    }
 
-  if(state == 2){
-    ref.read(screenProvider.notifier).songMenuScreen();
+    if (state == 2) {
+      ref.read(screenProvider.notifier).songMenuScreen();
+    }
   }
 
   return;

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../main.dart';
 import '../providers/providers.dart';
 
 bool modeWatchState(WidgetRef ref){
@@ -10,7 +11,9 @@ bool modeReadState(WidgetRef ref){
 }
 
 void modeSwitchState(WidgetRef ref){
-  ref.read(modeProvider.notifier).switchState();
+  if(ContextKey.navKey.currentContext!.mounted) {
+    ref.read(modeProvider.notifier).switchState();
+  }
   return;
 }
 
