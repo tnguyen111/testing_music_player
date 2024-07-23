@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:testing_music_player/src/my_app.dart';
 
-final globalNavigatorKey = GlobalKey<NavigatorState>();
-
+class ContextKey {
+  static final navKey = GlobalKey<NavigatorState>();
+}
 
 Future<void> main() async {
   await JustAudioBackground.init(

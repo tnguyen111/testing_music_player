@@ -6,7 +6,7 @@ bool modeWatchState(WidgetRef ref){
 }
 
 bool modeReadState(WidgetRef ref){
-  return ref.watch(modeProvider);
+  return ref.read(modeProvider);
 }
 
 void modeSwitchState(WidgetRef ref){

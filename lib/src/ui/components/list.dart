@@ -2,22 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:testing_music_player/src/services/services.dart';
 import '../../../main.dart';
+import '../../config/config.dart';
 import '../ui.dart';
 import 'package:testing_music_player/src/models/models.dart';
+import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 Widget playlistList(WidgetRef ref) {
   final ScrollController scrollController = ScrollController();
   return Expanded(
-    child: ListView.builder(
-        itemCount: playlistArray.length,
-        scrollDirection: Axis.vertical,
-        shrinkWrap: false,
-        controller: scrollController,
-        itemBuilder: (context, index) {
-          return (index < playlistArray.length - 1)
-              ? playlistBlock(ref, playlistArray[index + 1])
-              : playlistAddBlock(ref);
-        }),
+    child: ReorderableGridView.builder(
+      padding: EdgeInsets.only(
+          top: kMediumPadding,
+          bottom: kMediumPadding,
+          right: (kMediumPadding +
+                  MediaQuery.sizeOf(ContextKey.navKey.currentContext!).width -
+                  360) /
+              2,
+          left: (kMediumPadding +
+                  MediaQuery.sizeOf(ContextKey.navKey.currentContext!).width -
+                  360) /
+              2),
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 185,
+          mainAxisExtent: 220,
+          mainAxisSpacing: kMediumPadding,
+          crossAxisSpacing: kMediumPadding),
+      itemCount: (playlistArray.isNotEmpty) ? playlistArray.length - 1 : 0,
+      shrinkWrap: false,
+      controller: scrollController,
+      itemBuilder: (context, index) {
+        return playlistBlock(ref, playlistArray[index + 1]);
+      },
+      onReorder: (int oldIndex, int newIndex) {},
+    ),
   );
 }
 
@@ -80,7 +97,7 @@ Widget suggestionSongListWidget(WidgetRef ref, List<String> playlistString) {
         },
         title: Text(
           playlistString[index],
-          style: currentThemeSmallText(ref),
+          //style: currentThemeSmallText(ref),
         ),
       );
     },
@@ -99,14 +116,14 @@ Widget suggestionPlaylistWidget(WidgetRef ref, List<Playlist> playlistList) {
       return ListTile(
         onTap: () {
           Navigator.push(
-            globalNavigatorKey.currentContext!,
+            ContextKey.navKey.currentContext!,
             MaterialPageRoute(
                 builder: (context) => playlistScreen(ref, playlistList[index])),
           );
         },
         title: Text(
           playlistList[index].playlistName,
-          style: currentThemeSmallText(ref),
+          //style: currentThemeSmallText(ref),
         ),
       );
     },

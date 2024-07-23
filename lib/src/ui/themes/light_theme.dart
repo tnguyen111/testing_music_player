@@ -1,28 +1,34 @@
 import 'package:flutter/material.dart';
+import '../../config/config.dart';
 import 'source_colors.dart';
 import 'text_theme.dart';
+import 'themes.dart';
 
-
-ThemeData lightTheme() {
-  return ThemeData(
-    useMaterial3: true,
-    appBarTheme: AppBarTheme(
-      backgroundColor: lightThemeHeader(),
-      toolbarHeight: 60,
-    ),
-    colorScheme: const ColorScheme.light(),
-    iconButtonTheme: const IconButtonThemeData(
-      style: ButtonStyle(
-        iconSize: WidgetStatePropertyAll(40),
-        backgroundColor: WidgetStateColor.transparent,
-      ),
-    ),
-    iconTheme: IconThemeData(color: lightThemeTextColor(), size: 40),
-    scaffoldBackgroundColor: lightThemeMain(),
-    buttonTheme: ButtonThemeData(buttonColor: lightThemeTextColor(), height: 40),
-    textTheme: TextTheme(
-        headlineMedium: lightThemeHeaderText(),
-        bodyMedium: lightThemeSongText(),
-    ),
-  );
-}
+// ThemeData lightTheme() {
+//   return ThemeData(
+//     useMaterial3: true,
+//     appBarTheme: const AppBarTheme(
+//       //backgroundColor: lightThemeHeader(),
+//       iconTheme: IconThemeData(
+//         size: mediumIconSize,
+//       ),
+//       actionsIconTheme: IconThemeData(
+//         size: mediumIconSize,
+//       ),
+//       toolbarHeight: 60,
+//     ),
+//     colorScheme: theme.lightHighContrast().colorScheme,
+//     iconButtonTheme: const IconButtonThemeData(
+//       style: ButtonStyle(
+//         iconSize: WidgetStatePropertyAll(smallIconSize),
+//         backgroundColor: WidgetStateColor.transparent,
+//       ),
+//     ),
+//     iconTheme: const IconThemeData(
+//       //color: lightThemeTextColor(),
+//       size: smallIconSize,
+//     ),
+//     //scaffoldBackgroundColor: lightThemeMain(),
+//     textTheme: theme.lightHighContrast().textTheme,
+//   );
+// }

@@ -11,7 +11,7 @@ IconButton searchSongIcon(WidgetRef ref, Playlist playlist) => IconButton(
       onPressed: () {
         // Search things
         showSearch(
-          context: globalNavigatorKey.currentContext!,
+          context: ContextKey.navKey.currentContext!,
           delegate: PlaylistSongSearch(ref, playlist),
         );
       },
@@ -22,7 +22,7 @@ IconButton searchPlaylistIcon(WidgetRef ref) => IconButton(
       onPressed: () {
         // Search things
         showSearch(
-          context: globalNavigatorKey.currentContext!,
+          context: ContextKey.navKey.currentContext!,
           delegate: PlaylistSearch(ref),
         );
       },
@@ -71,7 +71,7 @@ IconButton addIcon(WidgetRef ref, Playlist playlist) => IconButton(
       icon: const Icon(Icons.add),
       onPressed: () {
         /*Add things*/
-        showDataAlert(globalNavigatorKey.currentContext!, ref, playlist);
+        showDataAlert(ContextKey.navKey.currentContext!, ref, playlist);
         playlistSwitchState(ref);
       },
     );
@@ -97,12 +97,12 @@ PopupMenuButton<String> addSongMenuIcon(WidgetRef ref, Playlist playlist) =>
 void handleAddSongMenu(String value, WidgetRef ref, Playlist playlist) {
   switch (value) {
     case 'Add New Song':
-      showDataAlert(globalNavigatorKey.currentContext!, ref, playlist);
+      showDataAlert(ContextKey.navKey.currentContext!, ref, playlist);
       playlistSwitchState(ref);
       break;
     case 'Add Songs From Songs List':
       Navigator.push(
-        globalNavigatorKey.currentContext!,
+        ContextKey.navKey.currentContext!,
         MaterialPageRoute(
           builder: (context) => addSongScreen(
             ref,
@@ -117,7 +117,8 @@ void handleAddSongMenu(String value, WidgetRef ref, Playlist playlist) {
 IconButton removeIcon(
         WidgetRef ref, Playlist playlist, AudioSource song, int index) =>
     IconButton(
-      icon: const Icon(Icons.close),
+      iconSize: 50,
+      icon: const Icon(Icons.close,),
       onPressed: () async {
         /*Remove things*/
         String songName = (song as UriAudioSource).tag.title;
@@ -171,7 +172,7 @@ void handleSettingListClick(String value, WidgetRef ref) {
           imagePath_: "lib/assets/default_image.png",
           songNameList_: List.empty(growable: true));
       Navigator.push(
-        globalNavigatorKey.currentContext!,
+        ContextKey.navKey.currentContext!,
         MaterialPageRoute(
             builder: (context) => addPlaylistScreen(ref, playlist)),
       );
@@ -186,7 +187,7 @@ void handleSettingListClick(String value, WidgetRef ref) {
 PopupMenuButton<String> settingSongIcon(WidgetRef ref, Playlist playlist) =>
     PopupMenuButton<String>(
       icon: const Icon(Icons.more_horiz),
-      iconSize: 30,
+      iconSize: 44,
       onSelected: (value) {
         handleSettingSongClick(value, ref, playlist);
         playlistSwitchState(ref);
@@ -205,7 +206,7 @@ void handleSettingSongClick(String value, WidgetRef ref, Playlist playlist) {
   switch (value) {
     case 'Edit Playlist Info':
       Navigator.push(
-        globalNavigatorKey.currentContext!,
+        ContextKey.navKey.currentContext!,
         MaterialPageRoute(
             builder: (context) => EditPlaylistScreen(
                   ref: ref,

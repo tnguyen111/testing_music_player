@@ -10,8 +10,8 @@ Widget listCheckbox(Playlist playlist, AudioSource song, WidgetRef ref) {
   bool value = playlist.songNameList.contains(songName);
   return Checkbox(
     value: value,
-    overlayColor: WidgetStatePropertyAll(currentThemeSmallText(ref).color),
-    activeColor: currentThemeSmallText(ref).color,
+    //overlayColor: WidgetStatePropertyAll(currentThemeSmallText(ref).color),
+    //activeColor: currentThemeSmallText(ref).color,
     onChanged: (value) async {
       try {
         if (value!) {

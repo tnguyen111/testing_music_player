@@ -37,6 +37,12 @@ Widget changePlaylistForm(
               children: [
                 Text(warning),
                 TextField(
+                  style: Theme.of(ContextKey.navKey.currentContext!)
+                      .textTheme
+                      .bodyLarge
+                      ?.apply(
+                    color: currentThemeOnSurface(ref),
+                  ),
                   obscureText: false,
                   controller: controller,
                   maxLength: 24,
@@ -55,9 +61,6 @@ Widget changePlaylistForm(
                   onChanged: (String value) {
                     playlistName = value;
                   },
-                  onTapOutside: (event) {
-                    playlist.setName(playlistName);
-                  },
                   onSubmitted: (String value) async {
                     if (playlistName != '') {
                       playlistName = value;
@@ -73,7 +76,7 @@ Widget changePlaylistForm(
                       }
                       IsarHelper().savePlaylist(playlist);
                       playlistSwitchState(ref);
-                      Navigator.pop(globalNavigatorKey.currentContext!);
+                      Navigator.pop(ContextKey.navKey.currentContext!);
                     }
                   },
                 ),
@@ -84,10 +87,10 @@ Widget changePlaylistForm(
           ElevatedButton(
             style: ButtonStyle(
               overlayColor: WidgetStatePropertyAll(
-                currentThemeSub(ref),
+                currentThemeOnSurface(ref),
               ),
               backgroundColor: WidgetStatePropertyAll(
-                currentThemeSub(ref),
+                currentThemeSurfaceContainerHighest(ref),
               ),
             ),
             onPressed: () async {
@@ -104,17 +107,17 @@ Widget changePlaylistForm(
                 }
                 IsarHelper().savePlaylist(playlist);
                 playlistSwitchState(ref);
-                Navigator.pop(globalNavigatorKey.currentContext!);
+                Navigator.pop(ContextKey.navKey.currentContext!);
               }
             },
             child: (addingPlaylist)
-                ? Text(
+                ? const Text(
                     'Create Playlist',
-                    style: currentThemeSmallText(ref),
+                    //style: currentThemeSmallText(ref),
                   )
-                : Text(
+                : const Text(
                     'Edit Playlist',
-                    style: currentThemeSmallText(ref),
+                    //style: currentThemeSmallText(ref),
                   ),
           ),
         ],

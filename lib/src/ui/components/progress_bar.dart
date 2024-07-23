@@ -18,12 +18,12 @@ class BarWavePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = currentThemeHeaderText(ref).color!
+      //..color = currentThemeHeaderText(ref).color!
       ..isAntiAlias = false
       ..shader
       ..style = PaintingStyle.fill;
     final spacing= Paint()
-      ..color = currentThemeHeader(ref)
+      //..color = currentThemeHeader(ref)
       ..isAntiAlias = false
       ..shader
       ..style = PaintingStyle.fill;
@@ -91,14 +91,14 @@ Widget songProgressBar(
               player.seek(duration);
             },
             barHeight: 5,
-            progressBarColor: currentThemeHeaderText(ref).color,
-            bufferedBarColor: currentThemeSub(ref),
+            //progressBarColor: currentThemeHeaderText(ref).color,
+            //bufferedBarColor: currentThemeSub(ref),
             thumbRadius: (isNotMiniplayer) ? 10: 3,
 
-            thumbColor: currentThemeHeaderText(ref).color,
-            baseBarColor: currentThemeHeader(ref),
+            //thumbColor: currentThemeHeaderText(ref).color,
+            //baseBarColor: currentThemeHeader(ref),
             timeLabelLocation: (isNotMiniplayer) ? TimeLabelLocation.above: TimeLabelLocation.none,
-            timeLabelTextStyle: currentThemeSmallText(ref),
+            //timeLabelTextStyle: currentThemeSmallText(ref),
           );
         }),
   );

@@ -5,7 +5,6 @@ import '../../services/services.dart';
 import '../components/components.dart';
 
 Scaffold songPlayerScreen(WidgetRef ref, Playlist playlist, int index) {
-  AppLifecycleListener(onResume: () => playlistSwitchState(ref));
   return Scaffold(
     appBar: songAppBar(ref),
     body: SingleChildScrollView(

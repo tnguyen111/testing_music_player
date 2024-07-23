@@ -6,73 +6,73 @@ import 'package:testing_music_player/src/ui/ui.dart';
 import 'package:testing_music_player/src/services/services.dart';
 import '../../../main.dart';
 import '../../models/models.dart';
+import '../../my_app.dart';
 
 Container headerBlock(String header, WidgetRef ref) => Container(
       margin: const EdgeInsets.only(
-          left: kDefaultPadding, top: kSmallPadding, bottom: kSmallPadding),
+          left: kDefaultPadding, right: kMediumPadding),
       child: Row(
         children: [
           Expanded(
-            child: Text(
+            child: headerText(
+              ref,
               header,
             ),
           ),
-          const SizedBox(width: 125),
-          (header == 'Your Playlist')
+          (header.contains('Playlist'))
               ? sortPlaylistIcon(ref)
               : sortSongIcon(ref, playlistArray[0]),
-          (header == 'Your Playlist')
-              ? settingListIcon(ref)
-              : addIcon(ref, playlistArray[0]),
         ],
       ),
     );
 
-Container playlistBlock(WidgetRef ref, Playlist playlist) => Container(
-      margin: const EdgeInsets.only(
-          left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
-      child: GestureDetector(
-        onTap: () {
-          // Change!
-          Navigator.push(
-            globalNavigatorKey.currentContext!,
-            MaterialPageRoute(
-                builder: (context) => playlistScreen(ref, playlist)),
-          );
-        },
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                color: currentThemeHeader(ref),
+Widget playlistBlock(WidgetRef ref, Playlist playlist) => Row(
+  key: Key('${playlistArray.indexOf(playlist)}'),
+  mainAxisAlignment: MainAxisAlignment.start,
+  children: [
+    Expanded(
+      child: Card(
+        clipBehavior: Clip.hardEdge,
+          child: Container(
+            color: currentThemeSurfaceContainer(ref),
+            width: 160,
+            child: GestureDetector(
+              onTap: () {
+                // Change!
+                Navigator.push(
+                  ContextKey.navKey.currentContext!,
+                  MaterialPageRoute(
+                      builder: (context) => playlistScreen(ref, playlist)),
+                );
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 160,
+                    height: 140,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                      child: playlist.getImage(),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 14, top: 8.0, bottom: 8.0, right: 14),
+                    child: playlistText(
+                      ref,
+                      playlist.playlistName_,
+                    ),
+                  ),
+                ],
               ),
-              height: 90,
             ),
-            Row(
-              children: [
-                SizedBox(
-                  width: 90,
-                  height: 90,
-                  child: Container(
-                    child: playlist.getImage(),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    playlist.playlistName_,
-                  ),
-                ),
-                (playlistRemoving)
-                    ? removePlaylistIcon(ref, playlist)
-                    : settingSongIcon(ref, playlist),
-              ],
-            ),
-          ],
+          ),
         ),
-      ),
-    );
+    ),
+  ],
+);
 
 Container playlistAddBlock(WidgetRef ref) => Container(
       margin: const EdgeInsets.only(
@@ -85,7 +85,7 @@ Container playlistAddBlock(WidgetRef ref) => Container(
               imagePath_: 'lib/assets/default_image.png',
               songNameList_: []);
           Navigator.push(
-            globalNavigatorKey.currentContext!,
+            ContextKey.navKey.currentContext!,
             MaterialPageRoute(
               builder: (context) => addPlaylistScreen(ref, playlist),
             ),
@@ -96,22 +96,20 @@ Container playlistAddBlock(WidgetRef ref) => Container(
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                color: currentThemeHeader(ref),
+                color: currentThemeSurfaceContainerLow(ref),
               ),
               height: 90,
             ),
             Row(children: [
-              SizedBox(
+              const SizedBox(
                 width: 90,
                 height: 90,
-                child: Container(
-                  color: currentThemeSub(ref),
-                  child: const Icon(Icons.add),
-                ),
+                child: Icon(Icons.add),
               ),
               const SizedBox(width: 10),
-              const Expanded(
-                child: Text(
+              Expanded(
+                child: playlistText(
+                  ref,
                   'Add New Playlist',
                 ),
               ),
@@ -132,39 +130,40 @@ Container songBlock(WidgetRef ref, Playlist playlist, int index) => Container(
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-            color: currentThemeHeader(ref),
+            color: currentThemeSurfaceContainer(ref),
           ),
-          padding: const EdgeInsets.only(top: 9, bottom: 9),
+          padding: const EdgeInsets.only(top: kXSPadding, bottom: kXSPadding),
           child: Row(
             children: [
-              const SizedBox(width: 10),
+              const SizedBox(width: kXSPadding),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Text(
+                      child: songText(
+                        ref,
                         (playlist.songList[index] as UriAudioSource).tag.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.fade,
                       ),
                     ),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Text(
+                      child: artistText(
+                        ref,
                         (playlist.songList[index] as UriAudioSource).tag.artist,
-                        overflow: TextOverflow.ellipsis,
-                        textScaler: const TextScaler.linear(0.6),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 18),
-              Text((playlist.songList[index] as UriAudioSource)
-                  .tag
-                  .displayDescription),
+              const SizedBox(width: kDefaultSmallPadding),
+              timeText(
+                ref,
+                (playlist.songList[index] as UriAudioSource)
+                    .tag
+                    .displayDescription,
+              ),
               removeIcon(ref, playlist,
                   (playlist.songList[index] as UriAudioSource), index),
             ],
@@ -194,11 +193,11 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
           TextButton(
             onPressed: () {
               editPlaylistNameDialog(
-                  globalNavigatorKey.currentContext!, ref, playlist);
+                  ContextKey.navKey.currentContext!, ref, playlist);
             },
-            child: Text(
+            child: headerText(
+              ref,
               playlist.playlistName,
-              style: currentThemeHeaderText(ref),
             ),
           ),
           Row(
@@ -232,9 +231,9 @@ Widget songIconBlock(
   return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
     (isNotMiniplayer) ? shuffleIcon(ref) : Container(),
     skipSongIcon(ref, false, playlist, isNotMiniplayer),
-    SizedBox(width: 9 * scaling),
+    SizedBox(width: 8 * scaling),
     Transform.scale(scale: scaling, child: playIcon(ref, playlist)),
-    SizedBox(width: 9 * scaling),
+    SizedBox(width: 8 * scaling),
     skipSongIcon(ref, true, playlist, isNotMiniplayer),
     (isNotMiniplayer) ? loopIcon(ref) : Container(),
   ]);
@@ -245,23 +244,38 @@ Widget songNameBlock(WidgetRef ref) {
   String authorName = player.sequenceState?.currentSource?.tag.artist ?? "";
   return Column(
     children: [
-      const SizedBox(height: 18),
+      const SizedBox(height: kDefaultSmallPadding),
       Padding(
-        padding: const EdgeInsets.only(left: 30, right: 30),
+        padding:
+            const EdgeInsets.only(left: kXXXXLPadding, right: kXXXXLPadding),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Text(
             songName,
-            style: currentThemeHeaderText(ref),
+            style: Theme.of(ContextKey.navKey.currentContext!)
+                .textTheme
+                .displaySmall
+                ?.apply(
+                  color: currentThemeOnSurface(ref),
+                ),
             maxLines: 1,
           ),
         ),
       ),
       Padding(
-        padding: const EdgeInsets.only(left: 50, right: 50),
+        padding: const EdgeInsets.only(
+            left: kXXXXLPadding + 12, right: kXXXXLPadding + 12),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: Text(authorName),
+          child: Text(
+            authorName,
+            style: Theme.of(ContextKey.navKey.currentContext!)
+                .textTheme
+                .headlineSmall
+                ?.apply(
+                  color: currentThemeOnSurface(ref),
+                ),
+          ),
         ),
       ),
     ],
@@ -278,7 +292,7 @@ Widget addSongBlock(ref, playlist, index) => Container(
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-            color: currentThemeHeader(ref),
+            color: currentThemeSurfaceContainerHigh(ref),
           ),
           padding: const EdgeInsets.only(top: 9, bottom: 9),
           child: Row(
@@ -290,26 +304,29 @@ Widget addSongBlock(ref, playlist, index) => Container(
                     children: [
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: Text(
+                        child: songText(
+                            ref,
                             (playlistArray[0].songList[index] as UriAudioSource)
                                 .tag
                                 .title),
                       ),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
-                        child: Text(
+                        child: artistText(
+                          ref,
                           (playlistArray[0].songList[index] as UriAudioSource)
                               .tag
                               .artist,
-                          textScaler: const TextScaler.linear(0.6),
                         ),
                       ),
                     ]),
               ),
               const SizedBox(width: 18),
-              Text((playlistArray[0].songList[index] as UriAudioSource)
-                  .tag
-                  .displayDescription),
+              timeText(
+                  ref,
+                  (playlistArray[0].songList[index] as UriAudioSource)
+                      .tag
+                      .displayDescription),
               listCheckbox(playlist, playlistArray[0].songList[index], ref),
             ],
           ),

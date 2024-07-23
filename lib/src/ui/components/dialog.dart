@@ -8,10 +8,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:testing_music_player/src/models/models.dart';
 import 'package:testing_music_player/src/services/services.dart';
+import '../../../main.dart';
 import '../../config/config.dart';
 import '../ui.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
-
+import 'package:path_provider/path_provider.dart';
 showDataAlert(
     BuildContext context, WidgetRef ref, Playlist playlist) {
   String songName = '';
@@ -33,15 +34,23 @@ showDataAlert(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.all(18.0),
-                  child: Text(
-                    "Add New Song",
+                Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Center(
+                    child: headerText(ref,
+                      "Add New Song",
+                    ),
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
+                    style: Theme.of(ContextKey.navKey.currentContext!)
+                        .textTheme
+                        .bodyLarge
+                        ?.apply(
+                      color: currentThemeOnSurface(ref),
+                    ),
                     maxLength: 50,
                     inputFormatters: [
                       FilteringTextInputFormatter.deny(
@@ -66,6 +75,12 @@ showDataAlert(
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: TextField(
+                    style: Theme.of(ContextKey.navKey.currentContext!)
+                        .textTheme
+                        .bodyLarge
+                        ?.apply(
+                      color: currentThemeOnSurface(ref),
+                    ),
                     maxLength: 50,
                     inputFormatters: [
                       FilteringTextInputFormatter.deny(
@@ -93,9 +108,12 @@ showDataAlert(
                             await FilePicker.platform.pickFiles(
                           type: FileType.audio,
                         );
+                        print(result?.paths);
                         if (result != null) {
                           String pathInput = result.files.single.path!;
-                          print(pathInput);
+                          String directPath = result.files.single.identifier!;
+                          print('direct path: ${result.files.single.identifier}');
+                          print('path: $pathInput');
                           if (!pathInput.endsWith('mp3') &&
                               !pathInput.endsWith("aac") &&
                               !pathInput.endsWith("flac") &&
@@ -109,22 +127,30 @@ showDataAlert(
                             showDialog(
                                 context: context,
                                 builder: (_) {
-                                  return const AlertDialog(
+                                  return AlertDialog(
                                     content: SizedBox(
                                       height: 200,
                                       child: Text(
+                                          style: Theme.of(ContextKey.navKey.currentContext!)
+                                              .textTheme
+                                              .titleLarge
+                                              ?.apply(
+                                            color: currentThemeOnSurface(ref),
+                                          ),
                                           textAlign: TextAlign.center,
-                                          'Wrong File Format. Only These File Formats Can Be Used: aac, amr, flac, mp3, mp4, m4a, wav, oog, opus'),
+                                          '''Wrong File Format
+                                          Only These File Formats Can Be Used:
+                                          aac, amr, flac, mp3, mp4, m4a, wav, oog, opus'''),
                                     ),
                                   );
                                 });
                             playlistSwitchState(ref);
                             return;
                           }
-                          songFile = File(pathInput);
-                          fileName = basename(songFile.path);
+                          songFile = File(directPath);
+                          fileName = basename(File(pathInput).path);
                           final metadata =
-                              await MetadataRetriever.fromFile(songFile);
+                              await MetadataRetriever.fromFile(File(pathInput));
                           String? trackName = metadata.trackName;
                           String? trackArtistNames =
                               metadata.trackArtistNames?.first;
@@ -146,14 +172,19 @@ showDataAlert(
                 ),
                 Center(
                   child: Text(
-                    textScaler: const TextScaler.linear(0.5),
+                    style: Theme.of(ContextKey.navKey.currentContext!)
+                        .textTheme
+                        .bodySmall
+                        ?.apply(
+                      color: currentThemeOnSurface(ref),
+                    ),
                     (fileName == '') ? '' : '"$fileName" Uploaded',
                   ),
                 ),
                 Container(
                   width: double.infinity,
                   height: 60,
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(kXSPadding),
                   child: ElevatedButton(
                     onPressed: () async {
                       if (await IsarHelper().songExisted(songName)) {
@@ -210,22 +241,34 @@ editPlaylistNameDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
     builder: (_) {
       return AlertDialog(
         content: SizedBox(
-          height: 300,
+          height: 240,
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.all(18.0),
+                 Padding(
+                  padding: EdgeInsets.all(kDefaultPadding),
                   child: Text(
+                    style: Theme.of(ContextKey.navKey.currentContext!)
+                        .textTheme
+                        .titleLarge
+                        ?.apply(
+                      color: currentThemeOnSurface(ref),
+                    ),
                     "Change Playlist Name",
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(kXSPadding),
                   child: TextField(
+                    style: Theme.of(ContextKey.navKey.currentContext!)
+                        .textTheme
+                        .bodyLarge
+                        ?.apply(
+                      color: currentThemeOnSurface(ref),
+                    ),
                     maxLength: 50,
                     controller: controller,
                     decoration: const InputDecoration(
@@ -241,11 +284,11 @@ editPlaylistNameDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
                     },
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: kMediumPadding),
                 Container(
                   width: double.infinity,
                   height: 60,
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(kXSPadding),
                   child: ElevatedButton(
                     onPressed: () {
                       playlist.setName(playlistName);

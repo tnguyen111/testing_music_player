@@ -14,7 +14,7 @@ void loadNewSong(
   int i,
 ) async {
   Navigator.push(
-      globalNavigatorKey.currentContext!,
+      ContextKey.navKey.currentContext!,
       MaterialPageRoute(
         builder: (context) => songPlayerScreen(ref, playlist, i),
       ));

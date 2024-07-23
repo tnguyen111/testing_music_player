@@ -1,3 +1,4 @@
+export 'setting_screen.dart';
 export 'main_screen.dart';
 export 'playlist_screen.dart';
 export 'add_playlist_screen.dart';

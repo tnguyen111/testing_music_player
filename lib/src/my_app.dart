@@ -31,9 +31,15 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    TextTheme textTheme = createTextTheme(context, "Roboto", "Roboto");
+    MaterialTheme theme = MaterialTheme(textTheme);
+    if (context.mounted) {
+      print('resume');
+      AppLifecycleListener(onResume: () => playlistSwitchState(ref));
+    }
     SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
     ]);
     bool modeState = modeWatchState(ref);
     playlistWatchState(ref);
@@ -46,22 +52,26 @@ class MyApp extends ConsumerWidget {
     }
 
     return MaterialApp(
-    debugShowCheckedModeBanner: false,
-    navigatorKey: globalNavigatorKey,
-    theme: (modeState) ? lightTheme() : darkTheme(),
-    builder: (context, child) => ResponsiveBreakpoints.builder(
-    child: child!,
-    breakpoints: [
-    const Breakpoint(start: 0, end: 450, name: MOBILE),
-    const Breakpoint(start: 451, end: 800, name: TABLET),
-    const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-    const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
-    ],
-    ),
-    color: Colors.white,
-    home: Stack(children: [
-    (screenState == 0) ? mainScreen(ref) : songScreen(ref),
-    ]),
+      debugShowCheckedModeBanner: false,
+      navigatorKey: ContextKey.navKey,
+      theme: (modeState) ? theme.light() : theme.dark(),
+      builder: (context, child) => ResponsiveBreakpoints.builder(
+        child: child!,
+        breakpoints: [
+          const Breakpoint(start: 0, end: 450, name: MOBILE),
+          const Breakpoint(start: 451, end: 800, name: TABLET),
+          const Breakpoint(start: 801, end: 1920, name: DESKTOP),
+          const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
+        ],
+      ),
+      //color: Colors.white,
+      home: Stack(children: [
+        (screenState == 0)
+            ? SettingScreen(ref)
+            : (screenState == 1)
+                ? MainScreen(ref)
+                : SongScreen(ref),
+      ]),
     );
-    }
   }
+}

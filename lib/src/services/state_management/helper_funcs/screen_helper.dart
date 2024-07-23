@@ -7,11 +7,15 @@ int screenWatchState(WidgetRef ref){
 
 void screenSetState(WidgetRef ref, int state){
   if(state == 0){
-    ref.read(screenProvider.notifier).mainMenuScreen();
+    ref.read(screenProvider.notifier).settingMenuScreen();
     return;
   }
 
   if(state == 1){
+    ref.read(screenProvider.notifier).mainMenuScreen();
+  }
+
+  if(state == 2){
     ref.read(screenProvider.notifier).songMenuScreen();
   }
 

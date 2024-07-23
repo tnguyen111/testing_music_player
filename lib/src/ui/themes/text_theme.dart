@@ -1,36 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'source_colors.dart';
 
-TextStyle darkThemeHeaderText(){
-  return GoogleFonts.roboto(
-      color: darkThemeTextColor(),
-      fontSize: 28,
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.w500);
+TextTheme createTextTheme(
+    BuildContext context, String bodyFontString, String displayFontString) {
+  TextTheme baseTextTheme = Theme.of(context).textTheme;
+  TextTheme bodyTextTheme = GoogleFonts.getTextTheme(bodyFontString, baseTextTheme);
+  TextTheme displayTextTheme =
+  GoogleFonts.getTextTheme(displayFontString, baseTextTheme);
+  TextTheme textTheme = displayTextTheme.copyWith(
+    bodyLarge: bodyTextTheme.bodyLarge,
+    bodyMedium: bodyTextTheme.bodyMedium,
+    bodySmall: bodyTextTheme.bodySmall,
+    labelLarge: bodyTextTheme.labelLarge,
+    labelMedium: bodyTextTheme.labelMedium,
+    labelSmall: bodyTextTheme.labelSmall,
+  );
+  return textTheme;
 }
-
-TextStyle darkThemeSongText(){
-  return GoogleFonts.roboto(
-      color: darkThemeTextColor(),
-      fontSize: 24,
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.w500);
-}
-
-TextStyle lightThemeHeaderText(){
-  return GoogleFonts.roboto(
-      color: lightThemeTextColor(),
-      fontSize: 28,
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.w500);
-}
-
-TextStyle lightThemeSongText(){
-  return GoogleFonts.roboto(
-      color: lightThemeTextColor(),
-      fontSize: 24,
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.w500);
-}
-

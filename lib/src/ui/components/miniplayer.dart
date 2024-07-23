@@ -10,7 +10,7 @@ Widget miniplayer(WidgetRef ref) {
   return (player.sequenceState?.currentSource != null &&
           currentGlobalPlaylist.songList.children.isNotEmpty)
       ? Container(
-          color: currentThemeSub(ref),
+          //color: currentThemeSub(ref),
           child: Miniplayer(
             minHeight: 74,
             maxHeight: 74,
