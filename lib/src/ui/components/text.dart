@@ -34,7 +34,7 @@ Text songText(WidgetRef ref, String string) {
     overflow: TextOverflow.ellipsis,
     style: Theme.of(ContextKey.navKey.currentContext!)
         .textTheme
-        .headlineMedium
+        .bodyLarge
         ?.apply(
           color: currentThemeOnSurface(ref),
         ),
@@ -48,7 +48,7 @@ Text artistText(WidgetRef ref, String string) {
     overflow: TextOverflow.ellipsis,
     style: Theme.of(ContextKey.navKey.currentContext!)
         .textTheme
-        .bodyLarge
+        .bodyMedium
         ?.apply(
       color: currentThemeOnSurfaceVar(ref),
     ),
@@ -60,7 +60,7 @@ Text timeText(WidgetRef ref, String string) {
     string,
     style: Theme.of(ContextKey.navKey.currentContext!)
         .textTheme
-        .headlineMedium
+        .headlineSmall
         ?.apply(
       color: currentThemeOnSurface(ref),
     ),
@@ -101,13 +101,13 @@ TextScroll miniArtistText(WidgetRef ref, String string) {
   );
 }
 
-Text alertText(WidgetRef ref, String string) {
+Text alertActionText(WidgetRef ref, String string) {
   return Text(
-    textAlign: TextAlign.center,
+    textAlign: TextAlign.start,
     string,
     style: Theme.of(ContextKey.navKey.currentContext!)
         .textTheme
-        .headlineMedium
-        ?.apply(color: currentThemeOnSurface(ref)),
+        .labelLarge
+        ?.apply(color: currentThemePrimary(ref)),
   );
 }

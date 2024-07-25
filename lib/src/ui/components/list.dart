@@ -90,15 +90,28 @@ Widget songList(WidgetRef ref, Playlist playlist) {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: alertText(ref,'Are you sure you want to delete this song from song list?'),
+                        titlePadding: const EdgeInsets.only(top: kLargePadding, left: kLargePadding, right: kLargePadding, bottom: kDefaultSmallPadding),
+                        contentPadding: const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
+                        actionsPadding: const EdgeInsets.all(kLargePadding),
+                        titleTextStyle: Theme.of(ContextKey.navKey.currentContext!)
+                            .textTheme
+                            .titleLarge
+                            ?.apply(color: currentThemeOnSurface(ref)),
+                        contentTextStyle: Theme.of(ContextKey.navKey.currentContext!)
+                            .textTheme
+                            .bodyMedium
+                            ?.apply(color: currentThemeOnSurfaceVar(ref)),
+                        backgroundColor: currentThemeSurfaceContainerHigh(ref),
+                        title: const Text('Delete Selected Song?'),
+                        content: const Text('Song will be permanently removed from your song list and all playlists'),
                         actions: [
-                          ElevatedButton(
+                          TextButton(
                             onPressed: () => Navigator.pop(context, false),
-                            child:  playlistText(ref,'No'),
+                            child:  alertActionText(ref,'Cancel'),
                           ),
-                          ElevatedButton(
+                          TextButton(
                             onPressed: () => Navigator.pop(context, true),
-                            child: playlistText(ref, 'Yes'),
+                            child: alertActionText(ref, 'Delete'),
                           )
                         ],
                       );

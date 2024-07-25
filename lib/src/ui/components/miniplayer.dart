@@ -11,8 +11,8 @@ Widget miniplayer(WidgetRef ref) {
   return (player.sequenceState?.currentSource != null &&
           currentGlobalPlaylist.songList.children.isNotEmpty)
       ? Miniplayer(
-          minHeight: 80,
-          maxHeight: 80,
+          minHeight: 76,
+          maxHeight: 76,
           builder: (height, percentage) {
             return Container(
               decoration: BoxDecoration(
@@ -34,8 +34,8 @@ Widget miniplayer(WidgetRef ref) {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                      top: kDefaultSmallPadding,
-                      //bottom: kXSPadding,
+                      top: kXSPadding,
+                      bottom: kXSPadding,
                       left: kDefaultSmallPadding,
                       right: kDefaultSmallPadding),
                   child: Row(

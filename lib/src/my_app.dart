@@ -26,6 +26,22 @@ Future micPerAsk() async {
   }
 }
 
+Future audioPerAsk() async {
+  print('In Microphone permission method');
+  var status = await Permission.audio.status;
+  if (status.isDenied) {
+    await Permission.audio.request();
+    status = await Permission.audio.status;
+  } else if (status.isPermanentlyDenied) {
+    openAppSettings();
+    status = await Permission.audio.status;
+  }
+
+  if (status.isPermanentlyDenied) {
+    exit(0);
+  }
+}
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
@@ -45,6 +61,7 @@ class MyApp extends ConsumerWidget {
       IsarHelper().setSongList(ref);
       IsarHelper().setPlaylistList(ref);
       micPerAsk();
+      audioPerAsk();
       started = true;
     }
 

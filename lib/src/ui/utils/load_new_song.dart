@@ -7,6 +7,7 @@ import '../../../main.dart';
 import '../../models/models.dart';
 import '../../services/services.dart';
 import '../screens/screens.dart';
+import 'package:open_filex/open_filex.dart';
 
 void loadNewSong(
   WidgetRef ref,
@@ -28,6 +29,7 @@ void loadNewSong(
 
 void loadNewPlaylist(Playlist playlist, int index) async {
   print('new playlist: ${playlist.songList.length}');
+  print((playlist.songList.children[index] as UriAudioSource).tag.id);
   await player.setAudioSource(playlist.songList, initialIndex: index);
   await player.startVisualizer();
 }

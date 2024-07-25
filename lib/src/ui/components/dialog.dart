@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -12,6 +13,8 @@ import '../../../main.dart';
 import '../../config/config.dart';
 import '../ui.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:external_path/external_path.dart';
 
 showDataAlert(BuildContext context, WidgetRef ref, Playlist playlist) {
   bool loading = false;
@@ -111,11 +114,10 @@ showDataAlert(BuildContext context, WidgetRef ref, Playlist playlist) {
                           type: FileType.audio,
                         );
                         print(result?.paths);
+                        playlistSwitchState(ref);
                         if (result != null) {
+                          fileName = '';
                           String pathInput = result.files.single.path!;
-                          String directPath = result.files.single.identifier!;
-                          print(
-                              'direct path: ${result.files.single.identifier}');
                           print('path: $pathInput');
                           if (!pathInput.endsWith('mp3') &&
                               !pathInput.endsWith("aac") &&
@@ -153,10 +155,20 @@ showDataAlert(BuildContext context, WidgetRef ref, Playlist playlist) {
                             playlistSwitchState(ref);
                             return;
                           }
-                          songFile = File(directPath);
-                          fileName = basename(File(pathInput).path);
+                          for (String directory in await ExternalPath
+                              .getExternalStorageDirectories()) {
+                            List<String> inputList = [pathInput, directory];
+                            String filePath =
+                                await compute<List<String>, String>(
+                                    addNewSong, inputList);
+                            if (filePath != '') {
+                              songFile = File(filePath);
+                            }
+                          }
+                          fileName = basename(songFile.path);
+                          FilePicker.platform.clearTemporaryFiles();
                           final metadata =
-                              await MetadataRetriever.fromFile(File(pathInput));
+                              await MetadataRetriever.fromFile(songFile);
                           String? trackName = metadata.trackName;
                           String? trackArtistNames =
                               metadata.trackArtistNames?.first;
@@ -188,15 +200,15 @@ showDataAlert(BuildContext context, WidgetRef ref, Playlist playlist) {
                   ),
                 ),
                 Center(
-                  child: Text(
+                  child: (fileName != '') ? Text(
                     style: Theme.of(ContextKey.navKey.currentContext!)
                         .textTheme
                         .bodySmall
                         ?.apply(
                           color: currentThemeOnSurface(ref),
                         ),
-                    (fileName == '') ? '' : '"$fileName" Uploaded',
-                  ),
+                    '"$fileName" Uploaded',
+                  ): (loading) ? CircularProgressIndicator(): Container(),
                 ),
                 Container(
                   width: double.infinity,
