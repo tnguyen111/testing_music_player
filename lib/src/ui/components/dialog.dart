@@ -7,6 +7,7 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path/path.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:testing_music_player/src/models/models.dart';
 import 'package:testing_music_player/src/services/services.dart';
 import '../../../main.dart';
@@ -16,7 +17,7 @@ import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:external_path/external_path.dart';
 
-showDataAlert(BuildContext context, WidgetRef ref, Playlist playlist) {
+addingSongsDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
   bool loading = false;
   String songName = '';
   String? authorName = '';
@@ -200,15 +201,19 @@ showDataAlert(BuildContext context, WidgetRef ref, Playlist playlist) {
                   ),
                 ),
                 Center(
-                  child: (fileName != '') ? Text(
-                    style: Theme.of(ContextKey.navKey.currentContext!)
-                        .textTheme
-                        .bodySmall
-                        ?.apply(
-                          color: currentThemeOnSurface(ref),
-                        ),
-                    '"$fileName" Uploaded',
-                  ): (loading) ? CircularProgressIndicator(): Container(),
+                  child: (fileName != '')
+                      ? Text(
+                          style: Theme.of(ContextKey.navKey.currentContext!)
+                              .textTheme
+                              .bodySmall
+                              ?.apply(
+                                color: currentThemeOnSurface(ref),
+                              ),
+                          '"$fileName" Uploaded',
+                        )
+                      : (loading)
+                          ? CircularProgressIndicator()
+                          : Container(),
                 ),
                 Container(
                   width: double.infinity,
@@ -267,6 +272,46 @@ showDataAlert(BuildContext context, WidgetRef ref, Playlist playlist) {
   );
 }
 
+deletingSongsDialog(BuildContext context, WidgetRef ref) {
+  showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        titlePadding: const EdgeInsets.only(
+            top: kLargePadding,
+            left: kLargePadding,
+            right: kLargePadding,
+            bottom: kDefaultSmallPadding),
+        contentPadding:
+            const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
+        actionsPadding: const EdgeInsets.all(kLargePadding),
+        titleTextStyle: Theme.of(context)
+            .textTheme
+            .titleLarge
+            ?.apply(color: currentThemeOnSurface(ref)),
+        contentTextStyle: Theme.of(context)
+            .textTheme
+            .bodyMedium
+            ?.apply(color: currentThemeOnSurfaceVar(ref)),
+        backgroundColor: currentThemeSurfaceContainerHigh(ref),
+        title: const Text('Delete Selected Song?'),
+        content: const Text(
+            'Song will be permanently removed from your song list and all playlists'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: alertActionText(ref, 'Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: alertActionText(ref, 'Delete'),
+          )
+        ],
+      );
+    },
+  );
+}
+
 editPlaylistNameDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
   String playlistName = playlist.playlistName;
   TextEditingController controller = TextEditingController(text: playlistName);
@@ -286,10 +331,7 @@ editPlaylistNameDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
                 Padding(
                   padding: const EdgeInsets.all(kDefaultPadding),
                   child: Text(
-                    style: Theme.of(ContextKey.navKey.currentContext!)
-                        .textTheme
-                        .titleLarge
-                        ?.apply(
+                    style: Theme.of(context).textTheme.titleLarge?.apply(
                           color: currentThemeOnSurface(ref),
                         ),
                     "Change Playlist Name",
@@ -298,10 +340,7 @@ editPlaylistNameDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
                 Container(
                   padding: const EdgeInsets.all(kXSPadding),
                   child: TextField(
-                    style: Theme.of(ContextKey.navKey.currentContext!)
-                        .textTheme
-                        .bodyLarge
-                        ?.apply(
+                    style: Theme.of(context).textTheme.bodyLarge?.apply(
                           color: currentThemeOnSurface(ref),
                         ),
                     maxLength: 50,
@@ -341,6 +380,88 @@ editPlaylistNameDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
             ),
           ),
         ),
+      );
+    },
+  );
+}
+
+showRationaleDialog(WidgetRef ref) {
+  showDialog(
+    context: ContextKey.navKey.currentContext!,
+    barrierDismissible: false,
+    builder: (_) {
+      return AlertDialog(
+        titlePadding: const EdgeInsets.only(
+            top: kLargePadding,
+            left: kLargePadding,
+            right: kLargePadding,
+            bottom: kDefaultSmallPadding),
+        contentPadding: const EdgeInsets.only(
+            left: kLargePadding, right: kLargePadding, bottom: kLargePadding),
+        actionsPadding: const EdgeInsets.only(
+            left: kLargePadding, bottom: kLargePadding, right: kLargePadding),
+        titleTextStyle: Theme.of(ContextKey.navKey.currentContext!)
+            .textTheme
+            .titleLarge
+            ?.apply(color: currentThemeOnSurface(ref)),
+        contentTextStyle: Theme.of(ContextKey.navKey.currentContext!)
+            .textTheme
+            .bodyMedium
+            ?.apply(color: currentThemeOnSurfaceVar(ref)),
+        backgroundColor: currentThemeSurfaceContainerHigh(ref),
+        title: const Text('Audio Permission Required'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Why is this permission required?',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: kLargePadding),
+              child: Text(
+                  'This app relies on accessing your audio files to function properly, and without audio permission, this app will simply not work.'),
+            ),
+            Text(
+              'Do we collect your private data?',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: kLargePadding),
+              child: Text(
+                  'We do not collect any of your private data under any circumstances. All files are processed and used locally.'),
+            ),
+            Text(
+              'What about other permissions?',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+                "Microphone permission is not required, but is recommended for the best performance. It is used to listen to currently playing audio files and create waveforms."),
+            ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              if (await Permission.audio.isGranted) {
+                Navigator.pop(ContextKey.navKey.currentContext!, false);
+              } else {
+                exit(1);
+              }
+            },
+            child: alertActionText(ref, 'Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (await Permission.audio.isGranted) {
+                Navigator.pop(ContextKey.navKey.currentContext!, false);
+              } else {
+                await openAppSettings();
+              }
+            },
+            child: alertActionText(ref, 'Ok'),
+          )
+        ],
       );
     },
   );

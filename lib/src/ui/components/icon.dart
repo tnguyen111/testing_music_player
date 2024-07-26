@@ -71,7 +71,7 @@ IconButton addIcon(WidgetRef ref, Playlist playlist) => IconButton(
       icon: const Icon(Icons.add),
       onPressed: () {
         /*Add things*/
-        showDataAlert(ContextKey.navKey.currentContext!, ref, playlist);
+        addingSongsDialog(ContextKey.navKey.currentContext!, ref, playlist);
         playlistSwitchState(ref);
       },
     );
@@ -97,7 +97,7 @@ PopupMenuButton<String> addSongMenuIcon(WidgetRef ref, Playlist playlist) =>
 void handleAddSongMenu(String value, WidgetRef ref, Playlist playlist) {
   switch (value) {
     case 'Add New Song':
-      showDataAlert(ContextKey.navKey.currentContext!, ref, playlist);
+      addingSongsDialog(ContextKey.navKey.currentContext!, ref, playlist);
       playlistSwitchState(ref);
       break;
     case 'Add Songs From Songs List':

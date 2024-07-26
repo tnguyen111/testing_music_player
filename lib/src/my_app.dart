@@ -10,35 +10,17 @@ import 'services/services.dart';
 
 bool started = false;
 
-Future micPerAsk() async {
-  print('In Microphone permission method');
-  var status = await Permission.microphone.status;
-  if (status.isDenied) {
-    await Permission.microphone.request();
-    status = await Permission.microphone.status;
-  } else if (status.isPermanentlyDenied) {
-    openAppSettings();
-    status = await Permission.microphone.status;
-  }
+Future permissionAsk(BuildContext context, WidgetRef ref) async {
+  print('In Permission Method');
 
-  if (status.isPermanentlyDenied) {
-    exit(0);
-  }
-}
+  Map<Permission, PermissionStatus> statuses = await [
+    Permission.microphone,
+    Permission.audio,
+  ].request();
 
-Future audioPerAsk() async {
-  print('In Microphone permission method');
-  var status = await Permission.audio.status;
-  if (status.isDenied) {
-    await Permission.audio.request();
-    status = await Permission.audio.status;
-  } else if (status.isPermanentlyDenied) {
-    openAppSettings();
-    status = await Permission.audio.status;
-  }
-
-  if (status.isPermanentlyDenied) {
-    exit(0);
+  if (statuses[Permission.audio]!.isPermanentlyDenied || true) {
+    print('Showed Rationale');
+    await showRationaleDialog(ref);
   }
 }
 
@@ -60,8 +42,7 @@ class MyApp extends ConsumerWidget {
     if (started == false) {
       IsarHelper().setSongList(ref);
       IsarHelper().setPlaylistList(ref);
-      micPerAsk();
-      audioPerAsk();
+      permissionAsk(context, ref);
       started = true;
     }
 

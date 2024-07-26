@@ -89,32 +89,7 @@ Widget songList(WidgetRef ref, Playlist playlist) {
                   final confirmed = await showDialog<bool>(
                     context: context,
                     builder: (context) {
-                      return AlertDialog(
-                        titlePadding: const EdgeInsets.only(top: kLargePadding, left: kLargePadding, right: kLargePadding, bottom: kDefaultSmallPadding),
-                        contentPadding: const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
-                        actionsPadding: const EdgeInsets.all(kLargePadding),
-                        titleTextStyle: Theme.of(ContextKey.navKey.currentContext!)
-                            .textTheme
-                            .titleLarge
-                            ?.apply(color: currentThemeOnSurface(ref)),
-                        contentTextStyle: Theme.of(ContextKey.navKey.currentContext!)
-                            .textTheme
-                            .bodyMedium
-                            ?.apply(color: currentThemeOnSurfaceVar(ref)),
-                        backgroundColor: currentThemeSurfaceContainerHigh(ref),
-                        title: const Text('Delete Selected Song?'),
-                        content: const Text('Song will be permanently removed from your song list and all playlists'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            child:  alertActionText(ref,'Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            child: alertActionText(ref, 'Delete'),
-                          )
-                        ],
-                      );
+                      return deletingSongsDialog(context, ref);
                     },
                   );
                   print('Deletion confirmed: $confirmed');
