@@ -8,3 +8,4 @@ export 'delete_song_from_playlist.dart';
 export 'swap_song_in_playlist.dart';
 export 'media_to_song.dart';
 export 'sort_playlist.dart';
+export 'move_playlist.dart';

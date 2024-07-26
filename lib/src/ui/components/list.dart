@@ -35,14 +35,15 @@ Widget playlistList(WidgetRef ref) {
         return playlistBlock(ref, playlistArray[index + 1]);
       },
       onReorder: (int oldIndex, int newIndex) async {
-        print(oldIndex);
-        print(newIndex);
-        oldIndex += 1;
-        newIndex += 1;
-        //await swapSongsInPlaylist(playlist, oldIndex, newIndex);
-        final playlist = playlistArray.removeAt(oldIndex);
-        playlistArray.insert(newIndex, playlist);
-        playlistSwitchState(ref);
+        if(oldIndex != newIndex) {
+          print(oldIndex);
+          print(newIndex);
+          oldIndex += 1;
+          newIndex += 1;
+          //await swapSongsInPlaylist(playlist, oldIndex, newIndex);
+          movePlaylist(oldIndex, newIndex);
+          playlistSwitchState(ref);
+        }
       },
     ),
   );
@@ -77,15 +78,15 @@ Widget songList(WidgetRef ref, Playlist playlist) {
                 color: const Color(0xff810303),
                 alignment: Alignment.centerRight,
                 child: const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Icon(
-                      Icons.delete,
-                      color: Colors.white,
-                    ),
+                  padding: EdgeInsets.all(16.0),
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               confirmDismiss: (direction) async {
-                if(playlist == playlistArray[0]) {
+                if (playlist == playlistArray[0]) {
                   final confirmed = await showDialog<bool>(
                     context: context,
                     builder: (context) {

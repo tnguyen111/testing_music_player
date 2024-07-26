@@ -90,7 +90,7 @@ class IsarHelper {
     final isar = await db;
     List<Playlist> newPlaylist =
         await isar.playlists.where().sortByPlaylistName().findAll();
-    for (int i = 0; i < newPlaylist.length; i++) {
+    for (int i = 1; i < newPlaylist.length; i++) {
       newPlaylist[i].id = i;
     }
     playlistArray.sort((a, b) => a.playlistName.compareTo(b.playlistName));

@@ -44,30 +44,45 @@ Widget miniplayer(WidgetRef ref) {
                       Padding(
                         padding:
                             const EdgeInsets.only(right: kDefaultSmallPadding),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: 150,
-                              child: miniSongText(
-                                ref,
-                                (player.sequenceState!.currentSource
+                        child: (((player.sequenceState!.currentSource
                                         as UriAudioSource)
                                     .tag
-                                    .title,
+                                    .artist) !=
+                                '')
+                            ? Column(
+                                children: [
+                                  SizedBox(
+                                    width: 150,
+                                    child: miniSongText(
+                                      ref,
+                                      (player.sequenceState!.currentSource
+                                              as UriAudioSource)
+                                          .tag
+                                          .title,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 150,
+                                    child: miniArtistText(
+                                      ref,
+                                      (player.sequenceState!.currentSource
+                                              as UriAudioSource)
+                                          .tag
+                                          .artist,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : SizedBox(
+                                width: 150,
+                                child: miniSongText(
+                                  ref,
+                                  (player.sequenceState!.currentSource
+                                          as UriAudioSource)
+                                      .tag
+                                      .title,
+                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 150,
-                              child: miniArtistText(
-                                ref,
-                                (player.sequenceState!.currentSource
-                                        as UriAudioSource)
-                                    .tag
-                                    .artist,
-                              ),
-                            ),
-                          ],
-                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(right: 8.0),

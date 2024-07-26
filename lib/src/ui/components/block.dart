@@ -140,7 +140,7 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
           TextButton(
             onPressed: () {
               editPlaylistNameDialog(
-                  ContextKey.navKey.currentContext!, ref, playlist);
+                  ref, playlist);
             },
             child: headerText(
               ref,

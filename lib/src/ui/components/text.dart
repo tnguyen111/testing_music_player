@@ -85,7 +85,7 @@ TextScroll miniSongText(WidgetRef ref, String string) {
         .textTheme
         .titleLarge
         ?.apply(color: currentThemeOnSurface(ref)),
-    textAlign: TextAlign.center,
+    textAlign: TextAlign.start,
   );
 }
 
@@ -95,9 +95,9 @@ TextScroll miniArtistText(WidgetRef ref, String string) {
     mode: TextScrollMode.endless,
     style: Theme.of(ContextKey.navKey.currentContext!)
         .textTheme
-        .titleMedium
+        .titleSmall
         ?.apply(color: currentThemeOnSurfaceVar(ref)),
-    textAlign: TextAlign.center,
+    textAlign: TextAlign.start,
   );
 }
 

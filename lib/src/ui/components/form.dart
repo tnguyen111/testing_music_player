@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:testing_music_player/src/config/config.dart';
 import 'package:testing_music_player/src/models/models.dart';
 import '../../../main.dart';
 import '../../services/services.dart';
@@ -17,21 +18,23 @@ Widget changePlaylistForm(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          GestureDetector(
-            onTap: () async {
-              await changePlaylistImage(playlist);
-              if(!addingPlaylist) {
-                IsarHelper().savePlaylist(playlist);
-              }
-              playlistSwitchState(ref);
-            },
-            child: SizedBox(
-              width: 300,
-              height: 300,
-              child: playlist.getImage(),
+          Padding(
+            padding: const EdgeInsets.all(kLargePadding),
+            child: GestureDetector(
+              onTap: () async {
+                await changePlaylistImage(playlist);
+                if (!addingPlaylist) {
+                  IsarHelper().savePlaylist(playlist);
+                }
+                playlistSwitchState(ref);
+              },
+              child: SizedBox(
+                width: 300,
+                height: 300,
+                child: playlist.getImage(),
+              ),
             ),
           ),
-          const SizedBox(height: 50),
           Form(
             child: Column(
               children: [
@@ -41,36 +44,40 @@ Widget changePlaylistForm(
                       .textTheme
                       .bodyLarge
                       ?.apply(
-                    color: currentThemeOnSurface(ref),
-                  ),
+                        color: currentThemeOnSurface(ref),
+                      ),
                   obscureText: false,
                   controller: controller,
-                  maxLength: 24,
+                  maxLength: 30,
                   decoration: const InputDecoration(
                     hintText: 'Playlist Name',
                     constraints: BoxConstraints(maxWidth: 350),
                     label: Text('Playlist Name'),
                   ),
                   onTap: () {
-                    if(controller.value.text == "Name's Taken. Choose a different name!") {
-                      controller.value =
-                          TextEditingValue(text: playlistName);
+                    if (controller.value.text ==
+                        "Name's Taken. Choose a different name!") {
+                      controller.value = TextEditingValue(text: playlistName);
                       playlistSwitchState(ref);
                     }
                   },
                   onChanged: (String value) {
+                    if (controller.value.text ==
+                        "Name's Taken. Choose a differe") {
+                      controller.value = TextEditingValue(text: playlistName);
+                    }
                     playlistName = value;
                   },
                   onSubmitted: (String value) async {
-                    if (playlistName != '') {
+                    if (playlistName.isNotEmpty) {
                       playlistName = value;
                       playlist.setName(playlistName);
                       if (addingPlaylist) {
                         if (!await IsarHelper().playlistExisted(playlistName)) {
                           playlistArray.add(playlist);
                         } else {
-                          controller.value =
-                              const TextEditingValue(text: "Name's Taken. Choose a different name!");
+                          controller.value = const TextEditingValue(
+                              text: "Name's Taken. Choose a different name!");
                           return;
                         }
                       }
@@ -83,25 +90,17 @@ Widget changePlaylistForm(
               ],
             ),
           ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            style: ButtonStyle(
-              overlayColor: WidgetStatePropertyAll(
-                currentThemeOnSurface(ref),
-              ),
-              backgroundColor: WidgetStatePropertyAll(
-                currentThemeSurfaceContainerHighest(ref),
-              ),
-            ),
+          const SizedBox(height: kLargePadding),
+          TextButton(
             onPressed: () async {
-              if (playlistName != '') {
+              if (playlistName.isNotEmpty) {
                 playlist.setName(playlistName);
                 if (addingPlaylist) {
                   if (!await IsarHelper().playlistExisted(playlistName)) {
                     playlistArray.add(playlist);
                   } else {
-                    controller.value =
-                        const TextEditingValue(text: "Name's Taken. Choose a different name!");
+                    controller.value = const TextEditingValue(
+                        text: "Name's Taken. Choose a different name!");
                     return;
                   }
                 }
@@ -111,11 +110,13 @@ Widget changePlaylistForm(
               }
             },
             child: (addingPlaylist)
-                ? const Text(
+                ? alertActionText(
+                    ref,
                     'Create Playlist',
                     //style: currentThemeSmallText(ref),
                   )
-                : const Text(
+                : alertActionText(
+                    ref,
                     'Edit Playlist',
                     //style: currentThemeSmallText(ref),
                   ),

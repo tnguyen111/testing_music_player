@@ -32,7 +32,10 @@ AppBar playlistAppBar(WidgetRef ref, Playlist playlist) {
         return backIcon(context);
       },
     ),
-    actions: [searchSongIcon(ref, playlist)],
+    actions: [
+      searchSongIcon(ref, playlist),
+      settingSongIcon(ref, playlist),
+    ],
     title: headerText(
       ref,
       playlist.playlistName,

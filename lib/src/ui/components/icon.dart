@@ -28,14 +28,6 @@ IconButton searchPlaylistIcon(WidgetRef ref) => IconButton(
       },
     );
 
-IconButton menuIcon(BuildContext context) => IconButton(
-      icon: const Icon(Icons.menu),
-      onPressed: () {
-        /*Open drawer*/
-        Scaffold.of(context).openDrawer();
-      },
-    );
-
 IconButton sortPlaylistIcon(WidgetRef ref) => IconButton(
       icon: const Icon(Icons.sort),
       onPressed: () async {
@@ -139,17 +131,6 @@ IconButton removeIcon(
       },
     );
 
-IconButton removePlaylistIcon(WidgetRef ref, Playlist playlist) => IconButton(
-      icon: const Icon(Icons.close),
-      onPressed: () {
-        /*Remove things*/
-        IsarHelper().deletePlaylistFor(playlist.playlistName);
-        playlistArray.remove(playlist);
-        playlistSwitchState(ref);
-      },
-    );
-
-
 IconButton addPlaylistIcon(WidgetRef ref) => IconButton(
   icon: const Icon(Icons.add),
   onPressed: () {
@@ -167,45 +148,9 @@ IconButton addPlaylistIcon(WidgetRef ref) => IconButton(
   },
 );
 
-PopupMenuButton<String> settingListIcon(WidgetRef ref) =>
-    PopupMenuButton<String>(
-      onSelected: (value) {
-        handleSettingListClick(value, ref);
-      },
-      itemBuilder: (BuildContext context) {
-        return {'Add New Playlist', 'Delete Playlist'}.map((String choice) {
-          return PopupMenuItem<String>(
-            value: choice,
-            child: Text(choice),
-          );
-        }).toList();
-      },
-    );
-
-void handleSettingListClick(String value, WidgetRef ref) {
-  switch (value) {
-    case 'Add New Playlist':
-      Playlist playlist = Playlist(
-          playlistName_: '',
-          imagePath_: "lib/assets/default_image.png",
-          songNameList_: List.empty(growable: true));
-      Navigator.push(
-        ContextKey.navKey.currentContext!,
-        MaterialPageRoute(
-            builder: (context) => addPlaylistScreen(ref, playlist)),
-      );
-      break;
-    case 'Delete Playlist':
-      playlistRemoving = !playlistRemoving;
-      playlistSwitchState(ref);
-      break;
-  }
-}
-
 PopupMenuButton<String> settingSongIcon(WidgetRef ref, Playlist playlist) =>
     PopupMenuButton<String>(
-      icon: const Icon(Icons.more_horiz),
-      iconSize: 44,
+      icon: const Icon(Icons.more_vert),
       onSelected: (value) {
         handleSettingSongClick(value, ref, playlist);
         playlistSwitchState(ref);
@@ -220,7 +165,7 @@ PopupMenuButton<String> settingSongIcon(WidgetRef ref, Playlist playlist) =>
       },
     );
 
-void handleSettingSongClick(String value, WidgetRef ref, Playlist playlist) {
+Future<void> handleSettingSongClick(String value, WidgetRef ref, Playlist playlist) async {
   switch (value) {
     case 'Edit Playlist Info':
       Navigator.push(
@@ -233,8 +178,8 @@ void handleSettingSongClick(String value, WidgetRef ref, Playlist playlist) {
       );
       break;
     case 'Delete Playlist':
-      IsarHelper().deletePlaylistFor(playlist.playlistName);
-      playlistArray.remove(playlist);
+      await deletePlaylistDialog(ref,playlist);
+      playlistSwitchState(ref);
       break;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:just_audio/just_audio.dart';
+import 'package:testing_music_player/src/config/config.dart';
 import '../../models/models.dart';
 import '../../services/database/database.dart';
 
@@ -12,6 +13,7 @@ Future<void> swapSongsInPlaylist(Playlist playlist, int oldIndex, int newIndex) 
     for(int i = 0; i < playlist.songList.length; i++){
       tempSongList.add(toSongDetails((playlist.songList[i] as UriAudioSource).tag));
     }
+
     await IsarHelper().saveSongList(tempSongList);
     return;
   }
@@ -26,8 +28,7 @@ Future<void> swapSongsInPlaylist(Playlist playlist, int oldIndex, int newIndex) 
 }
 
 Future<void> swapSong(int playlistIndex, int oldIndex, int newIndex) async {
-  final String temp = playlistArray[playlistIndex].songNameList.removeAt(oldIndex);
-  playlistArray[playlistIndex].songNameList.insert(newIndex, temp);
+  playlistArray[playlistIndex].songNameList.move(oldIndex, newIndex);
   try {
     await playlistArray[playlistIndex].songList.move(oldIndex, newIndex);
   } catch(e){
