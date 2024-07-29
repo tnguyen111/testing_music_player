@@ -13,11 +13,11 @@ class MainScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: headerBar(ref, false),
+      appBar: headerBar(ref),
       body: Column(
         children: [
           headerBlock(
-              '${playlistArray.length - 1} Playlist${(playlistArray.length - 1 > 1) ? 's' : ''}',
+              '${(playlistArray.length > 1) ? playlistArray.length - 1 : 0} Playlist${(playlistArray.length - 1 > 1) ? 's' : ''}',
               ref),
           playlistList(ref),
           miniplayer(ref),

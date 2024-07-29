@@ -22,3 +22,15 @@ Future<void> deleteSongFromPlaylist(WidgetRef ref, Playlist playlist, AudioSourc
   playlistSwitchState(ref);
   return;
 }
+
+void clearSongFromPlaylist(WidgetRef ref) {
+  for (int i = 0; i < playlistArray.length; i++) {
+    playlistArray[i].songList.clear();
+    playlistArray[i].songNameList.clear();
+    IsarHelper().savePlaylist(playlistArray[i]);
+  }
+
+  IsarHelper().clearSongList();
+  playlistSwitchState(ref);
+  return;
+}

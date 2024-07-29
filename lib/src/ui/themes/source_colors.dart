@@ -260,7 +260,7 @@ ColorScheme darkHighContrastScheme() {
   return const ColorScheme(
     brightness: Brightness.dark,
     primary: Color(0xfffdfaf9),
-    surfaceTint: Color(0xffc8c6c5),
+    surfaceTint: Color(0xff777676),
     onPrimary: Color(0xff000000),
     primaryContainer: Color(0xffcdcaca),
     onPrimaryContainer: Color(0xff000000),
@@ -344,6 +344,13 @@ class MaterialTheme {
           bodyColor: colorScheme.onPrimary,
           displayColor: colorScheme.onSurface,
         ),
+        dialogTheme: DialogTheme(
+          backgroundColor: colorScheme.surfaceContainerHigh,
+          titleTextStyle:
+              textTheme.titleLarge?.apply(color: colorScheme.onSurface),
+          contentTextStyle:
+              textTheme.bodyMedium?.apply(color: colorScheme.onSurfaceVariant),
+        ),
         scaffoldBackgroundColor: colorScheme.surface,
         canvasColor: colorScheme.surface,
         appBarTheme: const AppBarTheme(
@@ -368,8 +375,8 @@ class MaterialTheme {
         ),
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: colorScheme.surfaceContainerLow,
-
-          iconTheme: WidgetStatePropertyAll(IconThemeData(size: 24,color: colorScheme.onSurface)),
+          iconTheme: WidgetStatePropertyAll(
+              IconThemeData(size: 24, color: colorScheme.onSurface)),
           height: 80,
           labelTextStyle: WidgetStatePropertyAll(
             textTheme.titleSmall!.apply(color: colorScheme.onSurface),

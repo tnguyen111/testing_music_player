@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:external_path/external_path.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -34,7 +38,7 @@ Widget playlistBlock(WidgetRef ref, Playlist playlist) => Row(
             clipBehavior: Clip.hardEdge,
             child: Container(
               color: currentThemeSurfaceContainer(ref),
-              width: 160,
+              width: 185,
               child: GestureDetector(
                 onTap: () {
                   // Change!
@@ -49,7 +53,7 @@ Widget playlistBlock(WidgetRef ref, Playlist playlist) => Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 160,
+                      width: 185,
                       height: 140,
                       child: ClipRRect(
                         borderRadius:
@@ -124,9 +128,9 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
           left: kDefaultPadding, right: kDefaultPadding, bottom: kSmallPadding),
       child: Column(
         children: [
-          const SizedBox(height: kDefaultPadding),
           GestureDetector(
-            child: SizedBox(
+            child: Container(
+              margin: EdgeInsets.all(kDefaultSmallPadding),
               width: 300,
               height: 300,
               child: playlist.getImage(),
@@ -139,8 +143,7 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
           ),
           TextButton(
             onPressed: () {
-              editPlaylistNameDialog(
-                  ref, playlist);
+              editPlaylistNameDialog(ref, playlist);
             },
             child: headerText(
               ref,
@@ -179,7 +182,8 @@ Widget songIconBlock(
     (isNotMiniplayer) ? shuffleIcon(ref) : Container(),
     skipSongIcon(ref, false, playlist, isNotMiniplayer),
     SizedBox(width: 4 * scaling),
-    Transform.scale(scale: (isNotMiniplayer) ? 2: 1, child: playIcon(ref, playlist)),
+    Transform.scale(
+        scale: (isNotMiniplayer) ? 2 : 1, child: playIcon(ref, playlist)),
     SizedBox(width: 4 * scaling),
     skipSongIcon(ref, true, playlist, isNotMiniplayer),
     (isNotMiniplayer) ? loopIcon(ref) : Container(),
@@ -250,11 +254,15 @@ Widget addSongBlock(ref, playlist, index) => Container(
                     children: [
                       songText(
                         ref,
-                        (playlistArray[0].songList[index] as UriAudioSource).tag.title,
+                        (playlistArray[0].songList[index] as UriAudioSource)
+                            .tag
+                            .title,
                       ),
                       artistText(
                         ref,
-                        (playlistArray[0].songList[index] as UriAudioSource).tag.artist,
+                        (playlistArray[0].songList[index] as UriAudioSource)
+                            .tag
+                            .artist,
                       ),
                     ],
                   ),
@@ -272,4 +280,58 @@ Widget addSongBlock(ref, playlist, index) => Container(
           ),
         ),
       ),
+    );
+
+Widget settingBlock(ref, String function) => Container(
+      width: ContextKey.appWidth,
+      height: 56,
+      child: (function == "Dark Mode")
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  settingText(
+                    ref,
+                    function,
+                  ),
+                  Switch(
+                    thumbIcon: (!modeReadState(ref))
+                        ? const WidgetStatePropertyAll(Icon(Icons.nightlight))
+                        : const WidgetStatePropertyAll(Icon(Icons.sunny)),
+                    value: !modeReadState(ref),
+                    onChanged: (bool value) {
+                      modeSwitchState(ref);
+                    },
+                  ),
+                ],
+              ),
+            )
+          : TextButton(
+              style: ButtonStyle(alignment: Alignment.centerLeft),
+              onPressed: () async {
+                if (function == "Clear Your Songs") {
+                  clearSongsDialog(ref);
+                }
+                if (function == "Clear Your Playlists") {
+                  clearPlaylistsDialog(ref);
+                }
+                if (function == "Import All Song Files") {
+                  List<File> allFiles = [];
+                  for (String directory
+                      in await ExternalPath.getExternalStorageDirectories()) {
+                    allFiles = await compute<String, List<File>>(
+                        importAllSongs, directory);
+                  }
+                  print(allFiles.length);
+                  setupImportedSongs(allFiles);
+                  print('hi');
+                }
+              },
+              child: settingText(
+                ref,
+                function,
+              ),
+            ),
     );

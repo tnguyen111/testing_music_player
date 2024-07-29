@@ -38,15 +38,6 @@ addingSongsDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
         contentPadding:
             const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
         actionsPadding: const EdgeInsets.all(kLargePadding),
-        titleTextStyle: Theme.of(ContextKey.navKey.currentContext!)
-            .textTheme
-            .titleLarge
-            ?.apply(color: currentThemeOnSurface(ref)),
-        contentTextStyle: Theme.of(ContextKey.navKey.currentContext!)
-            .textTheme
-            .bodyMedium
-            ?.apply(color: currentThemeOnSurfaceVar(ref)),
-        backgroundColor: currentThemeSurfaceContainerHigh(ref),
         title: headerText(
           ref,
           "Add New Song",
@@ -82,6 +73,9 @@ addingSongsDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
                     hintText: 'Enter Song Name',
                     labelText: 'New Song Name'),
                 onChanged: (value) {
+                  if (value.length == 1 || value.isEmpty) {
+                    playlistSwitchState(ref);
+                  }
                   songName = value;
                 },
               ),
@@ -123,7 +117,7 @@ addingSongsDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
                       '"$fileName" Uploaded',
                     )
                   : (loading)
-                      ? CircularProgressIndicator()
+                      ? const CircularProgressIndicator()
                       : Container(),
             ),
           ],
@@ -204,6 +198,8 @@ addingSongsDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
                   authorNameController.text = authorName!;
                   loading = false;
                   playlistSwitchState(ref);
+                } else {
+                  loading = false;
                 }
               } catch (e) {
                 print(e);
@@ -212,49 +208,59 @@ addingSongsDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
             child: alertActionText(
               ref,
               "Upload Your File",
+              false,
             ),
           ),
           TextButton(
-            onPressed: () async {
-              if (await IsarHelper().songExisted(songName)) {
-                error = "Name's Already Taken!";
-                playlistSwitchState(ref);
-                return;
-              }
-              if (songFile.path.isNotEmpty &&
-                  songName != '' &&
-                  fileName != "Invalid File" &&
-                  !loading) {
-                loading = true;
-                Duration? newDuration = await getDuration(songFile);
-                if (loading) {
-                  SongDetails newSong = SongDetails(
-                    songName: songName,
-                    songAuthor: authorName!,
-                    songDurationData: newDuration.toString(),
-                    songPath: songFile.path,
-                  );
-                  await IsarHelper().saveSong(newSong);
-                  MediaItem newMediaItem = newSong.toMediaItem();
-                  AudioSource temp = AudioSource.uri(
-                    Uri.parse(newSong.songPath),
-                    tag: newMediaItem,
-                  );
-                  if (playlist != playlistArray[0]) {
-                    print('added to playlist');
-                    await addSongToPlaylist(ref, playlist, temp);
-                  }
-                  await addSongToPlaylist(ref, playlistArray[0], temp);
-                  if (loading) {
-                    Navigator.of(context).pop();
-                    playlistSwitchState(ref);
-                  }
-                }
-              }
-            },
+            onPressed: (fileName.isEmpty ||
+                    loading ||
+                    fileName == "Invalid File" ||
+                    songName.isEmpty)
+                ? null
+                : () async {
+                    if (await IsarHelper().songExisted(songName)) {
+                      error = "Name's Already Taken!";
+                      playlistSwitchState(ref);
+                      return;
+                    }
+                    if (songFile.path.isNotEmpty &&
+                        songName != '' &&
+                        fileName != "Invalid File" &&
+                        !loading) {
+                      loading = true;
+                      Duration? newDuration = await getDuration(songFile);
+                      if (loading) {
+                        SongDetails newSong = SongDetails(
+                          songName: songName,
+                          songAuthor: authorName!,
+                          songDurationData: newDuration.toString(),
+                          songPath: songFile.path,
+                        );
+                        await IsarHelper().saveSong(newSong);
+                        MediaItem newMediaItem = newSong.toMediaItem();
+                        AudioSource temp = AudioSource.uri(
+                          Uri.parse(newSong.songPath),
+                          tag: newMediaItem,
+                        );
+                        if (playlist != playlistArray[0]) {
+                          print('added to playlist');
+                          await addSongToPlaylist(ref, playlist, temp);
+                        }
+                        await addSongToPlaylist(ref, playlistArray[0], temp);
+                        if (loading) {
+                          Navigator.of(context).pop();
+                          playlistSwitchState(ref);
+                        }
+                      }
+                    }
+                  },
             child: alertActionText(
               ref,
               "Submit",
+              (fileName.isEmpty ||
+                  loading ||
+                  fileName == "Invalid File" ||
+                  songName.isEmpty),
             ),
           ),
         ],
@@ -273,28 +279,91 @@ deletingSongsDialog(BuildContext context, WidgetRef ref) {
     contentPadding:
         const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
     actionsPadding: const EdgeInsets.all(kLargePadding),
-    titleTextStyle: Theme.of(ContextKey.navKey.currentContext!)
-        .textTheme
-        .titleLarge
-        ?.apply(color: currentThemeOnSurface(ref)),
-    contentTextStyle: Theme.of(ContextKey.navKey.currentContext!)
-        .textTheme
-        .bodyMedium
-        ?.apply(color: currentThemeOnSurfaceVar(ref)),
-    backgroundColor: currentThemeSurfaceContainerHigh(ref),
     title: const Text('Delete Selected Song?'),
     content: const Text(
         'Song will be permanently removed from your song list and all playlists'),
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context, false),
-        child: alertActionText(ref, 'Cancel'),
+        child: alertActionText(ref, 'Cancel', false),
       ),
       TextButton(
         onPressed: () => Navigator.pop(context, true),
-        child: alertActionText(ref, 'Delete'),
+        child: alertActionText(ref, 'Delete', false),
       )
     ],
+  );
+}
+
+clearSongsDialog(WidgetRef ref) {
+  showDialog(
+    context: ContextKey.navKey.currentContext!,
+    builder: (_) {
+      return AlertDialog(
+        titlePadding: const EdgeInsets.only(
+            top: kLargePadding,
+            left: kLargePadding,
+            right: kLargePadding,
+            bottom: kDefaultSmallPadding),
+        contentPadding:
+            const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
+        actionsPadding: const EdgeInsets.all(kLargePadding),
+        title: const Text('Clear Your Songs?'),
+        content: const Text(
+            '''All songs will be permanently removed Are you sure wanting to proceed?'''),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(ContextKey.navKey.currentContext!, false),
+            child: alertActionText(ref, 'Cancel', false),
+          ),
+          TextButton(
+            onPressed: () {
+              clearSongFromPlaylist(ref);
+              playlistSwitchState(ref);
+              Navigator.pop(ContextKey.navKey.currentContext!, true);
+            },
+            child: alertActionText(ref, 'Clear', false),
+          )
+        ],
+      );
+    },
+  );
+}
+
+importSongsDialog(WidgetRef ref) {
+  showDialog(
+    context: ContextKey.navKey.currentContext!,
+    builder: (_) {
+      return AlertDialog(
+        titlePadding: const EdgeInsets.only(
+            top: kLargePadding,
+            left: kLargePadding,
+            right: kLargePadding,
+            bottom: kDefaultSmallPadding),
+        contentPadding:
+        const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
+        actionsPadding: const EdgeInsets.all(kLargePadding),
+        title: const Text('Import All Audio Files?'),
+        content: const Text(
+            'All audio files with tested formats will be imported from your local storage. This process will take a while, do you want to proceed?'),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(ContextKey.navKey.currentContext!, false),
+            child: alertActionText(ref, 'No', false),
+          ),
+          TextButton(
+            onPressed: () {
+
+              playlistSwitchState(ref);
+              Navigator.pop(ContextKey.navKey.currentContext!, true);
+            },
+            child: alertActionText(ref, 'Yes', false),
+          )
+        ],
+      );
+    },
   );
 }
 
@@ -315,15 +384,6 @@ editPlaylistNameDialog(WidgetRef ref, Playlist playlist) {
             left: kLargePadding, right: kLargePadding, bottom: kLargePadding),
         actionsPadding: const EdgeInsets.only(
             left: kLargePadding, bottom: kLargePadding, right: kLargePadding),
-        titleTextStyle: Theme.of(ContextKey.navKey.currentContext!)
-            .textTheme
-            .titleLarge
-            ?.apply(color: currentThemeOnSurface(ref)),
-        contentTextStyle: Theme.of(ContextKey.navKey.currentContext!)
-            .textTheme
-            .bodyMedium
-            ?.apply(color: currentThemeOnSurfaceVar(ref)),
-        backgroundColor: currentThemeSurfaceContainerHigh(ref),
         title: const Text("Change Playlist Name"),
         content: TextField(
           style: Theme.of(ContextKey.navKey.currentContext!)
@@ -369,7 +429,8 @@ editPlaylistNameDialog(WidgetRef ref, Playlist playlist) {
           TextButton(
             onPressed: () async {
               if (playlistName.isNotEmpty) {
-                if (await IsarHelper().playlistExisted(playlistName)) {
+                if (await IsarHelper().playlistExisted(playlistName) &&
+                    playlistName != playlist.playlistName) {
                   controller.value = const TextEditingValue(
                       text: "Name's Taken. Choose a different name!");
                   return;
@@ -384,6 +445,7 @@ editPlaylistNameDialog(WidgetRef ref, Playlist playlist) {
             child: alertActionText(
               ref,
               "Submit",
+              (playlistName.isEmpty),
             ),
           ),
         ],
@@ -394,48 +456,77 @@ editPlaylistNameDialog(WidgetRef ref, Playlist playlist) {
 
 deletePlaylistDialog(WidgetRef ref, Playlist playlist) {
   showDialog(
-      context: ContextKey.navKey.currentContext!,
-      builder: (_) {
-        return AlertDialog(
-          titlePadding: const EdgeInsets.only(
-              top: kLargePadding,
-              left: kLargePadding,
-              right: kLargePadding,
-              bottom: kDefaultSmallPadding),
-          contentPadding:
-              const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
-          actionsPadding: const EdgeInsets.all(kLargePadding),
-          titleTextStyle: Theme.of(ContextKey.navKey.currentContext!)
-              .textTheme
-              .titleLarge
-              ?.apply(color: currentThemeOnSurface(ref)),
-          contentTextStyle: Theme.of(ContextKey.navKey.currentContext!)
-              .textTheme
-              .bodyMedium
-              ?.apply(color: currentThemeOnSurfaceVar(ref)),
-          backgroundColor: currentThemeSurfaceContainerHigh(ref),
-          title: const Text('Delete Selected Playlist?'),
-          content: const Text(
-              'Playlist will be permanently removed from your playlists list.'),
-          actions: [
-            TextButton(
-              onPressed: () =>
-                  Navigator.pop(ContextKey.navKey.currentContext!, false),
-              child: alertActionText(ref, 'Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(ContextKey.navKey.currentContext!, true);
-                IsarHelper().deletePlaylistFor(playlist.playlistName);
-                playlistArray.remove(playlist);
-                Navigator.pop(ContextKey.navKey.currentContext!, true);
-                playlistSwitchState(ref);
-              },
-              child: alertActionText(ref, 'Delete'),
-            )
-          ],
-        );
-      });
+    context: ContextKey.navKey.currentContext!,
+    builder: (_) {
+      return AlertDialog(
+        titlePadding: const EdgeInsets.only(
+            top: kLargePadding,
+            left: kLargePadding,
+            right: kLargePadding,
+            bottom: kDefaultSmallPadding),
+        contentPadding:
+            const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
+        actionsPadding: const EdgeInsets.all(kLargePadding),
+        title: const Text('Delete Selected Playlist?'),
+        content: const Text(
+            'Playlist will be permanently removed from your playlists list.'),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(ContextKey.navKey.currentContext!, false),
+            child: alertActionText(ref, 'Cancel', false),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(ContextKey.navKey.currentContext!, true);
+              IsarHelper().deletePlaylistFor(playlist.playlistName);
+              playlistArray.remove(playlist);
+              Navigator.pop(ContextKey.navKey.currentContext!, true);
+              playlistSwitchState(ref);
+            },
+            child: alertActionText(ref, 'Delete', false),
+          )
+        ],
+      );
+    },
+  );
+}
+
+clearPlaylistsDialog(WidgetRef ref) {
+  showDialog(
+    context: ContextKey.navKey.currentContext!,
+    builder: (_) {
+      return AlertDialog(
+        titlePadding: const EdgeInsets.only(
+            top: kLargePadding,
+            left: kLargePadding,
+            right: kLargePadding,
+            bottom: kDefaultSmallPadding),
+        contentPadding:
+        const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
+        actionsPadding: const EdgeInsets.all(kLargePadding),
+        title: const Text('Clear Your Playlists?'),
+        content: const Text(
+            'All playlists will be permanently removed       Are you sure wanting to proceed?'),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(ContextKey.navKey.currentContext!, false),
+            child: alertActionText(ref, 'Cancel', false),
+          ),
+          TextButton(
+            onPressed: () {
+              IsarHelper().clearPlaylistList();
+              playlistArray.removeRange(1, playlistArray.length);
+              playlistSwitchState(ref);
+              Navigator.pop(ContextKey.navKey.currentContext!, true);
+            },
+            child: alertActionText(ref, 'Clear', false),
+          )
+        ],
+      );
+    },
+  );
 }
 
 showRationaleDialog(WidgetRef ref) {
@@ -453,15 +544,6 @@ showRationaleDialog(WidgetRef ref) {
             left: kLargePadding, right: kLargePadding, bottom: kLargePadding),
         actionsPadding: const EdgeInsets.only(
             left: kLargePadding, bottom: kLargePadding, right: kLargePadding),
-        titleTextStyle: Theme.of(ContextKey.navKey.currentContext!)
-            .textTheme
-            .titleLarge
-            ?.apply(color: currentThemeOnSurface(ref)),
-        contentTextStyle: Theme.of(ContextKey.navKey.currentContext!)
-            .textTheme
-            .bodyMedium
-            ?.apply(color: currentThemeOnSurfaceVar(ref)),
-        backgroundColor: currentThemeSurfaceContainerHigh(ref),
         title: const Text('Audio Permission Required'),
         content: const Column(
           mainAxisSize: MainAxisSize.min,
@@ -502,7 +584,7 @@ showRationaleDialog(WidgetRef ref) {
                 exit(1);
               }
             },
-            child: alertActionText(ref, 'Cancel'),
+            child: alertActionText(ref, 'Cancel', false),
           ),
           TextButton(
             onPressed: () async {
@@ -512,10 +594,13 @@ showRationaleDialog(WidgetRef ref) {
                 await openAppSettings();
               }
             },
-            child: alertActionText(ref, 'Ok'),
+            child: alertActionText(ref, 'Ok', false),
           )
         ],
       );
     },
   );
 }
+
+
+

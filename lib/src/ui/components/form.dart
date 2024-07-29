@@ -66,14 +66,15 @@ Widget changePlaylistForm(
                         "Name's Taken. Choose a differe") {
                       controller.value = TextEditingValue(text: playlistName);
                     }
+
                     playlistName = value;
                   },
                   onSubmitted: (String value) async {
                     if (playlistName.isNotEmpty) {
                       playlistName = value;
-                      playlist.setName(playlistName);
                       if (addingPlaylist) {
                         if (!await IsarHelper().playlistExisted(playlistName)) {
+                          playlist.setName(playlistName);
                           playlistArray.add(playlist);
                         } else {
                           controller.value = const TextEditingValue(
@@ -81,6 +82,13 @@ Widget changePlaylistForm(
                           return;
                         }
                       }
+                      if (await IsarHelper().playlistExisted(playlistName) &&
+                          playlistName != playlist.playlistName) {
+                        controller.value = const TextEditingValue(
+                            text: "Name's Taken. Choose a different name!");
+                        return;
+                      }
+                      playlist.setName(playlistName);
                       IsarHelper().savePlaylist(playlist);
                       playlistSwitchState(ref);
                       Navigator.pop(ContextKey.navKey.currentContext!);
@@ -91,31 +99,42 @@ Widget changePlaylistForm(
             ),
           ),
           const SizedBox(height: kLargePadding),
-          TextButton(
+          FilledButton(
+            style: ButtonStyle(
+                backgroundColor:
+                    WidgetStatePropertyAll(currentThemePrimaryContainer(ref)),
+                fixedSize: WidgetStatePropertyAll(
+                    Size(ContextKey.appWidth - kXXXXLPadding, 40))),
             onPressed: () async {
               if (playlistName.isNotEmpty) {
-                playlist.setName(playlistName);
                 if (addingPlaylist) {
                   if (!await IsarHelper().playlistExisted(playlistName)) {
+                    playlist.setName(playlistName);
                     playlistArray.add(playlist);
                   } else {
                     controller.value = const TextEditingValue(
                         text: "Name's Taken. Choose a different name!");
                     return;
                   }
+                } else if (await IsarHelper().playlistExisted(playlistName) &&
+                    playlistName != playlist.playlistName) {
+                  controller.value = const TextEditingValue(
+                      text: "Name's Taken. Choose a different name!");
+                  return;
                 }
+                playlist.setName(playlistName);
                 IsarHelper().savePlaylist(playlist);
                 playlistSwitchState(ref);
                 Navigator.pop(ContextKey.navKey.currentContext!);
               }
             },
             child: (addingPlaylist)
-                ? alertActionText(
+                ? filledButtonText(
                     ref,
                     'Create Playlist',
                     //style: currentThemeSmallText(ref),
                   )
-                : alertActionText(
+                : filledButtonText(
                     ref,
                     'Edit Playlist',
                     //style: currentThemeSmallText(ref),

@@ -10,7 +10,7 @@ class SongScreen extends ConsumerWidget{
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: headerBar(ref, true),
+      appBar: headerBar(ref),
       body: Column(
         children: [
           headerBlock('${playlistArray[0].songList.length} Song${(playlistArray[0].songList.length > 1) ? 's': ''}', ref),

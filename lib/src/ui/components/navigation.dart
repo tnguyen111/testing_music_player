@@ -13,7 +13,7 @@ Widget navigationBar(WidgetRef ref) {
       screenSetState(ref, value);
     },
 
-    selectedIndex: screenWatchState(ref),
+    selectedIndex: screenReadState(ref),
     destinations: const <Widget>[
       Padding(
         padding:

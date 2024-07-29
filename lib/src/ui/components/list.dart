@@ -13,29 +13,36 @@ Widget playlistList(WidgetRef ref) {
   return Expanded(
     child: ReorderableGridView.builder(
       padding: EdgeInsets.only(
-          top: kMediumPadding,
-          bottom: kMediumPadding,
-          right: (kMediumPadding +
-                  MediaQuery.sizeOf(ContextKey.navKey.currentContext!).width -
-                  360) /
-              2,
-          left: (kMediumPadding +
-                  MediaQuery.sizeOf(ContextKey.navKey.currentContext!).width -
-                  360) /
-              2),
+        top: kDefaultSmallPadding,
+        bottom: kDefaultSmallPadding,
+        right: kDefaultSmallPadding +
+            (((ContextKey.appWidth -
+                        32 -
+                        ((((ContextKey.appWidth - 32) / 185).floor() - 1) *
+                            12)) /
+                    185) /
+                2),
+        left: kDefaultSmallPadding +
+            (((ContextKey.appWidth -
+                        32 -
+                        ((((ContextKey.appWidth - 32) / 185).floor() - 1) *
+                            12)) /
+                    185) /
+                2),
+      ),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 185,
           mainAxisExtent: 220,
           mainAxisSpacing: kMediumPadding,
           crossAxisSpacing: kMediumPadding),
-      itemCount: (playlistArray.isNotEmpty) ? playlistArray.length - 1 : 0,
+      itemCount: (playlistArray.length > 1) ? playlistArray.length - 1 : 0,
       shrinkWrap: false,
       controller: scrollController,
       itemBuilder: (context, index) {
         return playlistBlock(ref, playlistArray[index + 1]);
       },
       onReorder: (int oldIndex, int newIndex) async {
-        if(oldIndex != newIndex) {
+        if (oldIndex != newIndex) {
           print(oldIndex);
           print(newIndex);
           oldIndex += 1;
@@ -67,7 +74,7 @@ Widget songList(WidgetRef ref, Playlist playlist) {
                 color: const Color(0xff810303),
                 alignment: Alignment.centerLeft,
                 child: const Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(kDefaultSmallPadding),
                   child: Icon(
                     Icons.delete,
                     color: Colors.white,
@@ -78,7 +85,7 @@ Widget songList(WidgetRef ref, Playlist playlist) {
                 color: const Color(0xff810303),
                 alignment: Alignment.centerRight,
                 child: const Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(kDefaultSmallPadding),
                   child: Icon(
                     Icons.delete,
                     color: Colors.white,
@@ -146,6 +153,26 @@ Widget addSongList(WidgetRef ref, Playlist playlist) {
         itemBuilder: (context, index) {
           return addSongBlock(ref, playlist, index);
         }),
+  );
+}
+
+Widget settingList(WidgetRef ref) {
+
+  return Expanded(
+    child: SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          settingBlock(ref, 'Clear Your Playlists'),
+          const Divider(height: 1),
+          settingBlock(ref, 'Clear Your Songs'),
+          const Divider(height: 1),
+          settingBlock(ref, 'Import All Song Files'),
+          const Divider(height: 1, ),
+          settingBlock(ref, 'Dark Mode'),
+        ],
+      ),
+    ),
   );
 }
 

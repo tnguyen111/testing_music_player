@@ -6,6 +6,10 @@ int screenWatchState(WidgetRef ref){
   return ref.watch(screenProvider);
 }
 
+int screenReadState(WidgetRef ref){
+  return ref.read(screenProvider);
+}
+
 void screenSetState(WidgetRef ref, int state){
   if(ContextKey.navKey.currentContext!.mounted) {
     if (state == 0) {

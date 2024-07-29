@@ -68,10 +68,21 @@ class IsarHelper {
     isar.writeTxnSync<List<int>>(() => isar.playlists.putAllSync(playlistList));
   }
 
+  Future<void> clearPlaylistList() async {
+    final isar = await db;
+    await isar.writeTxn(() => isar.playlists.clear());
+    isar.writeTxnSync<int>(() => isar.playlists.putSync(playlistArray[0]));
+  }
+
   Future<void> saveSongList(List<SongDetails> songList) async {
     final isar = await db;
     await isar.writeTxn(() => isar.songDetails.clear());
     isar.writeTxnSync<List<int>>(() => isar.songDetails.putAllSync(songList));
+  }
+
+  Future<void> clearSongList() async {
+    final isar = await db;
+    await isar.writeTxn(() => isar.songDetails.clear());
   }
 
   void deletePlaylistFor(String name) async {

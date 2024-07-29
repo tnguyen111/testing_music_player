@@ -2,25 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../config/config.dart';
 import '../../models/models.dart';
+import '../../services/services.dart';
 import '../ui.dart';
 
-AppBar headerBar(WidgetRef ref, bool isSongList) {
+AppBar headerBar(WidgetRef ref) {
   return AppBar(
     toolbarHeight: appBarHeight,
-    title: (isSongList)
+    title: (screenReadState(ref) == 0)
         ? headerText(
             ref,
-            'Your Songs',
+            'Your Settings',
           )
-        : headerText(
-            ref,
-            'Your Playlists',
-          ),
+        : (screenReadState(ref) == 1)
+            ? headerText(
+                ref,
+                'Your Playlists',
+              )
+            : headerText(
+                ref,
+                'Your Songs',
+              ),
     actions: [
-      (isSongList)
-          ? searchSongIcon(ref, playlistArray[0])
-          : searchPlaylistIcon(ref),
-      (isSongList) ? addIcon(ref, playlistArray[0]) : addPlaylistIcon(ref),
+      (screenReadState(ref) == 1)
+          ? searchPlaylistIcon(ref)
+          : (screenReadState(ref) == 2) ? searchSongIcon(ref, playlistArray[0]): Container(),
+      (screenReadState(ref) == 1) ? addPlaylistIcon(ref) : (screenReadState(ref) == 2) ? addIcon(ref, playlistArray[0]): Container(),
     ],
   );
 }

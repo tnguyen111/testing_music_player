@@ -32,12 +32,10 @@ Text songText(WidgetRef ref, String string) {
     string,
     maxLines: 1,
     overflow: TextOverflow.ellipsis,
-    style: Theme.of(ContextKey.navKey.currentContext!)
-        .textTheme
-        .bodyLarge
-        ?.apply(
-          color: currentThemeOnSurface(ref),
-        ),
+    style:
+        Theme.of(ContextKey.navKey.currentContext!).textTheme.bodyLarge?.apply(
+              color: currentThemeOnSurface(ref),
+            ),
   );
 }
 
@@ -46,12 +44,10 @@ Text artistText(WidgetRef ref, String string) {
     string,
     maxLines: 1,
     overflow: TextOverflow.ellipsis,
-    style: Theme.of(ContextKey.navKey.currentContext!)
-        .textTheme
-        .bodyMedium
-        ?.apply(
-      color: currentThemeOnSurfaceVar(ref),
-    ),
+    style:
+        Theme.of(ContextKey.navKey.currentContext!).textTheme.bodyMedium?.apply(
+              color: currentThemeOnSurfaceVar(ref),
+            ),
   );
 }
 
@@ -62,8 +58,8 @@ Text timeText(WidgetRef ref, String string) {
         .textTheme
         .headlineSmall
         ?.apply(
-      color: currentThemeOnSurface(ref),
-    ),
+          color: currentThemeOnSurface(ref),
+        ),
   );
 }
 
@@ -101,13 +97,39 @@ TextScroll miniArtistText(WidgetRef ref, String string) {
   );
 }
 
-Text alertActionText(WidgetRef ref, String string) {
+Text alertActionText(WidgetRef ref, String string, bool isDisabled) {
+  return Text(
+    textAlign: TextAlign.start,
+    string,
+    style: (isDisabled)
+        ? Theme.of(ContextKey.navKey.currentContext!)
+            .textTheme
+            .labelLarge
+            ?.apply(color: currentThemeSurfaceTint(ref))
+        : Theme.of(ContextKey.navKey.currentContext!)
+            .textTheme
+            .labelLarge
+            ?.apply(color: currentThemePrimary(ref)),
+  );
+}
+
+Text filledButtonText(WidgetRef ref, String string) {
   return Text(
     textAlign: TextAlign.start,
     string,
     style: Theme.of(ContextKey.navKey.currentContext!)
         .textTheme
         .labelLarge
-        ?.apply(color: currentThemePrimary(ref)),
+        ?.apply(color: currentThemeOnPrimaryContainer(ref)),
+  );
+}
+
+Text settingText(WidgetRef ref, String string) {
+  return Text(
+    string,
+    style:
+    Theme.of(ContextKey.navKey.currentContext!).textTheme.bodyLarge?.apply(
+      color: currentThemeOnSurface(ref),
+    ),
   );
 }

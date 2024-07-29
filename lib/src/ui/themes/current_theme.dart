@@ -38,6 +38,14 @@ Color currentThemePrimary(WidgetRef ref) {
   return currentTheme(ref).colorScheme.primary;
 }
 
+Color currentThemeInversePrimary(WidgetRef ref) {
+  return currentTheme(ref).colorScheme.inversePrimary;
+}
+
+Color currentThemeSurfaceTint(WidgetRef ref) {
+  return currentTheme(ref).colorScheme.surfaceTint;
+}
+
 Color currentThemePrimaryContainer(WidgetRef ref) {
   return currentTheme(ref).colorScheme.primaryContainer;
 }

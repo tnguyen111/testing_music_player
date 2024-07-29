@@ -12,13 +12,10 @@ class SettingScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: headerBar(ref, false),
+      appBar: headerBar(ref),
       body: Column(
         children: [
-          headerBlock(
-              'Settings',
-              ref),
-          IconButton(onPressed: (){modeSwitchState(ref);}, icon: const Icon(Icons.abc),),
+          settingList(ref),
           miniplayer(ref),
         ],
       ),
