@@ -286,11 +286,11 @@ Widget settingBlock(ref, String function) => SizedBox(
           ? settingSwitch(ref, function)
           : TextButton(
               style: const ButtonStyle(alignment: Alignment.centerLeft),
-              onPressed: (importingFile.value)
+              onPressed: (false)
                   ? null
                   : () async {
                       if (function == "Clear Your Songs") {
-                        clearSongsDialog(ref);
+                        print(playlistArray.length);
                       }
                       if (function == "Clear Your Playlists") {
                         clearPlaylistsDialog(ref);
@@ -306,3 +306,22 @@ Widget settingBlock(ref, String function) => SizedBox(
               ),
             ),
     );
+
+Widget importingBloc(WidgetRef ref){
+  return Expanded(
+    child: Column(
+      children: [
+        const CircularProgressIndicator(),
+        Padding(
+          padding: const EdgeInsets.all(kLargePadding),
+          child: Text(
+            'Importing Files...',
+            style: Theme.of(ContextKey.navKey.currentContext!).textTheme.titleMedium?.apply(
+              color: currentThemeOnSurfaceVar(ref),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}

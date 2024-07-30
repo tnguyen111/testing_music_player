@@ -143,12 +143,11 @@ class IsarHelper {
     return await isar.songDetails.where().findAll();
   }
 
-  Future<bool> setPlaylistList(WidgetRef ref) async {
+  Future<bool> setPlaylistList() async {
     playlistArray = await getAllPlaylist();
     for (int i = 0; i < playlistArray.length; i++) {
       setPlaylist(playlistArray[i]);
     }
-    playlistSwitchState(ref);
     return true;
   }
 
@@ -189,12 +188,12 @@ class IsarHelper {
     return playlist;
   }
 
-  Future<bool> setSongList(WidgetRef ref) async {
+  Future<bool> setSongList() async {
     if (!await IsarHelper().playlistExisted('')) {
       await savePlaylist(
           Playlist(playlistName_: '', imagePath_: '', songNameList_: []));
-      playlistSwitchState(ref);
     }
+    await IsarHelper().setPlaylistList();
     return true;
   }
 

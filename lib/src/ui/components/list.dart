@@ -59,7 +59,9 @@ Widget playlistList(WidgetRef ref) {
 Widget songList(WidgetRef ref, Playlist playlist) {
   final ScrollController scrollController = ScrollController();
 
-  return Expanded(
+  return (importingFile.value)
+      ? importingBloc(ref)
+      :  Expanded(
     child: ReorderableListView.builder(
       scrollController: scrollController,
       itemCount: playlist.songNameList.length,

@@ -9,8 +9,8 @@ import 'package:testing_music_player/src/models/global_list.dart';
 import '../../services/services.dart';
 import '../ui.dart';
 
-Future setupMode(WidgetRef ref) async {
-  print('wut');
+Future<bool> setupMode(WidgetRef ref) async {
+  print('setting up');
   SharedPreferences prefs = await SharedPreferences.getInstance();
   if (prefs.getBool('lightMode') ?? false) {
     modeSwitchState(ref);
@@ -32,7 +32,7 @@ Future setupMode(WidgetRef ref) async {
   }
 
   print('hey');
-  return;
+  return true;
 }
 
 void changeSongConfirmation() async {

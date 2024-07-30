@@ -354,16 +354,18 @@ importSongsDialog(WidgetRef ref) {
           ),
           TextButton(
             onPressed: () async {
-              importingFile.value = true;
-              Navigator.pop(ContextKey.navKey.currentContext!, true);
-              List<File> allFiles = [];
-              for (String directory
-                  in await ExternalPath.getExternalStorageDirectories()) {
-                allFiles = await compute<String, List<File>>(
-                    importAllSongs, directory);
+              if(await Permission.audio.isGranted) {
+                importingFile.value = true;
+                Navigator.pop(ContextKey.navKey.currentContext!, true);
+                List<File> allFiles = [];
+                for (String directory
+                in await ExternalPath.getExternalStorageDirectories()) {
+                  allFiles = await compute<String, List<File>>(
+                      importAllSongs, directory);
+                }
+                print(allFiles.length);
+                setupImportedSongs(allFiles);
               }
-              print(allFiles.length);
-              setupImportedSongs(allFiles);
             },
             child: alertActionText(ref, 'Proceed', false),
           )
@@ -604,6 +606,7 @@ showRationaleDialog(WidgetRef ref) {
           TextButton(
             onPressed: () async {
               if (await Permission.audio.isGranted) {
+                setupMode(ref);
                 Navigator.pop(ContextKey.navKey.currentContext!, false);
               } else {
                 await openAppSettings();

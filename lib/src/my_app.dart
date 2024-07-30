@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../main.dart';
@@ -17,9 +18,11 @@ Future permissionAsk(BuildContext context, WidgetRef ref) async {
     Permission.audio,
   ].request();
 
-  if (statuses[Permission.audio]!.isPermanentlyDenied) {
+  if (await Permission.audio.isPermanentlyDenied || !(await Permission.audio.isGranted)) {
     print('Showed Rationale');
     await showRationaleDialog(ref);
+  } else if(await Permission.audio.isGranted){
+    setupMode(ref);
   }
 }
 
@@ -42,10 +45,9 @@ class MyApp extends ConsumerWidget {
     int screenState = screenWatchState(ref);
     importingFile.addListener(() => playlistSwitchState(ref));
     if (started == false) {
-      IsarHelper().setSongList(ref);
-      IsarHelper().setPlaylistList(ref);
       permissionAsk(context, ref);
-      setupMode(ref);
+      IsarHelper().setSongList();
+      print(playlistArray.length);
       started = true;
     }
 

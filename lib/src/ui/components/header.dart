@@ -25,8 +25,8 @@ AppBar headerBar(WidgetRef ref) {
     actions: [
       (screenReadState(ref) == 1)
           ? searchPlaylistIcon(ref)
-          : (screenReadState(ref) == 2) ? searchSongIcon(ref, playlistArray[0]): Container(),
-      (screenReadState(ref) == 1) ? addPlaylistIcon(ref) : (screenReadState(ref) == 2) ? addIcon(ref, playlistArray[0]): Container(),
+          : (screenReadState(ref) == 2 && playlistArray.isNotEmpty) ? searchSongIcon(ref, playlistArray[0]): Container(),
+      (screenReadState(ref) == 1) ? addPlaylistIcon(ref) : (screenReadState(ref) == 2 && playlistArray.isNotEmpty) ? addIcon(ref, playlistArray[0]): Container(),
     ],
   );
 }

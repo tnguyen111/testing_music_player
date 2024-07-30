@@ -55,20 +55,20 @@ Widget miniplayer(WidgetRef ref) {
                                     width: 150,
                                     child: miniSongText(
                                       ref,
-                                      (player.sequenceState!.currentSource
+                                      (player.sequenceState?.currentSource
                                               as UriAudioSource)
                                           .tag
-                                          .title,
+                                          .title ?? '',
                                     ),
                                   ),
                                   SizedBox(
                                     width: 150,
                                     child: miniArtistText(
                                       ref,
-                                      (player.sequenceState!.currentSource
+                                      (player.sequenceState?.currentSource
                                               as UriAudioSource)
                                           .tag
-                                          .artist,
+                                          .artist ?? '',
                                     ),
                                   ),
                                 ],
@@ -77,10 +77,10 @@ Widget miniplayer(WidgetRef ref) {
                                 width: 150,
                                 child: miniSongText(
                                   ref,
-                                  (player.sequenceState!.currentSource
+                                  (player.sequenceState?.currentSource
                                           as UriAudioSource)
                                       .tag
-                                      .title,
+                                      .title ?? '',
                                 ),
                               ),
                       ),
