@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:testing_music_player/src/services/services.dart';
@@ -61,87 +62,116 @@ Widget songList(WidgetRef ref, Playlist playlist) {
 
   return (importingFile.value)
       ? importingBloc(ref)
-      :  Expanded(
-    child: ReorderableListView.builder(
-      scrollController: scrollController,
-      itemCount: playlist.songNameList.length,
-      scrollDirection: Axis.vertical,
-      shrinkWrap: false,
-      itemBuilder: (context, index) {
-        if (playlist.songNameList.isNotEmpty) {
-          try {
-            return Dismissible(
-              key: Key(playlist.songNameList[index]),
-              background: Container(
-                color: const Color(0xff810303),
-                alignment: Alignment.centerLeft,
-                child: const Padding(
-                  padding: EdgeInsets.all(kDefaultSmallPadding),
-                  child: Icon(
-                    Icons.delete,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              secondaryBackground: Container(
-                color: const Color(0xff810303),
-                alignment: Alignment.centerRight,
-                child: const Padding(
-                  padding: EdgeInsets.all(kDefaultSmallPadding),
-                  child: Icon(
-                    Icons.delete,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              confirmDismiss: (direction) async {
-                if (playlist == playlistArray[0] && songDeleteConfirmation) {
-                  final confirmed = await showDialog<bool>(
-                    context: context,
-                    builder: (context) {
-                      return deletingSongsDialog(context, ref);
+      : Expanded(
+          child: ReorderableListView.builder(
+            scrollController: scrollController,
+            itemCount: playlist.songNameList.length,
+            scrollDirection: Axis.vertical,
+            shrinkWrap: false,
+            itemBuilder: (context, index) {
+              if (playlist.songNameList.isNotEmpty) {
+                try {
+                  return Dismissible(
+                    key: Key(playlist.songNameList[index]),
+                    background: Container(
+                      color: const Color(0xff810303),
+                      alignment: Alignment.centerLeft,
+                      child: const Padding(
+                        padding: EdgeInsets.all(kDefaultSmallPadding),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    secondaryBackground: Container(
+                      color: const Color(0xff810303),
+                      alignment: Alignment.centerRight,
+                      child: const Padding(
+                        padding: EdgeInsets.all(kDefaultSmallPadding),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    confirmDismiss: (direction) async {
+                      if (playlist == playlistArray[0] &&
+                          songDeleteConfirmation) {
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder: (context) {
+                            return deletingSongsDialog(context, ref);
+                          },
+                        );
+                        print('Deletion confirmed: $confirmed');
+                        return confirmed;
+                      }
+                      return true;
                     },
+                    onDismissed: (direction) async {
+                      /*Remove things*/
+                      AudioSource song = playlist.songList[index];
+                      String songName = (song as UriAudioSource).tag.title;
+                      if (playlistArray[0] == playlist) {
+                        await deleteSongFromPlaylist(
+                            ref, playlistArray[0], song);
+                        await IsarHelper().deleteSongFor(songName);
+                        print('remove in list');
+                        for (int i = 1; i < playlistArray.length; i++) {
+                          if (playlistArray[i]
+                              .songNameList
+                              .contains(songName)) {
+                            await deleteSongFromPlaylist(
+                                ref, playlistArray[i], song);
+                          }
+                        }
+                      } else {
+                        await deleteSongFromPlaylist(ref, playlist, song);
+                      }
+                      playlistSwitchState(ref);
+                    },
+                    child: songBlock(ref, playlist, index),
                   );
-                  print('Deletion confirmed: $confirmed');
-                  return confirmed;
+                } catch (e) {
+                  print(e);
                 }
-                return true;
-              },
-              onDismissed: (direction) async {
-                /*Remove things*/
-                AudioSource song = playlist.songList[index];
-                String songName = (song as UriAudioSource).tag.title;
-                if (playlistArray[0] == playlist) {
-                  await deleteSongFromPlaylist(ref, playlistArray[0], song);
-                  await IsarHelper().deleteSongFor(songName);
-                  print('remove in list');
-                  for (int i = 1; i < playlistArray.length; i++) {
-                    if (playlistArray[i].songNameList.contains(songName)) {
-                      await deleteSongFromPlaylist(ref, playlistArray[i], song);
-                    }
-                  }
-                } else {
-                  await deleteSongFromPlaylist(ref, playlist, song);
-                }
-                playlistSwitchState(ref);
-              },
-              child: songBlock(ref, playlist, index),
-            );
-          } catch (e) {
-            print(e);
-          }
-        }
-        return Container();
-      },
-      onReorder: (int oldIndex, int newIndex) async {
-        if (oldIndex < newIndex) {
-          newIndex -= 1;
-        }
-        await swapSongsInPlaylist(playlist, oldIndex, newIndex);
-        playlistSwitchState(ref);
-      },
+              }
+              return Container();
+            },
+            onReorder: (int oldIndex, int newIndex) async {
+              if (oldIndex < newIndex) {
+                newIndex -= 1;
+              }
+              await swapSongsInPlaylist(playlist, oldIndex, newIndex);
+              playlistSwitchState(ref);
+            },
+          ),
+        );
+}
+
+Widget nextSongList(WidgetRef ref) {
+  int next = player.nextIndex ?? -1;
+
+  return (next >= 0) ? Container(
+    margin: const EdgeInsets.only(top: kXXXXLPadding),
+    padding:const EdgeInsets.only(top: kMediumPadding, left: kDefaultSmallPadding, right: kDefaultSmallPadding, bottom: kDefaultSmallPadding),
+    color: currentThemeSurfaceContainerLow(ref),
+    height: 200,
+    child: ListView(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: headerText(ref, 'Up Next'),
+        ),
+        upNextSongBlock(ref, next),
+        (next + 1 < player.sequence!.length) ? upNextSongBlock(ref, next+1): Container(),
+        (next + 2 < player.sequence!.length) ? upNextSongBlock(ref, next+2): Container(),
+        (next + 3 < player.sequence!.length) ? upNextSongBlock(ref, next+3): Container(),
+        (next + 4 < player.sequence!.length) ? upNextSongBlock(ref, next+4): Container(),
+      ],
     ),
-  );
+  ): Container();
 }
 
 Widget addSongList(WidgetRef ref, Playlist playlist) {
@@ -159,7 +189,6 @@ Widget addSongList(WidgetRef ref, Playlist playlist) {
 }
 
 Widget settingList(WidgetRef ref) {
-
   return Expanded(
     child: SingleChildScrollView(
       child: Column(
@@ -170,11 +199,17 @@ Widget settingList(WidgetRef ref) {
           settingBlock(ref, 'Clear Your Songs'),
           const Divider(height: 1),
           settingBlock(ref, 'Import All Audio Files'),
-          const Divider(height: 1, ),
+          const Divider(
+            height: 1,
+          ),
           settingBlock(ref, 'Song Deletion Confirmation'),
-          const Divider(height: 1, ),
+          const Divider(
+            height: 1,
+          ),
           settingBlock(ref, 'Playlist Deletion Confirmation'),
-          const Divider(height: 1, ),
+          const Divider(
+            height: 1,
+          ),
           settingBlock(ref, 'Dark Mode'),
         ],
       ),

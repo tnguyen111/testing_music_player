@@ -60,6 +60,8 @@ class PlaylistSongSearch extends SearchDelegate {
                   ),
             )
             .toList();
+    player.sequence?[player.nextIndex ?? 0];
     return suggestionSongListWidget(ref, suggestionList);
   }
 }
+

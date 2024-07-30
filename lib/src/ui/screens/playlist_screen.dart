@@ -8,7 +8,7 @@ Scaffold playlistScreen(WidgetRef ref, Playlist playlist) {
   return Scaffold(
     appBar: playlistAppBar(ref, playlist),
     body:
-      SingleChildScrollView(
+      SingleChildScrollView(controller: ScrollController(),
         child: SizedBox(
           height: MediaQuery.sizeOf(ContextKey.navKey.currentContext!).height - 90,
           width: MediaQuery.sizeOf(ContextKey.navKey.currentContext!).width,
