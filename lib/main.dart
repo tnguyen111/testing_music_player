@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:testing_music_player/src/my_app.dart';
 
+
 class ContextKey {
   static final navKey = GlobalKey<NavigatorState>();
   static final appWidth = MediaQuery.sizeOf(ContextKey.navKey.currentContext!).width;

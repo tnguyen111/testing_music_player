@@ -14,7 +14,7 @@ class SongScreen extends ConsumerWidget{
       body: Column(
         children: [
           headerBlock('${playlistArray[0].songList.length} Song${(playlistArray[0].songList.length > 1) ? 's': ''}', ref),
-          songList(ref, playlistArray[0]),
+          (importingFile.value) ? const CircularProgressIndicator():songList(ref, playlistArray[0]),
           miniplayer(ref),
         ],
       ),

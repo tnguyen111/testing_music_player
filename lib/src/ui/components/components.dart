@@ -10,3 +10,4 @@ export 'miniplayer.dart';
 export 'text.dart';
 export 'card.dart';
 export 'navigation.dart';
+export 'switch.dart';

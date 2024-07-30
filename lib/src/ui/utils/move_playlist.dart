@@ -1,4 +1,3 @@
-import 'package:just_audio/just_audio.dart';
 import 'package:testing_music_player/src/config/config.dart';
 import '../../models/models.dart';
 import '../../services/database/database.dart';

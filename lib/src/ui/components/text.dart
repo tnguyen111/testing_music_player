@@ -113,6 +113,13 @@ Text alertActionText(WidgetRef ref, String string, bool isDisabled) {
   );
 }
 
+TextStyle? searchFieldTextStyle(WidgetRef ref) {
+  return Theme.of(ContextKey.navKey.currentContext!)
+        .textTheme
+        .bodyLarge
+        ?.apply(color: currentThemeOnSurface(ref));
+}
+
 Text filledButtonText(WidgetRef ref, String string) {
   return Text(
     textAlign: TextAlign.start,

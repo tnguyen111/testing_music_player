@@ -1,10 +1,6 @@
 import 'dart:io';
 
-import 'package:external_path/external_path.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:mime/mime.dart';
@@ -93,6 +89,7 @@ Future<void> setupImportedSongs(List<File> songList) async {
     }
   }
   await IsarHelper().savePlaylist(playlistArray[0]);
+  importingFile.value = false;
   return;
 }
 

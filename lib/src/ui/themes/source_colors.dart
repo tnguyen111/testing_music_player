@@ -344,6 +344,11 @@ class MaterialTheme {
           bodyColor: colorScheme.onPrimary,
           displayColor: colorScheme.onSurface,
         ),
+        searchBarTheme: SearchBarThemeData(
+            hintStyle: WidgetStatePropertyAll(
+                textTheme.bodyLarge?.apply(color: colorScheme.onSurface)),
+            textStyle: WidgetStatePropertyAll(
+                textTheme.bodyLarge?.apply(color: colorScheme.onSurface))),
         dialogTheme: DialogTheme(
           backgroundColor: colorScheme.surfaceContainerHigh,
           titleTextStyle:

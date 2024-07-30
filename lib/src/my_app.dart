@@ -1,9 +1,9 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../main.dart';
+import 'models/global_list.dart';
 import 'ui/ui.dart';
 import 'services/services.dart';
 
@@ -17,7 +17,7 @@ Future permissionAsk(BuildContext context, WidgetRef ref) async {
     Permission.audio,
   ].request();
 
-  if (statuses[Permission.audio]!.isPermanentlyDenied || true) {
+  if (statuses[Permission.audio]!.isPermanentlyDenied) {
     print('Showed Rationale');
     await showRationaleDialog(ref);
   }
@@ -40,10 +40,12 @@ class MyApp extends ConsumerWidget {
     bool modeState = modeWatchState(ref);
     playlistWatchState(ref);
     int screenState = screenWatchState(ref);
+    importingFile.addListener(() => playlistSwitchState(ref));
     if (started == false) {
       IsarHelper().setSongList(ref);
       IsarHelper().setPlaylistList(ref);
       permissionAsk(context, ref);
+      setupMode(ref);
       started = true;
     }
 

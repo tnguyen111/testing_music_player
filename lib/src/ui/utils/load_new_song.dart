@@ -7,7 +7,6 @@ import '../../../main.dart';
 import '../../models/models.dart';
 import '../../services/services.dart';
 import '../screens/screens.dart';
-import 'package:open_filex/open_filex.dart';
 
 void loadNewSong(
   WidgetRef ref,

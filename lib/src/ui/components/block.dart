@@ -1,7 +1,4 @@
-import 'dart:io';
 
-import 'package:external_path/external_path.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -130,7 +127,7 @@ Container playlistMenuBlock(WidgetRef ref, Playlist playlist) => Container(
         children: [
           GestureDetector(
             child: Container(
-              margin: EdgeInsets.all(kDefaultSmallPadding),
+              margin: const EdgeInsets.all(kDefaultSmallPadding),
               width: 300,
               height: 300,
               child: playlist.getImage(),
@@ -282,53 +279,27 @@ Widget addSongBlock(ref, playlist, index) => Container(
       ),
     );
 
-Widget settingBlock(ref, String function) => Container(
+Widget settingBlock(ref, String function) => SizedBox(
       width: ContextKey.appWidth,
       height: 56,
-      child: (function == "Dark Mode")
-          ? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  settingText(
-                    ref,
-                    function,
-                  ),
-                  Switch(
-                    thumbIcon: (!modeReadState(ref))
-                        ? const WidgetStatePropertyAll(Icon(Icons.nightlight))
-                        : const WidgetStatePropertyAll(Icon(Icons.sunny)),
-                    value: !modeReadState(ref),
-                    onChanged: (bool value) {
-                      modeSwitchState(ref);
-                    },
-                  ),
-                ],
-              ),
-            )
+      child: (function == "Dark Mode" || function.contains('Confirmation'))
+          ? settingSwitch(ref, function)
           : TextButton(
-              style: ButtonStyle(alignment: Alignment.centerLeft),
-              onPressed: () async {
-                if (function == "Clear Your Songs") {
-                  clearSongsDialog(ref);
-                }
-                if (function == "Clear Your Playlists") {
-                  clearPlaylistsDialog(ref);
-                }
-                if (function == "Import All Song Files") {
-                  List<File> allFiles = [];
-                  for (String directory
-                      in await ExternalPath.getExternalStorageDirectories()) {
-                    allFiles = await compute<String, List<File>>(
-                        importAllSongs, directory);
-                  }
-                  print(allFiles.length);
-                  setupImportedSongs(allFiles);
-                  print('hi');
-                }
-              },
+              style: const ButtonStyle(alignment: Alignment.centerLeft),
+              onPressed: (importingFile.value)
+                  ? null
+                  : () async {
+                      if (function == "Clear Your Songs") {
+                        clearSongsDialog(ref);
+                      }
+                      if (function == "Clear Your Playlists") {
+                        clearPlaylistsDialog(ref);
+                      }
+                      if (function == "Import All Audio Files") {
+                        importSongsDialog(ref);
+                        print('done importing');
+                      }
+                    },
               child: settingText(
                 ref,
                 function,

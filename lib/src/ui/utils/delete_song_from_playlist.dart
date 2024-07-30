@@ -24,6 +24,7 @@ Future<void> deleteSongFromPlaylist(WidgetRef ref, Playlist playlist, AudioSourc
 }
 
 void clearSongFromPlaylist(WidgetRef ref) {
+  player.stop();
   for (int i = 0; i < playlistArray.length; i++) {
     playlistArray[i].songList.clear();
     playlistArray[i].songNameList.clear();

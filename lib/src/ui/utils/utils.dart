@@ -10,3 +10,4 @@ export 'media_to_song.dart';
 export 'sort_playlist.dart';
 export 'move_playlist.dart';
 export 'import_all_songs.dart';
+export 'startup_helper.dart';

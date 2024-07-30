@@ -93,7 +93,7 @@ Widget songList(WidgetRef ref, Playlist playlist) {
                 ),
               ),
               confirmDismiss: (direction) async {
-                if (playlist == playlistArray[0]) {
+                if (playlist == playlistArray[0] && songDeleteConfirmation) {
                   final confirmed = await showDialog<bool>(
                     context: context,
                     builder: (context) {
@@ -167,7 +167,11 @@ Widget settingList(WidgetRef ref) {
           const Divider(height: 1),
           settingBlock(ref, 'Clear Your Songs'),
           const Divider(height: 1),
-          settingBlock(ref, 'Import All Song Files'),
+          settingBlock(ref, 'Import All Audio Files'),
+          const Divider(height: 1, ),
+          settingBlock(ref, 'Song Deletion Confirmation'),
+          const Divider(height: 1, ),
+          settingBlock(ref, 'Playlist Deletion Confirmation'),
           const Divider(height: 1, ),
           settingBlock(ref, 'Dark Mode'),
         ],

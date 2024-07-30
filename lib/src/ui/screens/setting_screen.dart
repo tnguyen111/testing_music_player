@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:testing_music_player/src/ui/ui.dart';
-import '../../services/services.dart';
 import '../components/components.dart';
 
 class SettingScreen extends ConsumerWidget {

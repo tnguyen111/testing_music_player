@@ -61,17 +61,22 @@ PopupMenuButton<String> sortSongIcon(WidgetRef ref, Playlist playlist) =>
 
 IconButton addIcon(WidgetRef ref, Playlist playlist) => IconButton(
       icon: const Icon(Icons.add),
-      onPressed: () {
-        /*Add things*/
-        addingSongsDialog(ContextKey.navKey.currentContext!, ref, playlist);
-        playlistSwitchState(ref);
-      },
+      onPressed: (importingFile.value)
+          ? null
+          : () {
+              /*Add things*/
+              addingSongsDialog(
+                  ContextKey.navKey.currentContext!, ref, playlist);
+              playlistSwitchState(ref);
+            },
     );
 
 PopupMenuButton<String> addSongMenuIcon(WidgetRef ref, Playlist playlist) =>
     PopupMenuButton<String>(
       icon: const Icon(Icons.add),
-      onSelected: (value) {
+      onSelected: (importingFile.value)
+          ? null
+          : (value) {
         handleAddSongMenu(value, ref, playlist);
         playlistSwitchState(ref);
       },
@@ -110,7 +115,9 @@ IconButton removeIcon(
         WidgetRef ref, Playlist playlist, AudioSource song, int index) =>
     IconButton(
       iconSize: 50,
-      icon: const Icon(Icons.close,),
+      icon: const Icon(
+        Icons.close,
+      ),
       onPressed: () async {
         /*Remove things*/
         String songName = (song as UriAudioSource).tag.title;
@@ -132,21 +139,21 @@ IconButton removeIcon(
     );
 
 IconButton addPlaylistIcon(WidgetRef ref) => IconButton(
-  icon: const Icon(Icons.add),
-  onPressed: () {
-    /*Add things*/
-    Playlist playlist = Playlist(
-        playlistName_: '',
-        imagePath_: "lib/assets/default_image.png",
-        songNameList_: List.empty(growable: true));
-    Navigator.push(
-      ContextKey.navKey.currentContext!,
-      MaterialPageRoute(
-          builder: (context) => addPlaylistScreen(ref, playlist)),
+      icon: const Icon(Icons.add),
+      onPressed: () {
+        /*Add things*/
+        Playlist playlist = Playlist(
+            playlistName_: '',
+            imagePath_: "lib/assets/default_image.png",
+            songNameList_: List.empty(growable: true));
+        Navigator.push(
+          ContextKey.navKey.currentContext!,
+          MaterialPageRoute(
+              builder: (context) => addPlaylistScreen(ref, playlist)),
+        );
+        playlistSwitchState(ref);
+      },
     );
-    playlistSwitchState(ref);
-  },
-);
 
 PopupMenuButton<String> settingSongIcon(WidgetRef ref, Playlist playlist) =>
     PopupMenuButton<String>(
@@ -165,20 +172,22 @@ PopupMenuButton<String> settingSongIcon(WidgetRef ref, Playlist playlist) =>
       },
     );
 
-Future<void> handleSettingSongClick(String value, WidgetRef ref, Playlist playlist) async {
+Future<void> handleSettingSongClick(
+    String value, WidgetRef ref, Playlist playlist) async {
   switch (value) {
     case 'Edit Playlist Info':
       Navigator.push(
         ContextKey.navKey.currentContext!,
         MaterialPageRoute(
-            builder: (context) => EditPlaylistScreen(
-                  ref: ref,
-                  playlist: playlist,
-                )),
+          builder: (context) => EditPlaylistScreen(
+            ref: ref,
+            playlist: playlist,
+          ),
+        ),
       );
       break;
     case 'Delete Playlist':
-      await deletePlaylistDialog(ref,playlist);
+      await deletePlaylistDialog(ref, playlist);
       playlistSwitchState(ref);
       break;
   }

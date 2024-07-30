@@ -14,7 +14,6 @@ import '../../../main.dart';
 import '../../config/config.dart';
 import '../ui.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:external_path/external_path.dart';
 
 addingSongsDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
@@ -342,7 +341,7 @@ importSongsDialog(WidgetRef ref) {
             right: kLargePadding,
             bottom: kDefaultSmallPadding),
         contentPadding:
-        const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
+            const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
         actionsPadding: const EdgeInsets.all(kLargePadding),
         title: const Text('Import All Audio Files?'),
         content: const Text(
@@ -351,15 +350,22 @@ importSongsDialog(WidgetRef ref) {
           TextButton(
             onPressed: () =>
                 Navigator.pop(ContextKey.navKey.currentContext!, false),
-            child: alertActionText(ref, 'No', false),
+            child: alertActionText(ref, 'Cancel', false),
           ),
           TextButton(
-            onPressed: () {
-
-              playlistSwitchState(ref);
+            onPressed: () async {
+              importingFile.value = true;
               Navigator.pop(ContextKey.navKey.currentContext!, true);
+              List<File> allFiles = [];
+              for (String directory
+                  in await ExternalPath.getExternalStorageDirectories()) {
+                allFiles = await compute<String, List<File>>(
+                    importAllSongs, directory);
+              }
+              print(allFiles.length);
+              setupImportedSongs(allFiles);
             },
-            child: alertActionText(ref, 'Yes', false),
+            child: alertActionText(ref, 'Proceed', false),
           )
         ],
       );
@@ -455,41 +461,48 @@ editPlaylistNameDialog(WidgetRef ref, Playlist playlist) {
 }
 
 deletePlaylistDialog(WidgetRef ref, Playlist playlist) {
-  showDialog(
-    context: ContextKey.navKey.currentContext!,
-    builder: (_) {
-      return AlertDialog(
-        titlePadding: const EdgeInsets.only(
-            top: kLargePadding,
-            left: kLargePadding,
-            right: kLargePadding,
-            bottom: kDefaultSmallPadding),
-        contentPadding:
-            const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
-        actionsPadding: const EdgeInsets.all(kLargePadding),
-        title: const Text('Delete Selected Playlist?'),
-        content: const Text(
-            'Playlist will be permanently removed from your playlists list.'),
-        actions: [
-          TextButton(
-            onPressed: () =>
-                Navigator.pop(ContextKey.navKey.currentContext!, false),
-            child: alertActionText(ref, 'Cancel', false),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(ContextKey.navKey.currentContext!, true);
-              IsarHelper().deletePlaylistFor(playlist.playlistName);
-              playlistArray.remove(playlist);
-              Navigator.pop(ContextKey.navKey.currentContext!, true);
-              playlistSwitchState(ref);
-            },
-            child: alertActionText(ref, 'Delete', false),
-          )
-        ],
-      );
-    },
-  );
+  if (playlistDeleteConfirmation) {
+    showDialog(
+      context: ContextKey.navKey.currentContext!,
+      builder: (_) {
+        return AlertDialog(
+          titlePadding: const EdgeInsets.only(
+              top: kLargePadding,
+              left: kLargePadding,
+              right: kLargePadding,
+              bottom: kDefaultSmallPadding),
+          contentPadding:
+              const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
+          actionsPadding: const EdgeInsets.all(kLargePadding),
+          title: const Text('Delete Selected Playlist?'),
+          content: const Text(
+              'Playlist will be permanently removed from your playlists list.'),
+          actions: [
+            TextButton(
+              onPressed: () =>
+                  Navigator.pop(ContextKey.navKey.currentContext!, false),
+              child: alertActionText(ref, 'Cancel', false),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(ContextKey.navKey.currentContext!, true);
+                IsarHelper().deletePlaylistFor(playlist.playlistName);
+                playlistArray.remove(playlist);
+                Navigator.pop(ContextKey.navKey.currentContext!, true);
+                playlistSwitchState(ref);
+              },
+              child: alertActionText(ref, 'Delete', false),
+            ),
+          ],
+        );
+      },
+    );
+  } else {
+    Navigator.pop(ContextKey.navKey.currentContext!, true);
+    IsarHelper().deletePlaylistFor(playlist.playlistName);
+    playlistArray.remove(playlist);
+    playlistSwitchState(ref);
+  }
 }
 
 clearPlaylistsDialog(WidgetRef ref) {
@@ -503,7 +516,7 @@ clearPlaylistsDialog(WidgetRef ref) {
             right: kLargePadding,
             bottom: kDefaultSmallPadding),
         contentPadding:
-        const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
+            const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
         actionsPadding: const EdgeInsets.all(kLargePadding),
         title: const Text('Clear Your Playlists?'),
         content: const Text(
@@ -545,35 +558,37 @@ showRationaleDialog(WidgetRef ref) {
         actionsPadding: const EdgeInsets.only(
             left: kLargePadding, bottom: kLargePadding, right: kLargePadding),
         title: const Text('Audio Permission Required'),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Why is this permission required?',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: kLargePadding),
-              child: Text(
-                  'This app relies on accessing your audio files to function properly, and without audio permission, this app will simply not work.'),
-            ),
-            Text(
-              'Do we collect your private data?',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: kLargePadding),
-              child: Text(
-                  'We do not collect any of your private data under any circumstances. All files are processed and used locally.'),
-            ),
-            Text(
-              'What about other permissions?',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(
-                "Microphone permission is not required, but is recommended for the best performance. It is used to listen to currently playing audio files and create waveforms."),
-          ],
+        content: const SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Why is this permission required?',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: kLargePadding),
+                child: Text(
+                    'This app relies on accessing your audio files to function properly, and without audio permission, this app will simply not work.'),
+              ),
+              Text(
+                'Do we collect your private data?',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: kLargePadding),
+                child: Text(
+                    'We do not collect any of your private data under any circumstances. All files are processed and used locally.'),
+              ),
+              Text(
+                'What about other permissions?',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(
+                  "Microphone permission is not required, but is recommended for the best performance. It is used to listen to currently playing audio files and create waveforms."),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -601,6 +616,3 @@ showRationaleDialog(WidgetRef ref) {
     },
   );
 }
-
-
-

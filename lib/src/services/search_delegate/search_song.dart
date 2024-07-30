@@ -9,6 +9,9 @@ class PlaylistSongSearch extends SearchDelegate {
 
   PlaylistSongSearch(this.ref, this.playlist);
 
+@override
+  TextStyle? get searchFieldStyle => searchFieldTextStyle(ref);
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
