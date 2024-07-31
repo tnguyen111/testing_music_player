@@ -3,10 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../ui/components/components.dart';
 import '../../models/models.dart';
 
-class PlaylistSearch extends SearchDelegate {
+
+bool seeMorePlaylist = false;
+bool seeMoreSong = false;
+bool noSeeMorePlaylist = false;
+bool noSeeMoreSong = false;
+
+class MainSearch extends SearchDelegate {
   final WidgetRef ref;
 
-  PlaylistSearch(this.ref);
+
+  MainSearch(this.ref){
+    seeMorePlaylist = false;
+    seeMoreSong = false;
+    noSeeMorePlaylist = false;
+    noSeeMoreSong = false;
+  }
 
   @override
   TextStyle? get searchFieldStyle => searchFieldTextStyle(ref);
@@ -36,29 +48,60 @@ class PlaylistSearch extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    final List<Playlist> suggestionList = query.isEmpty
-        ? []
-        : playlistArray
+    List<Playlist> playlistSearchList = playlistArray
         .where(
           (p) => p.playlistName.toLowerCase().contains(
-        query.toLowerCase(),
-      ),
-    )
+                query.toLowerCase(),
+              ),
+        )
         .toList();
-    return suggestionPlaylistWidget(ref, suggestionList);
+    List<String> songListSearchList = playlistArray[0]
+        .songNameList
+        .where(
+          (p) => p.toLowerCase().contains(
+                query.toLowerCase(),
+              ),
+        )
+        .toList();
+    print(songListSearchList.length);
+    int playlistCount = playlistSearchList.length;
+    int songCount = songListSearchList.length;
+    List<dynamic> totalSearchList = [
+      ...playlistSearchList,
+      ...songListSearchList
+    ];
+    final List<dynamic> suggestionList = query.isEmpty ? [] : totalSearchList;
+    return suggestionPlaylistWidget(ref, suggestionList, query.isEmpty, playlistCount, songCount);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final List<Playlist> suggestionList = query.isEmpty
+    List<Playlist> playlistSearchList = (query.isEmpty)
         ? playlistArray.getRange(1, playlistArray.length).toList()
         : playlistArray
+            .where(
+              (p) => p.playlistName.toLowerCase().contains(
+                    query.toLowerCase(),
+                  ),
+            )
+            .toList();
+    List<String> songListSearchList = playlistArray[0]
+        .songNameList
         .where(
-          (p) => p.playlistName.toLowerCase().contains(
-        query.toLowerCase(),
-      ),
-    )
+          (p) => p.toLowerCase().contains(
+                query.toLowerCase(),
+              ),
+        )
         .toList();
-    return suggestionPlaylistWidget(ref, suggestionList);
+    List<dynamic> totalSearchList = [
+      ...playlistSearchList,
+      ...songListSearchList
+    ];
+    int playlistCount = playlistSearchList.length;
+    int songCount = songListSearchList.length;
+    final List<dynamic> suggestionList = query.isEmpty
+        ? totalSearchList
+        : totalSearchList;
+    return suggestionPlaylistWidget(ref, suggestionList, query.isEmpty, playlistCount, songCount);
   }
 }

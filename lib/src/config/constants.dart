@@ -29,3 +29,4 @@ const double mediumIconSize = 44;
 const double smallIconSize = 36;
 
 const double appBarHeight = 64;
+const double listFieldHeight = 56;

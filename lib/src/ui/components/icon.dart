@@ -10,10 +10,15 @@ IconButton searchSongIcon(WidgetRef ref, Playlist playlist) => IconButton(
       icon: const Icon(Icons.search),
       onPressed: () {
         // Search things
-        showSearch(
-          context: ContextKey.navKey.currentContext!,
-          delegate: PlaylistSongSearch(ref, playlist),
-        );
+        (playlist == playlistArray[0])
+            ? showSearch(
+                context: ContextKey.navKey.currentContext!,
+                delegate: MainSearch(ref),
+              )
+            : showSearch(
+                context: ContextKey.navKey.currentContext!,
+                delegate: PlaylistSongSearch(ref, playlist),
+              );
       },
     );
 
@@ -23,7 +28,7 @@ IconButton searchPlaylistIcon(WidgetRef ref) => IconButton(
         // Search things
         showSearch(
           context: ContextKey.navKey.currentContext!,
-          delegate: PlaylistSearch(ref),
+          delegate: MainSearch(ref),
         );
       },
     );
@@ -77,9 +82,9 @@ PopupMenuButton<String> addSongMenuIcon(WidgetRef ref, Playlist playlist) =>
       onSelected: (importingFile.value)
           ? null
           : (value) {
-        handleAddSongMenu(value, ref, playlist);
-        playlistSwitchState(ref);
-      },
+              handleAddSongMenu(value, ref, playlist);
+              playlistSwitchState(ref);
+            },
       itemBuilder: (BuildContext context) {
         return {'Add New Song', 'Add Songs From Songs List'}
             .map((String choice) {

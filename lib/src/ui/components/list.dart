@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:testing_music_player/src/services/services.dart';
@@ -40,7 +39,13 @@ Widget playlistList(WidgetRef ref) {
       shrinkWrap: false,
       controller: scrollController,
       itemBuilder: (context, index) {
-        return playlistBlock(ref, playlistArray[index + 1]);
+        try {
+          return playlistBlock(ref, playlistArray[index + 1]);
+        } catch (e) {
+          print(e);
+          playlistSwitchState(ref);
+        }
+        return Container();
       },
       onReorder: (int oldIndex, int newIndex) async {
         if (oldIndex != newIndex) {
@@ -131,10 +136,12 @@ Widget songList(WidgetRef ref, Playlist playlist) {
                       }
                       playlistSwitchState(ref);
                     },
+
                     child: songBlock(ref, playlist, index),
                   );
                 } catch (e) {
                   print(e);
+                  return Container();
                 }
               }
               return Container();
@@ -153,25 +160,39 @@ Widget songList(WidgetRef ref, Playlist playlist) {
 Widget nextSongList(WidgetRef ref) {
   int next = player.nextIndex ?? -1;
 
-  return (next >= 0) ? Container(
-    margin: const EdgeInsets.only(top: kXXXXLPadding),
-    padding:const EdgeInsets.only(top: kMediumPadding, left: kDefaultSmallPadding, right: kDefaultSmallPadding, bottom: kDefaultSmallPadding),
-    color: currentThemeSurfaceContainerLow(ref),
-    height: 200,
-    child: ListView(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: headerText(ref, 'Up Next'),
-        ),
-        upNextSongBlock(ref, next),
-        (next + 1 < player.sequence!.length) ? upNextSongBlock(ref, next+1): Container(),
-        (next + 2 < player.sequence!.length) ? upNextSongBlock(ref, next+2): Container(),
-        (next + 3 < player.sequence!.length) ? upNextSongBlock(ref, next+3): Container(),
-        (next + 4 < player.sequence!.length) ? upNextSongBlock(ref, next+4): Container(),
-      ],
-    ),
-  ): Container();
+  return (next >= 0)
+      ? Container(
+          margin: const EdgeInsets.only(top: kXXXXLPadding),
+          padding: const EdgeInsets.only(
+              top: kMediumPadding,
+              left: kDefaultSmallPadding,
+              right: kDefaultSmallPadding,
+              bottom: kDefaultSmallPadding),
+          color: currentThemeSurfaceContainerLow(ref),
+          height: 200,
+          child: ListView(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: headerText(ref, 'Up Next'),
+              ),
+              upNextSongBlock(ref, next),
+              (next + 1 < player.sequence!.length)
+                  ? upNextSongBlock(ref, next + 1)
+                  : Container(),
+              (next + 2 < player.sequence!.length)
+                  ? upNextSongBlock(ref, next + 2)
+                  : Container(),
+              (next + 3 < player.sequence!.length)
+                  ? upNextSongBlock(ref, next + 3)
+                  : Container(),
+              (next + 4 < player.sequence!.length)
+                  ? upNextSongBlock(ref, next + 4)
+                  : Container(),
+            ],
+          ),
+        )
+      : Container();
 }
 
 Widget addSongList(WidgetRef ref, Playlist playlist) {
@@ -243,27 +264,191 @@ Widget suggestionSongListWidget(WidgetRef ref, List<String> playlistString) {
   );
 }
 
-Widget suggestionPlaylistWidget(WidgetRef ref, List<Playlist> playlistList) {
+Widget suggestionPlaylistWidget(WidgetRef ref, List<dynamic> searchList,
+    bool queryIsEmpty, int playlistCount, int songCount) {
   final ScrollController scrollController = ScrollController();
+  int itemCount = 0;
+  print(searchList.length);
 
+  if (playlistCount <= 5) {
+    itemCount = playlistCount;
+    noSeeMorePlaylist = true;
+  } else {
+    if (seeMorePlaylist) {
+      itemCount = playlistCount;
+    } else {
+      itemCount = 5;
+    }
+    noSeeMorePlaylist = false;
+  }
+
+  if (songCount <= 5) {
+    itemCount += songCount;
+    noSeeMoreSong = true;
+  } else {
+    if (seeMoreSong) {
+      itemCount = songCount;
+    } else {
+      itemCount += 5;
+    }
+    noSeeMoreSong = false;
+  }
+
+  print('playlistCount: $playlistCount');
+  print('songCount: $songCount');
+  print('itemCount: $itemCount');
+  print(seeMorePlaylist);
   return ListView.builder(
-    itemCount: playlistList.length,
+    itemCount: itemCount,
     scrollDirection: Axis.vertical,
     shrinkWrap: false,
     controller: scrollController,
     itemBuilder: (context, index) {
-      return ListTile(
-        onTap: () {
-          Navigator.push(
-            ContextKey.navKey.currentContext!,
-            MaterialPageRoute(
-                builder: (context) => playlistScreen(ref, playlistList[index])),
-          );
-        },
-        title: Text(
-          playlistList[index].playlistName,
-          //style: currentThemeSmallText(ref),
-        ),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          (playlistCount > 0 && index == 0)
+              ? Padding(
+                  padding: const EdgeInsets.only(
+                      left: kDefaultSmallPadding, top: kXSPadding),
+                  child: headerText(ref, 'Playlists'),
+                )
+              : Container(),
+          (songCount > 0 &&
+                  index ==
+                      ((playlistCount < 5 || seeMorePlaylist)
+                          ? playlistCount
+                          : 5))
+              ? Padding(
+                  padding: const EdgeInsets.only(
+                      left: kDefaultSmallPadding, top: kXSPadding),
+                  child: headerText(ref, 'Songs'),
+                )
+              : Container(),
+          ListTile(
+            onTap: () => (playlistCount > 5)
+                ? (seeMorePlaylist)
+                    ? (searchList[index] is Playlist)
+                        ? Navigator.push(
+                            ContextKey.navKey.currentContext!,
+                            MaterialPageRoute(
+                              builder: (context) => playlistScreen(
+                                ref,
+                                searchList[index],
+                              ),
+                            ),
+                          )
+                        : loadSong(
+                            ref,
+                            playlistArray[0],
+                            playlistArray[0].songNameList.indexOf(
+                                  searchList[index],
+                                ),
+                          )
+                    : (index < 5)
+                        ? Navigator.push(
+                            ContextKey.navKey.currentContext!,
+                            MaterialPageRoute(
+                              builder: (context) => playlistScreen(
+                                ref,
+                                searchList[index],
+                              ),
+                            ),
+                          )
+                        : loadSong(
+                            ref,
+                            playlistArray[0],
+                            playlistArray[0].songNameList.indexOf(
+                                  searchList[searchList.indexWhere(
+                                          (element) => element is String) +
+                                      (index - 5)],
+                                ),
+                          )
+                : (searchList[index] is Playlist)
+                    ? Navigator.push(
+                        ContextKey.navKey.currentContext!,
+                        MaterialPageRoute(
+                          builder: (context) => playlistScreen(
+                            ref,
+                            searchList[index],
+                          ),
+                        ),
+                      )
+                    : loadSong(
+                        ref,
+                        playlistArray[0],
+                        playlistArray[0].songNameList.indexOf(
+                              searchList[index],
+                            ),
+                      ),
+            title: Text(
+              (playlistCount > 5)
+                  ? (seeMorePlaylist)
+                      ? (searchList[index] is Playlist)
+                          ? searchList[index].playlistName
+                          : searchList[index]
+                      : (index < 5)
+                          ? searchList[index].playlistName
+                          : searchList[searchList
+                                  .indexWhere((element) => element is String) +
+                              (index - 5)]
+                  : (searchList[index] is Playlist)
+                      ? searchList[index].playlistName
+                      : searchList[index],
+              style: searchFieldTextStyle(ref),
+            ),
+          ),
+          (index == 4 &&
+                  playlistCount > 5 &&
+                  !noSeeMorePlaylist &&
+                  !seeMorePlaylist)
+              ? InkWell(
+                  onTap: () {
+                    seeMorePlaylist = true;
+                    playlistSwitchState(ref);
+                  },
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    margin: const EdgeInsets.only(left: kDefaultSmallPadding),
+                    height: listFieldHeight,
+                    width: MediaQuery.sizeOf(ContextKey.navKey.currentContext!)
+                        .width,
+                    child: Text(
+                      'See more...',
+                      style: searchFieldTextStyle(ref),
+                    ),
+                  ),
+                )
+              : Container(),
+          (index ==
+                      ((playlistCount > 5)
+                          ? (seeMorePlaylist)
+                              ? playlistCount + 4
+                              : 9
+                          : playlistCount + 4) &&
+                  songCount > 5 &&
+                  !noSeeMoreSong &&
+                  !seeMoreSong)
+              ? InkWell(
+                  onTap: () {
+                    seeMoreSong = true;
+                    playlistSwitchState(ref);
+                  },
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    margin: const EdgeInsets.only(left: kDefaultSmallPadding),
+                    height: listFieldHeight,
+                    width: MediaQuery.sizeOf(ContextKey.navKey.currentContext!)
+                        .width,
+                    child: Text(
+                      'See more...',
+                      style: searchFieldTextStyle(ref),
+                    ),
+                  ),
+                )
+              : Container(),
+        ],
       );
     },
   );

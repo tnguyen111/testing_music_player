@@ -31,7 +31,7 @@ Future<bool> setupMode(WidgetRef ref) async {
     setupImportedSongs(allFiles);
   }
 
-  print('hey');
+  print('started');
   return true;
 }
 

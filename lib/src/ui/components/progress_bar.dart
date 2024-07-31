@@ -102,10 +102,10 @@ Widget songProgressBar(
             onSeek: (duration) {
               player.seek(duration);
             },
-            barHeight: 5,
+            barHeight: 4,
             progressBarColor: currentThemeOnSurfaceVar(ref),
             bufferedBarColor: currentThemeSurfaceContainer(ref),
-            thumbRadius: (isNotMiniplayer) ? 10 : 3,
+            thumbRadius: (isNotMiniplayer) ? 10 : 4,
             thumbColor: currentThemeOnSurface(ref),
             baseBarColor: currentThemeSurfaceContainerHighest(ref),
             timeLabelLocation: (isNotMiniplayer)

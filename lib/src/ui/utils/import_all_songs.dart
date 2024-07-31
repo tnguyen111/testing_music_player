@@ -96,5 +96,5 @@ Future<void> setupImportedSongs(List<File> songList) async {
 bool isAudio(String path) {
   final mimeType = lookupMimeType(path);
 
-  return mimeType?.startsWith('audio/') ?? false;
+  return (mimeType?.startsWith('audio/') ?? false || mimeType == null);
 }

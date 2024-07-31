@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:testing_music_player/src/models/models.dart';
-import '../../config/config.dart';
 import '../components/components.dart';
-import '../themes/current_theme.dart';
 
 class SongScreen extends ConsumerWidget {
   const SongScreen(this.ref, {super.key});
@@ -20,7 +18,7 @@ class SongScreen extends ConsumerWidget {
               '${playlistArray[0].songList.length} Song${(playlistArray[0].songList.length > 1) ? 's' : ''}',
               ref),
           songList(ref, playlistArray[0]),
-          miniplayer(ref),
+          miniplayer(ref, true),
         ],
       ),
       bottomNavigationBar: navigationBar(ref),

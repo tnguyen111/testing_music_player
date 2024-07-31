@@ -6,6 +6,7 @@ import '../../models/models.dart';
 import '../components/components.dart';
 
 class MainScreen extends ConsumerWidget {
+
   const MainScreen(this.ref, {super.key});
 
   final WidgetRef ref;
@@ -20,7 +21,7 @@ class MainScreen extends ConsumerWidget {
               '${(playlistArray.length > 1) ? playlistArray.length - 1 : 0} Playlist${(playlistArray.length - 1 > 1) ? 's' : ''}',
               ref),
           playlistList(ref),
-          miniplayer(ref),
+          miniplayer(ref, true),
         ],
       ),
       bottomNavigationBar: navigationBar(ref),

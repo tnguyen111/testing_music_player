@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -82,7 +81,10 @@ Container songBlock(WidgetRef ref, Playlist playlist, int index) => Container(
           loadSong(ref, playlist, index);
         },
         child: Container(
-          color: (player.sequenceState?.currentSource == playlist.songList.children[index]) ? currentThemeSurfaceContainerLow(ref):currentThemeSurface(ref),
+          color: (player.sequenceState?.currentSource ==
+                  playlist.songList.children[index] && player.audioSource == playlist.songList)
+              ? currentThemeSurfaceContainerLow(ref)
+              : currentThemeSurface(ref),
           child: Padding(
             padding: const EdgeInsets.only(
                 top: kMediumPadding,
@@ -91,27 +93,35 @@ Container songBlock(WidgetRef ref, Playlist playlist, int index) => Container(
                 right: kDefaultSmallPadding),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [((playlist.songList[index] as UriAudioSource).tag.artist == '')?Expanded(
-                child: songText(
-                ref,
-                (playlist.songList[index] as UriAudioSource).tag.title,
+              children: [
+                ((playlist.songList[index] as UriAudioSource).tag.artist == '')
+                    ? Expanded(
+                        child: songText(
+                          ref,
+                          (playlist.songList[index] as UriAudioSource)
+                              .tag
+                              .title,
+                        ),
+                      )
+                    : Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            songText(
+                              ref,
+                              (playlist.songList[index] as UriAudioSource)
+                                  .tag
+                                  .title,
                             ),
-              ):
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      songText(
-                        ref,
-                        (playlist.songList[index] as UriAudioSource).tag.title,
+                            artistText(
+                              ref,
+                              (playlist.songList[index] as UriAudioSource)
+                                  .tag
+                                  .artist,
+                            ),
+                          ],
+                        ),
                       ),
-                      artistText(
-                        ref,
-                        (playlist.songList[index] as UriAudioSource).tag.artist,
-                      ),
-                    ],
-                  ),
-                ),
                 const SizedBox(width: kDefaultSmallPadding),
                 timeText(
                   ref,
@@ -236,65 +246,73 @@ Widget songNameBlock(WidgetRef ref) {
   );
 }
 
-Widget addSongBlock(ref, playlist, index) => GestureDetector(
-  onTap: () {
-    loadSong(ref, playlistArray[0], index);
-  },
-  child: Container(
-    color: currentThemeSurface(ref),
-    child: Padding(
-      padding: const EdgeInsets.only(
-          top: kMediumPadding,
-          bottom: kMediumPadding,
-          left: kDefaultSmallPadding,
-          right: kDefaultSmallPadding),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                songText(
-                  ref,
-                  (playlistArray[0].songList[index] as UriAudioSource)
-                      .tag
-                      .title,
-                ),
-                artistText(
-                  ref,
-                  (playlistArray[0].songList[index] as UriAudioSource)
-                      .tag
-                      .artist,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: kDefaultSmallPadding),
-          timeText(
-              ref,
-              (playlistArray[0].songList[index] as UriAudioSource)
-                  .tag
-                  .displayDescription),
-          const SizedBox(width: kXSPadding),
-          listCheckbox(playlist, playlistArray[0].songList[index], ref),
-        ],
+Widget addSongBlock(ref, playlist, index) => InkWell(
+      onTap: () {
+        loadSong(ref, playlistArray[0], index);
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(
+            top: kMediumPadding,
+            bottom: kMediumPadding,
+            left: kDefaultSmallPadding,
+            right: kDefaultSmallPadding),
+        child: Row(
+          children: [
+            ((playlistArray[0].songList[index] as UriAudioSource)
+                        .tag
+                        .artist ==
+                    '')
+                ? Expanded(
+                    child: songText(
+                      ref,
+                      (playlistArray[0].songList[index] as UriAudioSource)
+                          .tag
+                          .title,
+                    ),
+                  )
+                : Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        songText(
+                          ref,
+                          (playlistArray[0].songList[index] as UriAudioSource)
+                              .tag
+                              .title,
+                        ),
+                        artistText(
+                          ref,
+                          (playlistArray[0].songList[index] as UriAudioSource)
+                              .tag
+                              .artist,
+                        ),
+                      ],
+                    ),
+                  ),
+            const SizedBox(width: kDefaultSmallPadding),
+            timeText(
+                ref,
+                (playlistArray[0].songList[index] as UriAudioSource)
+                    .tag
+                    .displayDescription),
+            const SizedBox(width: kXSPadding),
+            listCheckbox(playlist, playlistArray[0].songList[index], ref),
+          ],
+        ),
       ),
-    ),
-  ),
-);
+    );
 
 Widget settingBlock(ref, String function) => SizedBox(
       width: ContextKey.appWidth,
       height: 56,
       child: (function == "Dark Mode" || function.contains('Confirmation'))
           ? settingSwitch(ref, function)
-          : TextButton(
-              style: const ButtonStyle(alignment: Alignment.centerLeft),
-              onPressed: (false)
+          : InkWell(
+              onTap: (importingFile.value)
                   ? null
                   : () async {
                       if (function == "Clear Your Songs") {
-                        print(playlistArray.length);
+                        clearSongsDialog(ref);
                       }
                       if (function == "Clear Your Playlists") {
                         clearPlaylistsDialog(ref);
@@ -304,14 +322,17 @@ Widget settingBlock(ref, String function) => SizedBox(
                         print('done importing');
                       }
                     },
-              child: settingText(
-                ref,
-                function,
+              child: Container(margin: const EdgeInsets.all(kDefaultSmallPadding),
+                alignment: Alignment.centerLeft,
+                child: settingText(
+                  ref,
+                  function,
+                ),
               ),
             ),
     );
 
-Widget importingBloc(WidgetRef ref){
+Widget importingBloc(WidgetRef ref) {
   return Expanded(
     child: Column(
       children: [
@@ -320,9 +341,12 @@ Widget importingBloc(WidgetRef ref){
           padding: const EdgeInsets.all(kLargePadding),
           child: Text(
             'Importing Files...',
-            style: Theme.of(ContextKey.navKey.currentContext!).textTheme.titleMedium?.apply(
-              color: currentThemeOnSurfaceVar(ref),
-            ),
+            style: Theme.of(ContextKey.navKey.currentContext!)
+                .textTheme
+                .titleMedium
+                ?.apply(
+                  color: currentThemeOnSurfaceVar(ref),
+                ),
           ),
         ),
       ],
@@ -330,7 +354,7 @@ Widget importingBloc(WidgetRef ref){
   );
 }
 
-Widget upNextSongBlock(WidgetRef ref, int index){
+Widget upNextSongBlock(WidgetRef ref, int index) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 8),
     child: Column(

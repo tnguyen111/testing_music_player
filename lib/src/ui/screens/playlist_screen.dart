@@ -16,7 +16,7 @@ Scaffold playlistScreen(WidgetRef ref, Playlist playlist) {
             children: <Widget>[
               playlistMenuBlock(ref,playlist),
               songList(ref,playlist),
-              miniplayer(ref),
+              miniplayer(ref, false),
             ],
           ),
         ),

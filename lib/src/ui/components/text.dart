@@ -132,7 +132,7 @@ Text filledButtonText(WidgetRef ref, String string) {
 }
 
 Text settingText(WidgetRef ref, String string) {
-  return Text(
+  return Text(textAlign: TextAlign.start,
     string,
     style:
     Theme.of(ContextKey.navKey.currentContext!).textTheme.bodyLarge?.apply(

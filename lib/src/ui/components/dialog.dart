@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -135,6 +136,7 @@ addingSongsDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
                   fileName = '';
                   String pathInput = result.files.single.path!;
                   print('path: $pathInput');
+                  print('mime: ${lookupMimeType(pathInput)}');
                   if (!pathInput.endsWith('mp3') &&
                       !pathInput.endsWith("aac") &&
                       !pathInput.endsWith("flac") &&
@@ -345,7 +347,7 @@ importSongsDialog(WidgetRef ref) {
         actionsPadding: const EdgeInsets.all(kLargePadding),
         title: const Text('Import All Audio Files?'),
         content: const Text(
-            'All audio files with tested formats will be imported from your local storage. This process will take a while, do you want to proceed?'),
+            'All audio files with tested formats will be imported from your local storage (Some audio-only media files might not be imported). This process will take a while, do you want to proceed?'),
         actions: [
           TextButton(
             onPressed: () =>

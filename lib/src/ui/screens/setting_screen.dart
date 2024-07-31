@@ -15,7 +15,7 @@ class SettingScreen extends ConsumerWidget {
       body: Column(
         children: [
           settingList(ref),
-          miniplayer(ref),
+          miniplayer(ref, true),
         ],
       ),
       bottomNavigationBar: navigationBar(ref),

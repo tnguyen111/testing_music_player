@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../main.dart';
@@ -46,7 +45,7 @@ class MyApp extends ConsumerWidget {
     importingFile.addListener(() => playlistSwitchState(ref));
     if (started == false) {
       permissionAsk(context, ref);
-      IsarHelper().setSongList();
+      IsarHelper().setSongList(ref);
       print(playlistArray.length);
       started = true;
     }

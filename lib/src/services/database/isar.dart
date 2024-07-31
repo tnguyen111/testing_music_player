@@ -1,3 +1,4 @@
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:just_audio/just_audio.dart';
@@ -188,12 +189,14 @@ class IsarHelper {
     return playlist;
   }
 
-  Future<bool> setSongList() async {
+  Future<bool> setSongList(WidgetRef ref) async {
     if (!await IsarHelper().playlistExisted('')) {
-      await savePlaylist(
+      savePlaylist(
           Playlist(playlistName_: '', imagePath_: '', songNameList_: []));
     }
     await IsarHelper().setPlaylistList();
+    FlutterNativeSplash.remove();
+    playlistSwitchState(ref);
     return true;
   }
 
