@@ -40,7 +40,7 @@ AppBar playlistAppBar(WidgetRef ref, Playlist playlist) {
     ),
     actions: [
       searchSongIcon(ref, playlist),
-      settingSongIcon(ref, playlist),
+      settingPlaylistIcon(ref, playlist),
     ],
     title: headerText(
       ref,
@@ -65,13 +65,14 @@ AppBar addSongAppBar(WidgetRef ref, Playlist playlist) {
   );
 }
 
-AppBar songAppBar(WidgetRef ref) {
+AppBar songAppBar(WidgetRef ref, Playlist playlist, int index) {
   return AppBar(
     leading: Builder(
       builder: (context) {
         return backIcon(context);
       },
     ),
+    actions:[settingSongIcon(ref, playlist,index)],
     title: headerText(
       ref,
       'Now Playing', //style: currentThemeHeaderText(ref),

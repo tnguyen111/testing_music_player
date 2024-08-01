@@ -23,7 +23,7 @@ Widget settingSwitch(WidgetRef ref, String function) {
                   ? const WidgetStatePropertyAll(Icon(Icons.nightlight))
                   : const WidgetStatePropertyAll(Icon(Icons.sunny))
               : null,
-          value: (function == 'Dark Mode') ? !modeReadState(ref): (function == 'Song Deletion Confirmation') ? songDeleteConfirmation: playlistDeleteConfirmation,
+          value: (function == 'Dark Mode') ? !modeReadState(ref): (function == 'Song Deletion Confirmation') ? songDeleteConfirmation: (function == 'Playlist Deletion Confirmation') ? playlistDeleteConfirmation: songEditConfirmation,
           onChanged: (bool value) async {
             if(function == 'Dark Mode') {
               modeSwitchState(ref);
@@ -38,6 +38,11 @@ Widget settingSwitch(WidgetRef ref, String function) {
             } else if(function == 'Playlist Deletion Confirmation'){
               playlistDeleteConfirmation = !playlistDeleteConfirmation;
               changePlaylistConfirmation();
+              playlistSwitchState(ref);
+              return;
+            } else if(function == 'Song Edit Confirmation'){
+              songEditConfirmation = !songEditConfirmation;
+              changeSongEditConfirmation();
               playlistSwitchState(ref);
               return;
             }

@@ -81,6 +81,15 @@ class IsarHelper {
     isar.writeTxnSync<List<int>>(() => isar.songDetails.putAllSync(songList));
   }
 
+  Future<void> editSong(String oldSongName, String newSongName, String newArtist) async {
+    final isar = await db;
+    SongDetails? editedSong = await isar.songDetails.filter().songNameEqualTo(oldSongName).findFirst();
+    editedSong?.songName = newSongName;
+    editedSong?.songAuthor = newArtist;
+    await saveSong(editedSong!);
+    return;
+  }
+
   Future<void> clearSongList() async {
     final isar = await db;
     await isar.writeTxn(() => isar.songDetails.clear());

@@ -84,40 +84,46 @@ Widget songList(WidgetRef ref, Playlist playlist) {
                     return Dismissible(
                       key: Key(playlist.songNameList[index]),
                       background: Container(
-                        color: const Color(0xff810303),
+                        color: const Color(0xff007c77),
                         alignment: Alignment.centerLeft,
-                        child: const Padding(
-                          padding: EdgeInsets.all(kDefaultSmallPadding),
-                          child: Icon(
-                            Icons.delete,
-                            color: Colors.white,
-                          ),
+                        padding:
+                            const EdgeInsets.only(left: kDefaultSmallPadding),
+                        child: const Icon(
+                          Icons.edit,
+                          color: Colors.white,
                         ),
                       ),
                       secondaryBackground: Container(
                         color: const Color(0xff810303),
                         alignment: Alignment.centerRight,
-                        child: const Padding(
-                          padding: EdgeInsets.all(kDefaultSmallPadding),
-                          child: Icon(
-                            Icons.delete,
-                            color: Colors.white,
-                          ),
+                        padding:
+                            const EdgeInsets.only(right: kDefaultSmallPadding),
+                        child: const Icon(
+                          Icons.delete,
+                          color: Colors.white,
                         ),
                       ),
                       confirmDismiss: (direction) async {
-                        if (playlist == playlistArray[0] &&
-                            songDeleteConfirmation) {
-                          final confirmed = await showDialog<bool>(
-                            context: context,
-                            builder: (context) {
-                              return deletingSongsDialog(context, ref);
-                            },
-                          );
-                          print('Deletion confirmed: $confirmed');
-                          return confirmed;
+                        if (direction == DismissDirection.startToEnd) {
+                          // Editing Songs
+                          editingSongsDialog(context, ref, playlist.songList[index] as UriAudioSource);
+                          return false;
+                        } else if (direction == DismissDirection.endToStart) {
+                          // Deleting Songs
+                          if (playlist == playlistArray[0] &&
+                              songDeleteConfirmation) {
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (context) {
+                                return deletingSongsDialog(context, ref);
+                              },
+                            );
+                            print('Deletion confirmed: $confirmed');
+                            return confirmed;
+                          }
+                          return true;
                         }
-                        return true;
+                        return false;
                       },
                       onDismissed: (direction) async {
                         /*Remove things*/
@@ -235,6 +241,10 @@ Widget settingList(WidgetRef ref) {
               height: 1,
             ),
             settingBlock(ref, 'Song Deletion Confirmation'),
+            const Divider(
+              height: 1,
+            ),
+            settingBlock(ref, 'Song Edit Confirmation'),
             const Divider(
               height: 1,
             ),
@@ -407,8 +417,8 @@ Widget suggestionPlaylistWidget(WidgetRef ref, List<dynamic> searchList,
                             : searchList[index]
                         : (index < 5)
                             ? searchList[index].playlistName
-                            : searchList[searchList
-                                    .indexWhere((element) => element is String) +
+                            : searchList[searchList.indexWhere(
+                                    (element) => element is String) +
                                 (index - 5)]
                     : (searchList[index] is Playlist)
                         ? searchList[index].playlistName
@@ -429,8 +439,9 @@ Widget suggestionPlaylistWidget(WidgetRef ref, List<dynamic> searchList,
                       alignment: Alignment.centerLeft,
                       margin: const EdgeInsets.only(left: kDefaultSmallPadding),
                       height: listFieldHeight,
-                      width: MediaQuery.sizeOf(ContextKey.navKey.currentContext!)
-                          .width,
+                      width:
+                          MediaQuery.sizeOf(ContextKey.navKey.currentContext!)
+                              .width,
                       child: Text(
                         'See more...',
                         style: searchFieldTextStyle(ref),
@@ -456,8 +467,9 @@ Widget suggestionPlaylistWidget(WidgetRef ref, List<dynamic> searchList,
                       alignment: Alignment.centerLeft,
                       margin: const EdgeInsets.only(left: kDefaultSmallPadding),
                       height: listFieldHeight,
-                      width: MediaQuery.sizeOf(ContextKey.navKey.currentContext!)
-                          .width,
+                      width:
+                          MediaQuery.sizeOf(ContextKey.navKey.currentContext!)
+                              .width,
                       child: Text(
                         'See more...',
                         style: searchFieldTextStyle(ref),

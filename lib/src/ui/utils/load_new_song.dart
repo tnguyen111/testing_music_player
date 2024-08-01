@@ -7,6 +7,7 @@ import '../../../main.dart';
 import '../../models/models.dart';
 import '../../services/services.dart';
 import '../screens/screens.dart';
+import '../ui.dart';
 
 void loadNewSong(
   WidgetRef ref,
@@ -20,6 +21,7 @@ void loadNewSong(
       ));
   if (player.sequenceState?.currentSource != playlist.songList[i]) {
     await player.seek(Duration.zero, index: i);
+    startSong(ref);
   }
 
   playlistSwitchState(ref);

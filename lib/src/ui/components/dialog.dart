@@ -270,6 +270,167 @@ addingSongsDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
   );
 }
 
+editingSongsDialog(BuildContext context, WidgetRef ref, UriAudioSource song) {
+  String songName = song.tag.title ?? '';
+  String authorName = song.tag.artist ?? '';
+  String error = '';
+  TextEditingController songNameController =
+      TextEditingController(text: songName);
+  TextEditingController authorNameController =
+      TextEditingController(text: authorName);
+  showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog(
+        titlePadding: const EdgeInsets.only(
+            top: kLargePadding,
+            left: kLargePadding,
+            right: kLargePadding,
+            bottom: kDefaultSmallPadding),
+        contentPadding:
+            const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
+        actionsPadding: const EdgeInsets.all(kLargePadding),
+        title: headerText(
+          ref,
+          "Edit Song",
+        ),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                style: Theme.of(ContextKey.navKey.currentContext!)
+                    .textTheme
+                    .bodyLarge
+                    ?.apply(
+                      color: currentThemeOnSurface(ref),
+                    ),
+                maxLength: 50,
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(
+                    RegExp(noEmoji),
+                  ),
+                ],
+                controller: songNameController,
+                onTap: () {
+                  error = '';
+                  playlistSwitchState(ref);
+                },
+                decoration: InputDecoration(
+                    errorText: (error != '') ? error : null,
+                    border: const OutlineInputBorder(),
+                    hintText: 'Enter Song Name',
+                    labelText: 'Edit Song Name'),
+                onChanged: (value) {
+                  if (value.length == 1 || value.isEmpty) {
+                    playlistSwitchState(ref);
+                  }
+                  songName = value;
+                },
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                style: Theme.of(ContextKey.navKey.currentContext!)
+                    .textTheme
+                    .bodyLarge
+                    ?.apply(
+                      color: currentThemeOnSurface(ref),
+                    ),
+                maxLength: 50,
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(
+                    RegExp(noEmoji),
+                  ),
+                ],
+                controller: authorNameController,
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter Artist Name',
+                    labelText: 'Edit Artist Name'),
+                onChanged: (value) {
+                  authorName = value;
+                },
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: alertActionText(ref, 'Cancel', false),
+          ),
+          TextButton(
+            onPressed: (songName.isEmpty)
+                ? null
+                : () async {
+                    if (await IsarHelper().songExisted(songName) &&
+                        songName != song.tag.title) {
+                      error = "Name's Already Taken!";
+                      playlistSwitchState(ref);
+                      return;
+                    }
+                    final confirmed = (songEditConfirmation)
+                        ? (await showModalBottomSheet<bool>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return editingSongsConfirmationDialog(
+                                  context, ref);
+                            },
+                          ))
+                        : true;
+                    print(confirmed);
+                    if (confirmed ?? false) {
+                      if (songName != song.tag.title ||
+                          authorName != song.tag.artist) {
+                        print('changed');
+                        editSong(ref, song, songName, authorName);
+                      }
+                      Navigator.pop(context, false);
+                    }
+                  },
+            child: alertActionText(
+              ref,
+              "Submit",
+              (songName.isEmpty),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+editingSongsConfirmationDialog(BuildContext context, WidgetRef ref) {
+  return AlertDialog(
+    titlePadding: const EdgeInsets.only(
+        top: kLargePadding,
+        left: kLargePadding,
+        right: kLargePadding,
+        bottom: kDefaultSmallPadding),
+    contentPadding:
+        const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
+    actionsPadding: const EdgeInsets.all(kLargePadding),
+    title: const Text('Edit Selected Song?'),
+    content: const Text(
+        'Caution! This song will be edited in your main song list and all playlists after completion. Do you want to proceed?'),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context, false),
+        child: alertActionText(ref, 'Cancel', false),
+      ),
+      TextButton(
+        onPressed: () => Navigator.pop(context, true),
+        child: alertActionText(ref, 'Proceed', false),
+      )
+    ],
+  );
+}
+
 deletingSongsDialog(BuildContext context, WidgetRef ref) {
   return AlertDialog(
     titlePadding: const EdgeInsets.only(
@@ -282,7 +443,7 @@ deletingSongsDialog(BuildContext context, WidgetRef ref) {
     actionsPadding: const EdgeInsets.all(kLargePadding),
     title: const Text('Delete Selected Song?'),
     content: const Text(
-        'Song will be permanently removed from your song list and all playlists'),
+        'Song will be permanently removed from your main song list and all playlists.'),
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context, false),
@@ -356,12 +517,12 @@ importSongsDialog(WidgetRef ref) {
           ),
           TextButton(
             onPressed: () async {
-              if(await Permission.audio.isGranted) {
+              if (await Permission.audio.isGranted) {
                 importingFile.value = true;
                 Navigator.pop(ContextKey.navKey.currentContext!, true);
                 List<File> allFiles = [];
                 for (String directory
-                in await ExternalPath.getExternalStorageDirectories()) {
+                    in await ExternalPath.getExternalStorageDirectories()) {
                   allFiles = await compute<String, List<File>>(
                       importAllSongs, directory);
                 }

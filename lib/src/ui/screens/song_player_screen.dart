@@ -5,7 +5,7 @@ import '../components/components.dart';
 
 Scaffold songPlayerScreen(WidgetRef ref, Playlist playlist, int index) {
   return Scaffold(
-    appBar: songAppBar(ref),
+    appBar: songAppBar(ref, playlist, index),
     body: SingleChildScrollView(
       child: Column(
         children: <Widget>[

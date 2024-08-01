@@ -94,6 +94,32 @@ class Playlist {
     }
   }
 
+  Future<void> insertSong(int index, UriAudioSource insertedSong) async {
+    bool changed = false;
+    bool playing = false;
+    AudioSource? tempConcar;
+    int? tempIndex;
+    Duration tempDura = Duration.zero;
+
+    if (songList != player.audioSource && player.audioSource != null) {
+      changed = true;
+      playing = player.playing;
+      tempConcar = player.audioSource;
+      tempIndex = player.currentIndex;
+      tempDura = player.position;
+
+      await player.setAudioSource(songList);
+    }
+
+    await songList_.insert(index, insertedSong);
+
+    if (changed) {
+      await player.setAudioSource(tempConcar!,
+          initialIndex: tempIndex, initialPosition: tempDura);
+      if (playing) player.play();
+    }
+  }
+
   Future<void> removeSong(int index) async {
     bool switched = false;
     bool playing = false;

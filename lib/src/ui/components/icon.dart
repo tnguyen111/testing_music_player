@@ -116,32 +116,67 @@ void handleAddSongMenu(String value, WidgetRef ref, Playlist playlist) {
   }
 }
 
-IconButton removeIcon(
-        WidgetRef ref, Playlist playlist, AudioSource song, int index) =>
-    IconButton(
-      iconSize: 50,
-      icon: const Icon(
-        Icons.close,
-      ),
-      onPressed: () async {
-        /*Remove things*/
-        String songName = (song as UriAudioSource).tag.title;
-        if (playlistArray[0] == playlist) {
-          for (int i = 1; i < playlistArray.length; i++) {
-            if (playlistArray[i].songNameList.contains(songName)) {
-              deleteSongFromPlaylist(ref, playlistArray[i], song);
-              IsarHelper().savePlaylist(playlistArray[i]);
-            }
-          }
-
-          await deleteSongFromPlaylist(ref, playlistArray[0], song);
-          IsarHelper().deleteSongFor(songName);
-        } else {
-          deleteSongFromPlaylist(ref, playlist, song);
-        }
+PopupMenuButton<String> settingSongIcon(WidgetRef ref, Playlist playlist, int index) =>
+    PopupMenuButton<String>(
+      icon: const Icon(Icons.more_vert),
+      onSelected: (value) {
+        handleSettingSongClick(value, ref, playlist, index);
         playlistSwitchState(ref);
       },
+      itemBuilder: (BuildContext context) {
+        return {'Edit Song', 'Delete Song','Add Song To Playlists'}.map((String choice) {
+          return PopupMenuItem<String>(
+            value: choice,
+            child: Text(choice),
+          );
+        }).toList();
+      },
     );
+
+Future<void> handleSettingSongClick(
+    String value, WidgetRef ref, Playlist playlist, int index) async {
+  switch (value) {
+    case 'Edit Song':
+      editingSongsDialog(ContextKey.navKey.currentContext!, ref, playlist.songList[index] as UriAudioSource);
+      break;
+    case 'Delete Song':
+      bool confirmed = true;
+      if (playlist == playlistArray[0] &&
+          songDeleteConfirmation) {
+        confirmed = await showDialog<bool>(
+          context: ContextKey.navKey.currentContext!,
+          builder: (context) {
+            return deletingSongsDialog(context, ref);
+          },
+        ) ?? false;
+        print('Deletion confirmed: $confirmed');
+      }
+
+      if(confirmed){
+        AudioSource song = playlist.songList[index];
+        String songName = (song as UriAudioSource).tag.title;
+        if (playlistArray[0] == playlist) {
+          await deleteSongFromPlaylist(
+              ref, playlistArray[0], song);
+          await IsarHelper().deleteSongFor(songName);
+          print('remove in list');
+          for (int i = 1; i < playlistArray.length; i++) {
+            if (playlistArray[i]
+                .songNameList
+                .contains(songName)) {
+              await deleteSongFromPlaylist(
+                  ref, playlistArray[i], song);
+            }
+          }
+        } else {
+          await deleteSongFromPlaylist(ref, playlist, song);
+        }
+      }
+      Navigator.of(ContextKey.navKey.currentContext!).pop();
+      playlistSwitchState(ref);
+      break;
+  }
+}
 
 IconButton addPlaylistIcon(WidgetRef ref) => IconButton(
       icon: const Icon(Icons.add),
@@ -160,15 +195,15 @@ IconButton addPlaylistIcon(WidgetRef ref) => IconButton(
       },
     );
 
-PopupMenuButton<String> settingSongIcon(WidgetRef ref, Playlist playlist) =>
+PopupMenuButton<String> settingPlaylistIcon(WidgetRef ref, Playlist playlist) =>
     PopupMenuButton<String>(
       icon: const Icon(Icons.more_vert),
       onSelected: (value) {
-        handleSettingSongClick(value, ref, playlist);
+        handleSettingPlaylistClick(value, ref, playlist);
         playlistSwitchState(ref);
       },
       itemBuilder: (BuildContext context) {
-        return {'Edit Playlist Info', 'Delete Playlist'}.map((String choice) {
+        return {'Edit Playlist', 'Delete Playlist'}.map((String choice) {
           return PopupMenuItem<String>(
             value: choice,
             child: Text(choice),
@@ -177,10 +212,10 @@ PopupMenuButton<String> settingSongIcon(WidgetRef ref, Playlist playlist) =>
       },
     );
 
-Future<void> handleSettingSongClick(
+Future<void> handleSettingPlaylistClick(
     String value, WidgetRef ref, Playlist playlist) async {
   switch (value) {
-    case 'Edit Playlist Info':
+    case 'Edit Playlist':
       Navigator.push(
         ContextKey.navKey.currentContext!,
         MaterialPageRoute(
