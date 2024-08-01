@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 import '../../ui/components/components.dart';
 import '../../models/models.dart';
 
@@ -9,7 +10,7 @@ class PlaylistSongSearch extends SearchDelegate {
 
   PlaylistSongSearch(this.ref, this.playlist);
 
-@override
+  @override
   TextStyle? get searchFieldStyle => searchFieldTextStyle(ref);
 
   @override
@@ -41,9 +42,18 @@ class PlaylistSongSearch extends SearchDelegate {
         ? []
         : playlist.songNameList
             .where(
-              (p) => p.toLowerCase().contains(
-                    query.toLowerCase(),
-                  ),
+              (p) =>
+                  p.toLowerCase().contains(
+                        query.toLowerCase(),
+                      ) ||
+                  ((playlist.songList[playlist.songNameList.indexOf(p)]
+                          as UriAudioSource)
+                      .tag
+                      .artist
+                      .toLowerCase()
+                      .contains(
+                        query.toLowerCase(),
+                      )),
             )
             .toList();
     return suggestionSongListWidget(ref, suggestionList);
@@ -55,13 +65,21 @@ class PlaylistSongSearch extends SearchDelegate {
         ? playlist.songNameList
         : playlist.songNameList
             .where(
-              (p) => p.toLowerCase().contains(
-                    query.toLowerCase(),
-                  ),
+              (p) =>
+                  p.toLowerCase().contains(
+                        query.toLowerCase(),
+                      ) ||
+                  ((playlist.songList[playlist.songNameList.indexOf(p)]
+                          as UriAudioSource)
+                      .tag
+                      .artist
+                      .toLowerCase()
+                      .contains(
+                        query.toLowerCase(),
+                      )),
             )
             .toList();
 
     return suggestionSongListWidget(ref, suggestionList);
   }
 }
-

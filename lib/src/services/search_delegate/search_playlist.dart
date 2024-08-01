@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 import '../../ui/components/components.dart';
 import '../../models/models.dart';
-
 
 bool seeMorePlaylist = false;
 bool seeMoreSong = false;
@@ -12,8 +12,7 @@ bool noSeeMoreSong = false;
 class MainSearch extends SearchDelegate {
   final WidgetRef ref;
 
-
-  MainSearch(this.ref){
+  MainSearch(this.ref) {
     seeMorePlaylist = false;
     seeMoreSong = false;
     noSeeMorePlaylist = false;
@@ -58,9 +57,19 @@ class MainSearch extends SearchDelegate {
     List<String> songListSearchList = playlistArray[0]
         .songNameList
         .where(
-          (p) => p.toLowerCase().contains(
-                query.toLowerCase(),
-              ),
+          (p) =>
+              p.toLowerCase().contains(
+                    query.toLowerCase(),
+                  ) ||
+              ((playlistArray[0]
+                          .songList[playlistArray[0].songNameList.indexOf(p)]
+                      as UriAudioSource)
+                  .tag
+                  .artist
+                  .toLowerCase()
+                  .contains(
+                    query.toLowerCase(),
+                  )),
         )
         .toList();
     print(songListSearchList.length);
@@ -71,7 +80,8 @@ class MainSearch extends SearchDelegate {
       ...songListSearchList
     ];
     final List<dynamic> suggestionList = query.isEmpty ? [] : totalSearchList;
-    return suggestionPlaylistWidget(ref, suggestionList, query.isEmpty, playlistCount, songCount);
+    return suggestionPlaylistWidget(
+        ref, suggestionList, query.isEmpty, playlistCount, songCount);
   }
 
   @override
@@ -88,9 +98,19 @@ class MainSearch extends SearchDelegate {
     List<String> songListSearchList = playlistArray[0]
         .songNameList
         .where(
-          (p) => p.toLowerCase().contains(
-                query.toLowerCase(),
-              ),
+          (p) =>
+              p.toLowerCase().contains(
+                    query.toLowerCase(),
+                  ) ||
+              ((playlistArray[0]
+                          .songList[playlistArray[0].songNameList.indexOf(p)]
+                      as UriAudioSource)
+                  .tag
+                  .artist
+                  .toLowerCase()
+                  .contains(
+                    query.toLowerCase(),
+                  )),
         )
         .toList();
     List<dynamic> totalSearchList = [
@@ -99,9 +119,9 @@ class MainSearch extends SearchDelegate {
     ];
     int playlistCount = playlistSearchList.length;
     int songCount = songListSearchList.length;
-    final List<dynamic> suggestionList = query.isEmpty
-        ? totalSearchList
-        : totalSearchList;
-    return suggestionPlaylistWidget(ref, suggestionList, query.isEmpty, playlistCount, songCount);
+    final List<dynamic> suggestionList =
+        query.isEmpty ? totalSearchList : totalSearchList;
+    return suggestionPlaylistWidget(
+        ref, suggestionList, query.isEmpty, playlistCount, songCount);
   }
 }
