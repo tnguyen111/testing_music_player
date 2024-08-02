@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
+import '../../../main.dart';
 import '../../config/config.dart';
 import '../../models/models.dart';
 import '../../services/services.dart';
@@ -76,6 +78,30 @@ AppBar songAppBar(WidgetRef ref, Playlist playlist, int index) {
     title: headerText(
       ref,
       'Now Playing', //style: currentThemeHeaderText(ref),
+    ),
+  );
+}
+
+AppBar addToPlaylistAppBar(WidgetRef ref, AudioSource song) {
+  return AppBar(
+    leading: Builder(
+      builder: (context) {
+        return backIcon(context);
+      },
+    ),
+    //actions: [searchSongIcon(ref, playlistArray[0])],
+    title: SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Text(
+        (song as UriAudioSource).tag.title,
+        style: Theme.of(ContextKey.navKey.currentContext!)
+            .textTheme
+            .titleLarge
+            ?.apply(
+          color: currentThemeOnSurface(ref),
+        ),
+        maxLines: 1,
+      ),
     ),
   );
 }

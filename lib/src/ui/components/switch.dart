@@ -3,12 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:testing_music_player/src/models/global_list.dart';
 
+import '../../config/config.dart';
 import '../../services/services.dart';
 import '../ui.dart';
 
 Widget settingSwitch(WidgetRef ref, String function) {
   return Padding(
-    padding: const EdgeInsets.all(8.0),
+    padding: const EdgeInsets.all(kXSPadding),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -23,7 +24,7 @@ Widget settingSwitch(WidgetRef ref, String function) {
                   ? const WidgetStatePropertyAll(Icon(Icons.nightlight))
                   : const WidgetStatePropertyAll(Icon(Icons.sunny))
               : null,
-          value: (function == 'Dark Mode') ? !modeReadState(ref): (function == 'Song Deletion Confirmation') ? songDeleteConfirmation: (function == 'Playlist Deletion Confirmation') ? playlistDeleteConfirmation: songEditConfirmation,
+          value: (function == 'Dark Mode') ? !modeReadState(ref): (function == 'Song Deletion Confirmation') ? songDeleteConfirmation: playlistDeleteConfirmation,
           onChanged: (bool value) async {
             if(function == 'Dark Mode') {
               modeSwitchState(ref);
@@ -38,11 +39,6 @@ Widget settingSwitch(WidgetRef ref, String function) {
             } else if(function == 'Playlist Deletion Confirmation'){
               playlistDeleteConfirmation = !playlistDeleteConfirmation;
               changePlaylistConfirmation();
-              playlistSwitchState(ref);
-              return;
-            } else if(function == 'Song Edit Confirmation'){
-              songEditConfirmation = !songEditConfirmation;
-              changeSongEditConfirmation();
               playlistSwitchState(ref);
               return;
             }

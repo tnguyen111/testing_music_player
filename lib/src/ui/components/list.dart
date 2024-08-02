@@ -7,6 +7,7 @@ import '../../config/config.dart';
 import '../ui.dart';
 import 'package:testing_music_player/src/models/models.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 Widget playlistList(WidgetRef ref) {
   final ScrollController scrollController = ScrollController();
@@ -73,96 +74,183 @@ Widget songList(WidgetRef ref, Playlist playlist) {
       : Expanded(
           child: SizedBox(
             width: MediaQuery.sizeOf(ContextKey.navKey.currentContext!).width,
-            child: ReorderableListView.builder(
-              scrollController: scrollController,
-              itemCount: playlist.songNameList.length,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: false,
-              itemBuilder: (context, index) {
-                if (playlist.songNameList.isNotEmpty) {
-                  try {
-                    return Dismissible(
-                      key: Key(playlist.songNameList[index]),
-                      background: Container(
-                        color: const Color(0xff007c77),
-                        alignment: Alignment.centerLeft,
-                        padding:
-                            const EdgeInsets.only(left: kDefaultSmallPadding),
-                        child: const Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                        ),
-                      ),
-                      secondaryBackground: Container(
-                        color: const Color(0xff810303),
-                        alignment: Alignment.centerRight,
-                        padding:
-                            const EdgeInsets.only(right: kDefaultSmallPadding),
-                        child: const Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                        ),
-                      ),
-                      confirmDismiss: (direction) async {
-                        if (direction == DismissDirection.startToEnd) {
-                          // Editing Songs
-                          editingSongsDialog(context, ref, playlist.songList[index] as UriAudioSource);
-                          return false;
-                        } else if (direction == DismissDirection.endToStart) {
-                          // Deleting Songs
-                          if (playlist == playlistArray[0] &&
-                              songDeleteConfirmation) {
-                            final confirmed = await showDialog<bool>(
-                              context: context,
-                              builder: (context) {
-                                return deletingSongsDialog(context, ref);
+            child: SlidableAutoCloseBehavior(
+
+              child: ReorderableListView.builder(
+                scrollController: scrollController,
+                itemCount: playlist.songNameList.length,
+                scrollDirection: Axis.vertical,
+                shrinkWrap: false,
+                itemBuilder: (context, index) {
+                  if (playlist.songNameList.isNotEmpty) {
+                    try {
+                      return Slidable(
+                        key: Key(playlist.songNameList[index]),
+                        startActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          children: [
+                            SlidableAction(
+                              autoClose: false,
+                              onPressed: (context) {
+                                // Editing Songs
+                                editingSongsDialog(context, ref,
+                                    playlist.songList[index] as UriAudioSource);
                               },
-                            );
-                            print('Deletion confirmed: $confirmed');
-                            return confirmed;
-                          }
-                          return true;
-                        }
-                        return false;
-                      },
-                      onDismissed: (direction) async {
-                        /*Remove things*/
-                        AudioSource song = playlist.songList[index];
-                        String songName = (song as UriAudioSource).tag.title;
-                        if (playlistArray[0] == playlist) {
-                          await deleteSongFromPlaylist(
-                              ref, playlistArray[0], song);
-                          await IsarHelper().deleteSongFor(songName);
-                          print('remove in list');
-                          for (int i = 1; i < playlistArray.length; i++) {
-                            if (playlistArray[i]
-                                .songNameList
-                                .contains(songName)) {
-                              await deleteSongFromPlaylist(
-                                  ref, playlistArray[i], song);
-                            }
-                          }
-                        } else {
-                          await deleteSongFromPlaylist(ref, playlist, song);
-                        }
-                        playlistSwitchState(ref);
-                      },
-                      child: songBlock(ref, playlist, index),
-                    );
-                  } catch (e) {
-                    print(e);
-                    return Container();
+                              backgroundColor: const Color(0xff007c77),
+                              foregroundColor: Colors.white,
+                              icon: Icons.edit,
+                            ),
+                            SlidableAction(
+                              autoClose: false,
+                              onPressed: (context) {
+                                if(playlist.songList.children.isNotEmpty) {
+                                  Navigator.push(
+                                    ContextKey.navKey.currentContext!,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          addToPlaylistScreen(ref, playlist,
+                                              playlist.songList[index]),
+                                    ),
+                                  );
+                                }
+                              },
+                              backgroundColor: const Color(0xFF70B13B),
+                              foregroundColor: Colors.white,
+                              icon: Icons.playlist_add,
+                            ),
+                          ],
+                        ),
+                        endActionPane: ActionPane(
+                            motion: const ScrollMotion(),
+                            dismissible: DismissiblePane(
+                              closeOnCancel: true,
+                              confirmDismiss: () async {
+                                // Deleting Songs
+                                if (playlist == playlistArray[0] &&
+                                    songDeleteConfirmation) {
+                                  final bool confirmed = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) {
+                                          return deletingSongsDialog(
+                                              context, ref);
+                                        },
+                                      ) ??
+                                      false;
+                                  print('Deletion confirmed: $confirmed');
+                                  return confirmed;
+                                }
+                                return true;
+                              },
+                              onDismissed: () async {
+                                /*Remove things*/
+                                AudioSource song = playlist.songList[index];
+                                String songName =
+                                    (song as UriAudioSource).tag.title;
+                                if (playlistArray[0] == playlist) {
+                                  await deleteSongFromPlaylist(
+                                      ref, playlistArray[0], song);
+                                  await IsarHelper().deleteSongFor(songName);
+                                  print('remove in list');
+                                  for (int i = 1; i < playlistArray.length; i++) {
+                                    if (playlistArray[i]
+                                        .songNameList
+                                        .contains(songName)) {
+                                      await deleteSongFromPlaylist(
+                                          ref, playlistArray[i], song);
+                                    }
+                                  }
+                                } else {
+                                  await deleteSongFromPlaylist(
+                                      ref, playlist, song);
+                                }
+                                //playlistSwitchState(ref);
+                              },
+                            ),
+                            children: [
+                              SlidableAction(
+                                autoClose: false,
+                                onPressed: (context) async {
+                                  bool confirmed;
+                                  if (playlist == playlistArray[0] &&
+                                      songDeleteConfirmation) {
+                                    confirmed = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) {
+                                            return deletingSongsDialog(
+                                                context, ref);
+                                          },
+                                        ) ??
+                                        false;
+                                    print('Deletion confirmed: $confirmed');
+                                  } else {
+                                    confirmed = true;
+                                  }
+
+                                  if (confirmed) {
+                                    AudioSource song = playlist.songList[index];
+                                    String songName =
+                                        (song as UriAudioSource).tag.title;
+                                    if (playlistArray[0] == playlist) {
+                                      await deleteSongFromPlaylist(
+                                          ref, playlistArray[0], song);
+                                      await IsarHelper().deleteSongFor(songName);
+                                      print('remove in list');
+                                      for (int i = 1;
+                                          i < playlistArray.length;
+                                          i++) {
+                                        if (playlistArray[i]
+                                            .songNameList
+                                            .contains(songName)) {
+                                          final controller = Slidable.of(context);
+                                          controller?.dismiss(
+                                            ResizeRequest(
+                                                const Duration(milliseconds: 300),
+                                                () async =>
+                                                    deleteSongFromPlaylist(ref,
+                                                        playlistArray[i], song)),
+                                            duration:
+                                                const Duration(milliseconds: 300),
+                                          );
+                                        }
+                                      }
+                                    } else {
+                                      final controller = Slidable.of(context);
+                                      controller?.dismiss(
+                                        ResizeRequest(
+                                            const Duration(milliseconds: 300),
+                                            () async => deleteSongFromPlaylist(
+                                                ref, playlist, song)),
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                      );
+                                    }
+                                  } else {
+                                    return;
+                                  }
+                                  //playlistSwitchState(ref);
+                                },
+                                backgroundColor: const Color(0xff810303),
+                                foregroundColor: Colors.white,
+                                icon: Icons.delete,
+                              ),
+                            ]),
+                        child: songBlock(ref, playlist, index),
+                      );
+                    } catch (e) {
+                      print(e);
+                      return Container();
+                    }
                   }
-                }
-                return Container();
-              },
-              onReorder: (int oldIndex, int newIndex) async {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                await swapSongsInPlaylist(playlist, oldIndex, newIndex);
-                playlistSwitchState(ref);
-              },
+                  return Container();
+                },
+                onReorder: (int oldIndex, int newIndex) async {
+                  if (oldIndex < newIndex) {
+                    newIndex -= 1;
+                  }
+                  await swapSongsInPlaylist(playlist, oldIndex, newIndex);
+                  playlistSwitchState(ref);
+                },
+              ),
             ),
           ),
         );
@@ -175,17 +263,18 @@ Widget nextSongList(WidgetRef ref) {
       ? Container(
           margin: const EdgeInsets.only(top: kXXXXLPadding),
           padding: const EdgeInsets.only(
-              top: kMediumPadding,
-              left: kDefaultSmallPadding,
-              right: kDefaultSmallPadding,
-              bottom: kDefaultSmallPadding),
+            top: kMediumPadding,
+          ),
           color: currentThemeSurfaceContainerLow(ref),
           height: 200,
           width: MediaQuery.sizeOf(ContextKey.navKey.currentContext!).width,
           child: ListView(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(
+                    bottom: kXSPadding,
+                    left: kDefaultSmallPadding,
+                    right: kDefaultSmallPadding),
                 child: headerText(ref, 'Up Next'),
               ),
               upNextSongBlock(ref, next),
@@ -224,6 +313,23 @@ Widget addSongList(WidgetRef ref, Playlist playlist) {
   );
 }
 
+Widget addToPlaylistList(WidgetRef ref, Playlist originalPlaylist, AudioSource song) {
+  final ScrollController scrollController = ScrollController();
+  return Expanded(
+    child: SizedBox(
+      width: MediaQuery.sizeOf(ContextKey.navKey.currentContext!).width,
+      child: ListView.builder(
+          itemCount: playlistArray.length - 1,
+          scrollDirection: Axis.vertical,
+          shrinkWrap: false,
+          controller: scrollController,
+          itemBuilder: (context, index) {
+            return addToPlaylistBlock(ref, originalPlaylist, playlistArray[index + 1], song);
+          }),
+    ),
+  );
+}
+
 Widget settingList(WidgetRef ref) {
   return Expanded(
     child: SizedBox(
@@ -241,10 +347,6 @@ Widget settingList(WidgetRef ref) {
               height: 1,
             ),
             settingBlock(ref, 'Song Deletion Confirmation'),
-            const Divider(
-              height: 1,
-            ),
-            settingBlock(ref, 'Song Edit Confirmation'),
             const Divider(
               height: 1,
             ),

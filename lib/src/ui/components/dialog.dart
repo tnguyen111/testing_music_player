@@ -16,6 +16,7 @@ import '../../config/config.dart';
 import '../ui.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:external_path/external_path.dart';
+import 'package:info_popup/info_popup.dart';
 
 addingSongsDialog(BuildContext context, WidgetRef ref, Playlist playlist) {
   bool loading = false;
@@ -290,9 +291,21 @@ editingSongsDialog(BuildContext context, WidgetRef ref, UriAudioSource song) {
         contentPadding:
             const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
         actionsPadding: const EdgeInsets.all(kLargePadding),
-        title: headerText(
-          ref,
-          "Edit Song",
+        title: Row(
+          children: [
+            headerText(
+              ref,
+              "Edit Song",
+            ),
+            InfoPopupWidget(
+              contentTitle: 'Song will be edited in songs list and playlists',
+              child: Icon(
+                size: 18,
+                Icons.info_outline,
+                color: currentThemeOnSurfaceVar(ref),
+              ),
+            ),
+          ],
         ),
         content: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -300,7 +313,7 @@ editingSongsDialog(BuildContext context, WidgetRef ref, UriAudioSource song) {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Container(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(kXSPadding),
               child: TextField(
                 style: Theme.of(ContextKey.navKey.currentContext!)
                     .textTheme
@@ -333,7 +346,7 @@ editingSongsDialog(BuildContext context, WidgetRef ref, UriAudioSource song) {
               ),
             ),
             Container(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(kXSPadding),
               child: TextField(
                 style: Theme.of(ContextKey.navKey.currentContext!)
                     .textTheme
@@ -374,24 +387,12 @@ editingSongsDialog(BuildContext context, WidgetRef ref, UriAudioSource song) {
                       playlistSwitchState(ref);
                       return;
                     }
-                    final confirmed = (songEditConfirmation)
-                        ? (await showModalBottomSheet<bool>(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return editingSongsConfirmationDialog(
-                                  context, ref);
-                            },
-                          ))
-                        : true;
-                    print(confirmed);
-                    if (confirmed ?? false) {
-                      if (songName != song.tag.title ||
-                          authorName != song.tag.artist) {
-                        print('changed');
-                        editSong(ref, song, songName, authorName);
-                      }
-                      Navigator.pop(context, false);
+                    if (songName != song.tag.title ||
+                        authorName != song.tag.artist) {
+                      print('changed');
+                      editSong(ref, song, songName, authorName);
                     }
+                    Navigator.pop(context, false);
                   },
             child: alertActionText(
               ref,
@@ -406,29 +407,62 @@ editingSongsDialog(BuildContext context, WidgetRef ref, UriAudioSource song) {
 }
 
 editingSongsConfirmationDialog(BuildContext context, WidgetRef ref) {
-  return AlertDialog(
-    titlePadding: const EdgeInsets.only(
-        top: kLargePadding,
+  return Container(
+    margin: const EdgeInsets.only(
         left: kLargePadding,
+        top: kLargePadding,
         right: kLargePadding,
-        bottom: kDefaultSmallPadding),
-    contentPadding:
-        const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
-    actionsPadding: const EdgeInsets.all(kLargePadding),
-    title: const Text('Edit Selected Song?'),
-    content: const Text(
-        'Caution! This song will be edited in your main song list and all playlists after completion. Do you want to proceed?'),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context, false),
-        child: alertActionText(ref, 'Cancel', false),
-      ),
-      TextButton(
-        onPressed: () => Navigator.pop(context, true),
-        child: alertActionText(ref, 'Proceed', false),
-      )
-    ],
+        bottom: kXSPadding),
+    child: Wrap(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: kDefaultSmallPadding),
+          child: headerText(ref, 'Edit Selected Song?'),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: kDefaultSmallPadding),
+          child: contentText(ref,
+              'Caution! This song will be edited in your main song list and all playlists after completion. Do you want to proceed?'),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: alertActionText(ref, 'Cancel', false),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: alertActionText(ref, 'Proceed', false),
+            )
+          ],
+        ),
+      ],
+    ),
   );
+  //   AlertDialog(
+  //   titlePadding: const EdgeInsets.only(
+  //       top: kLargePadding,
+  //       left: kLargePadding,
+  //       right: kLargePadding,
+  //       bottom: kDefaultSmallPadding),
+  //   contentPadding:
+  //       const EdgeInsets.only(left: kLargePadding, right: kLargePadding),
+  //   actionsPadding: const EdgeInsets.all(kLargePadding),
+  //   title: const Text('Edit Selected Song?'),
+  //   content: const Text(
+  //       'Caution! This song will be edited in your main song list and all playlists after completion. Do you want to proceed?'),
+  //   actions: [
+  //     TextButton(
+  //       onPressed: () => Navigator.pop(context, false),
+  //       child: alertActionText(ref, 'Cancel', false),
+  //     ),
+  //     TextButton(
+  //       onPressed: () => Navigator.pop(context, true),
+  //       child: alertActionText(ref, 'Proceed', false),
+  //     )
+  //   ],
+  // );
 }
 
 deletingSongsDialog(BuildContext context, WidgetRef ref) {

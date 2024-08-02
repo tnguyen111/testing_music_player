@@ -5,5 +5,4 @@ List<Playlist> playlistArray = [Playlist(playlistName_: '', imagePath_: '', song
 ValueNotifier<bool> importingFile = ValueNotifier<bool>(false);
 bool playlistDeleteConfirmation = true;
 bool songDeleteConfirmation = true;
-bool songEditConfirmation = true;
 

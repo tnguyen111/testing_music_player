@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:external_path/external_path.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,7 +15,6 @@ Future<bool> setupMode(WidgetRef ref) async {
     modeSwitchState(ref);
   }
   songDeleteConfirmation = prefs.getBool('songDeleteConfirmation') ?? true;
-  songEditConfirmation = prefs.getBool('songEditConfirmation') ?? true;
   playlistDeleteConfirmation =
       prefs.getBool('playlistDeleteConfirmation') ?? true;
 
@@ -39,12 +37,6 @@ Future<bool> setupMode(WidgetRef ref) async {
 void changeSongConfirmation() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setBool('songDeleteConfirmation', songDeleteConfirmation);
-  return;
-}
-
-void changeSongEditConfirmation() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setBool('songEditConfirmation', songEditConfirmation);
   return;
 }
 

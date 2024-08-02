@@ -51,6 +51,16 @@ Text artistText(WidgetRef ref, String string) {
   );
 }
 
+Text contentText(WidgetRef ref, String string) {
+  return Text(
+    string,
+    style:
+    Theme.of(ContextKey.navKey.currentContext!).textTheme.bodyMedium?.apply(
+      color: currentThemeOnSurfaceVar(ref),
+    ),
+  );
+}
+
 Text timeText(WidgetRef ref, String string) {
   return Text(
     string,

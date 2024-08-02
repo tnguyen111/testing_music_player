@@ -194,5 +194,30 @@ class Playlist {
       if (playing) player.play();
     }
   }
+
+  Future<void> alterSong(int index, UriAudioSource edittedSong) async {
+    bool changed = false;
+    bool playing = false;
+    AudioSource? tempConcar;
+    int? tempIndex;
+    Duration tempDura = Duration.zero;
+
+    if (player.audioSource == songList && player.sequenceState?.currentSource == songList[index]) {
+      changed = true;
+      playing = player.playing;
+      tempConcar = player.audioSource;
+      tempIndex = songNameList.indexOf(edittedSong.tag.title);
+      tempDura = player.position;
+    }
+
+    await removeSong(index);
+    await insertSong(index, edittedSong);
+
+    if (changed) {
+      await player.setAudioSource(tempConcar!,
+          initialIndex: tempIndex, initialPosition: tempDura);
+      if (playing) player.play();
+    }
+  }
 }
 

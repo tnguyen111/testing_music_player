@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -82,7 +83,8 @@ Container songBlock(WidgetRef ref, Playlist playlist, int index) => Container(
         },
         child: Container(
           color: (player.sequenceState?.currentSource ==
-                  playlist.songList.children[index] && player.audioSource == playlist.songList)
+                      playlist.songList.children[index] &&
+                  player.audioSource == playlist.songList)
               ? currentThemeSurfaceContainerLow(ref)
               : currentThemeSurface(ref),
           child: Padding(
@@ -218,7 +220,7 @@ Widget songNameBlock(WidgetRef ref) {
             songName,
             style: Theme.of(ContextKey.navKey.currentContext!)
                 .textTheme
-                .displaySmall
+                .titleLarge
                 ?.apply(
                   color: currentThemeOnSurface(ref),
                 ),
@@ -235,7 +237,7 @@ Widget songNameBlock(WidgetRef ref) {
             authorName,
             style: Theme.of(ContextKey.navKey.currentContext!)
                 .textTheme
-                .headlineSmall
+                .titleMedium
                 ?.apply(
                   color: currentThemeOnSurfaceVar(ref),
                 ),
@@ -246,7 +248,7 @@ Widget songNameBlock(WidgetRef ref) {
   );
 }
 
-Widget addSongBlock(ref, playlist, index) => InkWell(
+Widget addSongBlock(WidgetRef ref, Playlist playlist, int index) => InkWell(
       onTap: () {
         loadSong(ref, playlistArray[0], index);
       },
@@ -258,9 +260,7 @@ Widget addSongBlock(ref, playlist, index) => InkWell(
             right: kDefaultSmallPadding),
         child: Row(
           children: [
-            ((playlistArray[0].songList[index] as UriAudioSource)
-                        .tag
-                        .artist ==
+            ((playlistArray[0].songList[index] as UriAudioSource).tag.artist ==
                     '')
                 ? Expanded(
                     child: songText(
@@ -296,11 +296,37 @@ Widget addSongBlock(ref, playlist, index) => InkWell(
                     .tag
                     .displayDescription),
             const SizedBox(width: kXSPadding),
-            listCheckbox(playlist, playlistArray[0].songList[index], ref),
+            playlistCheckbox(playlist, playlistArray[0].songList[index], ref),
           ],
         ),
       ),
     );
+
+Widget addToPlaylistBlock(WidgetRef ref, Playlist originalPlaylist, Playlist playlist, AudioSource song) => (originalPlaylist != playlist) ?
+    InkWell(
+      onTap: () {
+        Navigator.push(
+          ContextKey.navKey.currentContext!,
+          MaterialPageRoute(
+              builder: (context) => playlistScreen(ref, playlist)),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.only(
+            top: kMediumPadding,
+            bottom: kMediumPadding,
+            left: kDefaultSmallPadding,
+            right: kDefaultSmallPadding),
+        child: Row(
+          children: [
+            Container(margin: EdgeInsets.only(right: 16),height: 56, width: 56,child:playlist.getImage(),),
+            Expanded(child: playlistText(ref, playlist.playlistName)),
+            const SizedBox(width: kDefaultSmallPadding),
+            songCheckbox(playlist, song, ref),
+          ],
+        ),
+      ),
+    ): Container();
 
 Widget settingBlock(ref, String function) => SizedBox(
       width: ContextKey.appWidth,
@@ -322,7 +348,8 @@ Widget settingBlock(ref, String function) => SizedBox(
                         print('done importing');
                       }
                     },
-              child: Container(margin: const EdgeInsets.all(kDefaultSmallPadding),
+              child: Container(
+                margin: const EdgeInsets.all(kDefaultSmallPadding),
                 alignment: Alignment.centerLeft,
                 child: settingText(
                   ref,
@@ -355,20 +382,33 @@ Widget importingBloc(WidgetRef ref) {
 }
 
 Widget upNextSongBlock(WidgetRef ref, int index) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 8),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        songText(
-          ref,
-          (player.sequence?[index])?.tag.title,
+  return Material(
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: () {
+        player.seek(Duration.zero, index: index);
+        playlistSwitchState(ref);
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(
+          bottom: kXSPadding,
+          left: kDefaultSmallPadding,
+          right: kDefaultSmallPadding,
         ),
-        artistText(
-          ref,
-          (player.sequence?[index])?.tag.title,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            songText(
+              ref,
+              (player.sequence?[index])?.tag.title,
+            ),
+            artistText(
+              ref,
+              (player.sequence?[index])?.tag.title,
+            ),
+          ],
         ),
-      ],
+      ),
     ),
   );
 }

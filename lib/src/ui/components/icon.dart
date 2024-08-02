@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:testing_music_player/src/models/models.dart';
 import 'package:testing_music_player/src/services/services.dart';
+import 'package:testing_music_player/src/ui/screens/add_to_playlist_screen.dart';
 import '../../../main.dart';
 import '../ui.dart';
 
@@ -174,6 +175,14 @@ Future<void> handleSettingSongClick(
       }
       Navigator.of(ContextKey.navKey.currentContext!).pop();
       playlistSwitchState(ref);
+      break;
+    case 'Add Song To Playlists':
+      Navigator.push(
+        ContextKey.navKey.currentContext!,
+        MaterialPageRoute(
+          builder: (context) => addToPlaylistScreen(ref, playlist, playlist.songList[index]),
+        ),
+      );
       break;
   }
 }

@@ -28,9 +28,8 @@ Future<void> editSong(WidgetRef ref, UriAudioSource song, String newTitle, Strin
   for(Playlist playlist in playlistArray){
     if(playlist.songNameList.contains(song.tag.title)){
       int index = playlist.songNameList.indexOf(song.tag.title);
-      await playlist.removeSong(index);
-      await playlist.insertSong(index, temp as UriAudioSource);
       playlist.songNameList[index] = newTitle;
+      await playlist.alterSong(index, temp as UriAudioSource);
       await IsarHelper().savePlaylist(playlist);
     }
   }
