@@ -75,7 +75,6 @@ Widget songList(WidgetRef ref, Playlist playlist) {
           child: SizedBox(
             width: MediaQuery.sizeOf(ContextKey.navKey.currentContext!).width,
             child: SlidableAutoCloseBehavior(
-
               child: ReorderableListView.builder(
                 scrollController: scrollController,
                 itemCount: playlist.songNameList.length,
@@ -103,13 +102,14 @@ Widget songList(WidgetRef ref, Playlist playlist) {
                             SlidableAction(
                               autoClose: false,
                               onPressed: (context) {
-                                if(playlist.songList.children.isNotEmpty) {
+                                if (playlist.songList.children.isNotEmpty) {
                                   Navigator.push(
                                     ContextKey.navKey.currentContext!,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          addToPlaylistScreen(ref, playlist,
-                                              playlist.songList[index]),
+                                      builder: (context) => addToPlaylistScreen(
+                                          ref,
+                                          playlist,
+                                          playlist.songList[index]),
                                     ),
                                   );
                                 }
@@ -151,7 +151,9 @@ Widget songList(WidgetRef ref, Playlist playlist) {
                                       ref, playlistArray[0], song);
                                   await IsarHelper().deleteSongFor(songName);
                                   print('remove in list');
-                                  for (int i = 1; i < playlistArray.length; i++) {
+                                  for (int i = 1;
+                                      i < playlistArray.length;
+                                      i++) {
                                     if (playlistArray[i]
                                         .songNameList
                                         .contains(songName)) {
@@ -193,7 +195,8 @@ Widget songList(WidgetRef ref, Playlist playlist) {
                                     if (playlistArray[0] == playlist) {
                                       await deleteSongFromPlaylist(
                                           ref, playlistArray[0], song);
-                                      await IsarHelper().deleteSongFor(songName);
+                                      await IsarHelper()
+                                          .deleteSongFor(songName);
                                       print('remove in list');
                                       for (int i = 1;
                                           i < playlistArray.length;
@@ -201,18 +204,20 @@ Widget songList(WidgetRef ref, Playlist playlist) {
                                         if (playlistArray[i]
                                             .songNameList
                                             .contains(songName)) {
-                                          final controller = Slidable.of(context);
-                                          controller?.dismiss(
-                                            ResizeRequest(
-                                                const Duration(milliseconds: 300),
-                                                () async =>
-                                                    deleteSongFromPlaylist(ref,
-                                                        playlistArray[i], song)),
-                                            duration:
-                                                const Duration(milliseconds: 300),
-                                          );
+                                          deleteSongFromPlaylist(
+                                              ref, playlistArray[i], song);
                                         }
                                       }
+                                      final controller = Slidable.of(ContextKey.navKey.currentContext!);
+                                      controller?.dismiss(
+                                        ResizeRequest(
+                                            const Duration(milliseconds: 300),
+                                                () async =>
+                                                deleteSongFromPlaylist(ref,
+                                                    playlistArray[0], song)),
+                                        duration:
+                                        const Duration(milliseconds: 300),
+                                      );
                                     } else {
                                       final controller = Slidable.of(context);
                                       controller?.dismiss(
@@ -313,7 +318,8 @@ Widget addSongList(WidgetRef ref, Playlist playlist) {
   );
 }
 
-Widget addToPlaylistList(WidgetRef ref, Playlist originalPlaylist, AudioSource song) {
+Widget addToPlaylistList(
+    WidgetRef ref, Playlist originalPlaylist, AudioSource song) {
   final ScrollController scrollController = ScrollController();
   return Expanded(
     child: SizedBox(
@@ -324,7 +330,8 @@ Widget addToPlaylistList(WidgetRef ref, Playlist originalPlaylist, AudioSource s
           shrinkWrap: false,
           controller: scrollController,
           itemBuilder: (context, index) {
-            return addToPlaylistBlock(ref, originalPlaylist, playlistArray[index + 1], song);
+            return addToPlaylistBlock(
+                ref, originalPlaylist, playlistArray[index + 1], song);
           }),
     ),
   );
