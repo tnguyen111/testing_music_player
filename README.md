@@ -18,7 +18,7 @@ Notes:
 - Only the stated file formats above are tested and working properly. Changes will needed to be made in lib/src/ui/components/dialog.dart to process/test different formats.
 - Song files are saved to the database by file paths in device's storage. Songs will not be played properly if files are deleted. 
 - Although much testing was conducted and many bugs were fixed, errors and bugs may still occur, especially when a playlist is interacted with (add, delete, sort, etc. songs) while a different playlist is playing. Errors SHOULDN'T occur for most of the normal usages.
-- The app runs, yet the code is horrendous and very brute force-ish in many parts (2nd revision, this point still stands).
+- The app runs, yet the code is horrendous and very brute force-ish in many parts because of the library's capability (2nd revision, this point still stands).
 
 # Things Learned From Making This App
 
